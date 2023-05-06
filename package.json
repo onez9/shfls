@@ -1,0 +1,26 @@
+{
+  "name": "fileloader",
+  "version": "0.0.0",
+  "private": true,
+
+  "scripts": {
+    "start": "nodemon server.mjs",
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "type": "module",
+  "dependencies": {
+    "express": "^4.18.2",
+    "express-fileupload": "^1.4.0",
+    "nodemon": "^2.0.22",
+    "qrcode": "^1.5.3",
+    "uuid": "^9.0.0",
+    "vue": "^3.2.47",
+    "vue-router": "^4.1.6"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.0.0",
+    "vite": "^4.1.4"
+  }
+}
