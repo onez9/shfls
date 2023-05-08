@@ -2,7 +2,6 @@ import express from 'express';
 import path from 'path';
 import fs from 'fs'
 const router = express.Router();
-const urlencodedParser = express.urlencoded({extended: false})
 import {v4} from 'uuid'
 
 import { fileURLToPath } from 'url';
@@ -19,7 +18,7 @@ const __dirname = dirname(__filename);
 
 
 
-router.get('/', urlencodedParser, async (req, res) => {
+router.get('/', async (req, res) => {
 
     // `server/Pictures/${v4()}${path.parse(req.files.file.name).ext}`
     let data = {
@@ -40,12 +39,12 @@ router.get('/', urlencodedParser, async (req, res) => {
     //     console.log('success!');
     // })
     const options = {
-        root: path.resolve('files'),
+        root: path.resolve(config.folders.files),
         headers: {'Content-Type': 'image/jpeg'}
     }
 
     qrcode.toFile(
-        path.resolve('files', 'qrcode.png'),
+        path.resolve(config.folders.files, 'qrcode.png'),
         // [{ data: Buffer.from([253,254,255]), mode: 'byte' }],
         [{ data: JSON.parse(stringdata).url, mode: 'byte' }],
         {width: 512},
