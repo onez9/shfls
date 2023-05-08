@@ -4,10 +4,43 @@ import { RouterLink, RouterView } from 'vue-router'
 </script>
 
 <template>
-    <header>
-    <!-- <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" /> -->
+	<header class="container-fluid p-0">
 
-    <!--<div class="wrapper">
+		<nav class="navbar navbar-expand-lg bg-light">
+      <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
+              <router-link class="nav-link" to="/"><i class="bi-house"></i> Главная</router-link>
+            </li>
+						<li class="nav-item">
+              <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
+              <router-link class="nav-link" to="/g/files"><i class="bi bi-card-list"></i> Файлообменник</router-link>
+            </li>
+						<li class="nav-item">
+              <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
+              <router-link class="nav-link" to="/g/images"><i class="bi bi-images"></i> Картинки</router-link>
+            </li>
+            <li class="nav-item">
+              <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
+              <router-link class="nav-link" to="/g/videos"><i class="bi bi-file-play"></i> Видео</router-link>
+            </li>
+            <li class="nav-item">
+              <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
+              <router-link class="nav-link" to="/g/musics"><i class="bi bi-music-player"></i> Музыка</router-link>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav> 
+
+		<!-- <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" /> -->
+
+		<!--<div class="wrapper">
       <HelloWorld msg="You did it!" />
 
       <nav>
@@ -15,156 +48,29 @@ import { RouterLink, RouterView } from 'vue-router'
         <RouterLink to="/about">About</RouterLink>
       </nav>
     </div> -->
-    </header>
-    <main class="container">
-        <div class="row">
-            <div class="col">
-                <label for="id_upload">Загрузить новый файл</label>
-                <input
-                    id="id_upload"
-                    name="file"
-                    type="file"
-                    class="form-control mb-1">
-                
-                <div class="row">
-                    <div class="col-6">
-                        <button
-                            class="btn btn-danger mb-3 form-control"
-                            @click="upload_file">
-                            <i class="bi bi-upload"></i> Загрузить
-                        </button>
-                    </div>
-                    <div class="col-6">
-                        <button
-                            class="btn btn-dark form-control mb-3"
-                            @click="show_qr">
-                            <i class="bi bi-qr-code"></i> Создать qr-код
-                        </button>
-                    </div>
-                </div>
-                <br />
+	</header>
+	<main class="container-fluid">
+		<RouterView :wait="wait"/>
 
-                <table 
-                    id="id_table"
-                    class="table">
-                    <tbody>
-                        <tr v-for="(item, i) in array" :key="i">
-                            <td><button class="btn btn-danger"><i class="bi bi-file-binary-fill"></i></button></td>
-                            <td>{{ item }}</td>
-                            <td>
-                                <button @click="download_file(item)" 
-                                class="btn btn-dark form-control"><i class="bi bi-download"></i></button>
-                            </td>
+	</main>
+	<footer>
 
-                        </tr>
-                    </tbody>
-                </table>
+	</footer>
 
-
-            </div>
-        </div>
-    </main>
-    <footer>
-
-    </footer>
-
-  <!-- <RouterView /> -->
+	<!-- <RouterView /> -->
 </template>
 
-<style scoped>
-
-
-</style>
+<style scoped></style>
 
 <script>
-    export default {
-        data() {
-            return {
-                array: []
-            }
-        },
-        props: {
-
-        },
-        computed: {
-
-        },
-        async mounted() {
-            await this.get_lst()
-        },
-        methods: {
-            async get_lst() {
-                let person={
-                    name: "Maxi",
-                    age: 14
-                }
-                const response = await fetch('/get', {
-                    method: 'POST',
-                    credentials: 'include',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(person)
-                })
-                this.array = await response.json()
-            },
-
-            async download_file(name) {
-                const response = await fetch(`/download?name=${name}`, {
-                    // const response = await fetch('/download', {
-                    method: 'GET',
-                    // credentials: 'include',
-                    // headers: {
-                    //     'Content-Type': 'application/json',
-                    // },
-                    // body: JSON.stringify({name: name})
-                })
-
-                console.log(response)
-                //window.open(response);
-                window.open(response.url)
-            },
-
-            async upload_file() {
-                let formData = new FormData()
-                let input = document.querySelector('input[type="file"]')
-
-                formData.append('file', input.files[0])
-                // formData.append('email', window.localStorage.getItem('user'))
-                
-
-
-                const response = await fetch('/upload', {
-                    method: 'POST',
-                    credentials: 'include',
-                    // headers: {
-                    //     'authorization': window.localStorage.getItem('jwt')
-                    // },
-                    body: formData
-
-                })
-                let result = await response.json()
-                console.log('Тут ответ который возвращает запрос: ', result)
-                document.querySelector('input[type=file]').value = "";
-                await this.get_lst()
-
-
-		    },
-            async show_qr() {
-                const response = await fetch('/qr', {
-                    method: 'GET',
-                    credentials: 'include',
-                    // headers: {
-                    //     'authorization': window.localStorage.getItem('jwt')
-                    // },
-                    //body: JSON.stringify({200: 200})
-
-                })
-                window.open(response.url)
-                console.log(response)
-            }
-        }
+export default {
+  data() {
+    return {
+      wait: false
     }
+  },
+
+}
 
 </script>
 

@@ -1,57 +1,112 @@
 import express from 'express'
-import {v4} from 'uuid'
+import { v4 } from 'uuid'
 import path from 'path'
 import fileUpload from 'express-fileupload'
-import { fileURLToPath } from 'url';
+import { WebSocketServer } from 'ws'
+import {createServer} from 'http'
+import config from './config.mjs'
+const urlencodedParser = express.urlencoded({ extended: false })
+
+
 // import { dirname } from 'path';
 
 // const __filename = fileURLToPath(import.meta.url);
 // const __dirname = dirname(__filename);
 const __dirname = path.resolve();
 
+
+// создаем объект приложения
 const app = express()
+
+
+
+const http = createServer(app)
+
+
+
+// const dispatchEvent = (message, ws) => {
+// 	const json = JSON.parse(message);
+// 	switch (json.event) {
+// 		case "chat-message": webSocketServer.clients.forEach(client => client.send(message));
+// 		default: ws.send((new Error("Wrong query")).message);
+// 	}
+// }
+
+
+// создаём экземпляр ws
+const wsServer = new WebSocketServer({
+	server: http,
+})
+
+// wsServer.on('connection', ws => {
+// 	ws.on('message', m => {
+// 		console.log('Новое сообщение')
+// 		console.log(m.toString())
+// 		console.log(typeof m)
+// 		// let message = new Blob(['привет я с сервера'], {
+// 		// 	type: 'text/plain'
+// 		// })
+
+// 		let message = 'Привет я с сервера, а ты кто такой?'
+		
+// 		setInterval(() => {
+// 			wsServer.clients.forEach(client => client.send(message))
+// 		}, 1000)
+
+
+// 	})
+
+// 	ws.on("error", e => ws.send(e));
+
+// 	ws.send('Привет всем, я сервер websocket');
+// })
+
 
 // настройка приложения
 app.use(express.json());
+app.use(urlencodedParser);
 // // app.use(cookieParser('secret key'));
-app.use(fileUpload({    
-	useTempFiles : true,
-	tempFileDir : 'files/'
+app.use(fileUpload({
+	useTempFiles: true,
+	tempFileDir: config.folders.files
 }));
 
 
 
-import getFiles from './Controllers/get.mjs'
+import get from './Controllers/get.mjs'
 import uploadFile from './Controllers/upload.mjs'
 import downloadFile from './Controllers/download.mjs'
 import qrCode from './Controllers/qrcode.mjs'
-import config from './config.mjs'
+import { create } from 'domain'
 
 
 
+app.use(function (req, res, next) {
+	req.wsServer = wsServer;
+	next();
+});
 
 
 
-app.use('/get', getFiles);
+app.use('/g', get);
 app.use('/upload', uploadFile);
 app.use('/download', downloadFile);
 app.use('/qr', qrCode);
 
 
 console.log(__dirname)
-app.use('/files', express.static(path.join(__dirname,'files')))
-app.use('/public', express.static(path.join(__dirname,'public')))
+app.use(config.routes.files, express.static(path.join(__dirname, config.folders.files)))
+app.use(config.routes.images, express.static(path.join(__dirname, config.folders.images)))
+app.use(config.routes.public, express.static(path.join(__dirname, config.folders.public)))
+app.use(config.routes.musics, express.static(path.join(__dirname, config.folders.musics)))
 // app.use(express.static('files'));
-
-
-
 // app.use('/files1', express.static(path.resolve(__dirname, 'files')));
 // app.use('/files', express.static('files'));
 // app.use('/js', express.static('js'));
 // app.use('/private', express.static('private'));
 
 
-app.get('*', (req, res)=>{
+app.get('*', (req, res) => {
 	console.log('отправка стандартного файла')
 	res.sendFile(path.resolve('index.html'))
 })
@@ -59,7 +114,7 @@ app.get('*', (req, res)=>{
 
 //import arr_upload = upload.fields([{ name: 'file', maxCount: 10 }]);
 // запуск приложения
-app.listen(config.wlan0.port, config.wlan0.host, () => {
+http.listen(config.wlan0.port, config.wlan0.host, () => {
 	console.log(`Сервер запущен - http://${config.wlan0.host}:${config.wlan0.port}/`);
 	console.log('Остановить сервер - Ctrl+C');
 
