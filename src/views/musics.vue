@@ -2,7 +2,7 @@
 </script>
 
 <template>
-  <div class="container">
+  <div class="container-fluid">
     <div class="row">
       <div class="col">
         <div class="col-sm-6" v-for="(item, i) in array_music" :key="i">

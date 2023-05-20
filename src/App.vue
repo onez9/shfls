@@ -1,74 +1,76 @@
 <script setup>
+
 import { RouterLink, RouterView } from 'vue-router'
-//import HelloWorld from './components/HelloWorld.vue'
+import search from '../Components/search.vue';
+import nv from '../Components/nv.vue'
+import Swal from 'sweetalert2';
+
 </script>
 
+
+
 <template>
-	<header class="container-fluid p-0">
+  <!-- <p>The username to test is <%=process.env.VITE_TEST_VAR %></p> -->
+  <header class="container-fluid p-0">
+    <nv :theme="theme" />
+    <!-- <content-header></content-header> -->
+  </header>
+  <main class="container-fluid">
+    <RouterView :wait="wait" :theme="theme" />
 
-		<nav class="navbar navbar-expand-lg bg-light">
-      <div class="container-fluid">
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
-              <router-link class="nav-link" to="/"><i class="bi-house"></i> Главная</router-link>
-            </li>
-						<li class="nav-item">
-              <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
-              <router-link class="nav-link" to="/g/files"><i class="bi bi-card-list"></i> Файлообменник</router-link>
-            </li>
-						<li class="nav-item">
-              <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
-              <router-link class="nav-link" to="/g/images"><i class="bi bi-images"></i> Картинки</router-link>
-            </li>
-            <li class="nav-item">
-              <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
-              <router-link class="nav-link" to="/g/videos"><i class="bi bi-file-play"></i> Видео</router-link>
-            </li>
-            <li class="nav-item">
-              <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
-              <router-link class="nav-link" to="/g/musics"><i class="bi bi-music-player"></i> Музыка</router-link>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav> 
+  </main>
+  <footer>
 
-		<!-- <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" /> -->
+  </footer>
 
-		<!--<div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div> -->
-	</header>
-	<main class="container-fluid">
-		<RouterView :wait="wait"/>
-
-	</main>
-	<footer>
-
-	</footer>
-
-	<!-- <RouterView /> -->
 </template>
 
 <style scoped></style>
 
 <script>
+// new Vue
+
+// const app = vue.createApp({})
+// app.component('button-counter', {
+//   data() {
+//     return {
+//       count: 0
+//     }
+//   },
+//   template: `
+//     <button v-on:click="count++">
+//       You clicked me {{ count }} times.
+//     </button>`
+// })
+// app.mount('#components-demo')
 export default {
   data() {
     return {
-      wait: false
+      wait: false,
+      theme: 'dark',
     }
   },
+  watch: {
+
+  },
+  components: {
+  },
+  // template1: `
+  //   <button @click="count++">
+  //     You clicked me {{ count }} times.
+  //   </button>`,
+  // components: {
+  //   template1
+  // },
+  async mounted() {
+    // console.log(process.env)
+    console.log(import.meta.env.VITE_TEST_VAR)
+    console.log(import.meta.env.VITE_APP_F23)
+  },
+
+  methods: {
+
+  }
 
 }
 

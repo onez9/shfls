@@ -4,6 +4,9 @@ import home from '../views/home.vue'
 import images from '../views/pictures.vue'
 import videos from '../views/videos.vue'
 import musics from '../views/musics.vue'
+import works from '../views/works.vue'
+import books from '../views/books.vue'
+import search from '../views/search.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -11,8 +14,13 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      redirect: {path: 'files'},
+      redirect: {path: '/g/files'},
       component: home
+    },
+    {
+      path: '/g/books',
+      name: 'books',
+      component: books
     },
     {
       path: '/g/files',
@@ -33,6 +41,16 @@ const router = createRouter({
       path: '/g/musics',
       name: 'musics',
       component: musics
+    },
+    {
+      path: '/g/works',
+      name: 'works',
+      component: works
+    },
+    {
+      path: '/g/search',
+      name: 'search',
+      component: search
     }
   ]
 })

@@ -13,7 +13,12 @@ import vue from '@vitejs/plugin-vue'
 //  }
 // })
 
+
 export default defineConfig({
+  //Массив плагинов для использования. Falsy значения 
+    //будут проигнорированы и массив плагинов будет выровнен (flattened). 
+    //Смотрите Plugin API для получения большей 
+    //информации о Vite плагинах.
   plugins: [vue()],
   resolve: {
     alias: {
@@ -27,5 +32,8 @@ export default defineConfig({
       // overwrite default .html entry
       input: './src/main.js'
     }
-  }
+  },
+  // define: {
+  //   __VALUE__: `"${process.env.VITE_TEST_VAR}"` // wrapping in "" since it's a string
+  // },
 })
