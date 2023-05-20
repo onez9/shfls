@@ -7,7 +7,7 @@ import {v4} from 'uuid'
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import qrcode from 'qrcode'
-import config from '../config.mjs'
+import config from '../../Configs/config.mjs';
 
 
 
