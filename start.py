@@ -3,7 +3,7 @@ import subprocess
 import socket
 import threading
 import os
-import qrcode
+#import qrcode
 import io
 import logging
 import webbrowser
@@ -20,6 +20,7 @@ if __name__=='__main__':
     try:
         host=socket.gethostname()
         ip=socket.gethostbyname(host)
+        # ip='0.0.0.0'
 
         print(f'ip: {ip}')
         with open(path_config, 'r') as fi:

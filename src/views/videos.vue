@@ -75,7 +75,7 @@ import search from '../../Components/search.vue'
 export default {
   data() {
     return {
-      // img: '/files/192.168.188.184-kartinkin-com-p-anime-v-realnoi-zhizni-oboi-anime-krasivo-6.jpg',
+      // img: '/files/192.168.68.184-kartinkin-com-p-anime-v-realnoi-zhizni-oboi-anime-krasivo-6.jpg',
       array_videos: [],
       url: "",
       re1: '',
@@ -100,7 +100,7 @@ export default {
   },
   created() {
     console.log("Запускаю процедуру подключения к WebSocket Server")
-    this.connection = new WebSocket("ws://192.168.188.184:3000")
+    this.connection = new WebSocket("ws://192.168.68.184:3000")
     this.connection.binaryData = "blob";
     this.connection.onmessage = function (event) {
       // console.log(event.data.text());

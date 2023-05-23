@@ -96,6 +96,14 @@ export default {
               <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
               <router-link class="nav-link" to="/g/search"><i class="bi bi-search-heart"></i> поиск</router-link>
             </li>
+            <li class="nav-item">
+              <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
+              <router-link class="nav-link" to="/g/lang"><i class="bi bi-translate"></i> Язык</router-link>
+            </li>
+            <li class="nav-item">
+              <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
+              <router-link class="nav-link" to="/g/crypt"><i class="bi bi-terminal-fill"></i> Шифрование</router-link>
+            </li>
           </ul>
         </div>
       </div>

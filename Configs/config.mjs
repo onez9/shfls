@@ -1,7 +1,7 @@
 export default {
     wlan0: {
         secret: 'secret',
-        host: '192.168.188.184',
+        host: '192.168.68.184',
         port: 3000
     },
     ws: {
