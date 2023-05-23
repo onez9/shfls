@@ -1,0 +1,217 @@
+glance - взгляд, взглянем
+withdraw - отзывать, изымать, уходить
+consent - согласие, разрешение, соглашаться, довать согласие, уступать, позволять
+as compliant - в соответствии с требованиями
+upon - more formal term for on, especially in abstract senses.
+decision - решение
+scream - скример
+sweet - сладкий, милый, нежный, сладкое, милое, нежное
+dessert - сладкое
+desert - пустыня
+conjunction - связь
+considered - считается
+so nested objects are typically fine - как правило вложенные объекты подходят
+dramatically - драммотично
+newly - недавно
+stretched - растянутый
+to declare - чтобы объявить
+Gets Messed Up - запутался, испортился
+Normally - обычно
+nothing should go wrong - ничего не должно пойти не так
+gathered - собрались
+bountiful - щедрость
+to examine - изучить
+regardless of whether it = независимо от того
+I'm not lending you money - I'm not lending you money
+to alter　- изменить
+To do that - Чтобы сделать это, Для этого...
+compress it - сжать его
+options that enhance - опции которые улучшают
+whereby - таким образом
+indeed - действительно, верно, действительно, в самом деле, впрямь
+thus - таким образом
+auxiliary package - вспомогательный пакет
+appears - 
+invaluable - бесценный
+as for - что косается
+more advanced features - больше продвинутых функций
+chemistry, stinks - химия
+desposed - распоряжаться
+team - команда, бригада, экипаж
+settled - поселился
+
+cow - корова
+sheep, ewe - овца
+goat - коза
+chicken, hen - курица, курочка
+cucumber - огурец
+tomato - помидор
+onion, bow - лук
+garlik - чеснок
+orange - апельсин
+kiwi, apterix - киви
+oweral - в целом
+ommite - опустить
+get tired - уставать
+be late - опаздывать
+suffering - страдания
+
+drowsy - сонливость
+entice - завлечь
+torment　- мучения
+cranium - череп
+footgear - обувь
+neglect - пренебрежение, безнадзорность, пренебрегать, опускать, не обращать внимание, забивать, забрасывать, запускать
+
+20.09.2000
+Despite - несмотря на
+difference, distinction - различие
+to slap - шлёпать
+skewered - нанизанный
+are naught - ничто
+but a trivial matter to you - а для вас пустяковае дело
+bewail - оплакивать, скорбить
+forgive - прощать
+precedence - приоритет
+devoid of sorrow - лишенный печали
+I appreciate it - я ценю это
+my assertion - утверждение
+your mind yet again - твой разум ещё раз
+webpack - 
+overuse - 
+grab certain - захватить определённые
+if i hit enter - если я нажму enter
+treats me - относится ко мне
+treats sick - лечит больных	
+treat - удовольствие
+treat - лечить относиться, трактовать, угощать(реже)
+merchant - купец, торговец, коммерсант	
+SDK - software development kit 
+CMS - Content management system - информационная система или компьютерная программа, используемая для обеспечения и организации совместного процесса создания, редактирования и управления содержимым, иначе — контентом (от англ. content).
+customer - клиент, заказчик, покупатель
+frequently - часто
+coating - покрытие
+beside - рядом с
+supplies  - поставлять
+
+23.09.2022
+is fired - срабатывает
+Prevent default behavior - Предотвратить поведение по умолчанию
+Prevent file from being opened - предотвращение открытия файла
+Leave Them All Behind - Оставь их позади
+Behind - позади
+overlapping - перекрытие
+justify - оправдывать, объяснять, подтверждать (выравнивание по ширине)
+derived - производная, 
+It seems that I've got 2 problems. - Похоже, что у меня 	
+disclose information - раскрывать информацию
+That was aniticlimactic - Это было разочаровывающим - Это было бы скучным
+adjusted - скорректированны
+innermost - внутренний
+Notice also that - заметьте также, что
+substracting - вычитание
+accordingly - соответственно
+presentation - презентация
+contraction - сокращение, сжатие, стягивание
+
+
+...can seem like a complicated task - может показаться сложной задачей
+Before we begin, it’s important to note - перед тем как мы начнём важно
+does not require the following input field - не требует специального текстового поля
+...is where... - Элемент div с id image_drop_area находится там, где
+element with an id of file_name - элемент с id file_name
+properly - правильно,
+to your liking. - по вашему вкусу
+this way we can access it wherever we want. - в этом случае мы получим к нему доступ в любом месте
+The dragover event isn’t sufficient to - событие перетаскивания не достаточно, для того чтобы
+sufficient - достаточно
+maintaining - поддержание
+intrinsic - внутренний
+elsewhere - в другом месте
+pull - вытаскивать, тянуть
+In order to execute SQL statements and fetch results from SQL queries - Для выполнения SQL запросов и получения результатов из SQL-queries
+achievements - достижения
+leaderboards - таблицы лидеров
+ongoing - продолжающимися
+violence - насилие
+does not condone - не подтворствует
+condemn - осуждаем
+laws - законы	
+binding - переплёт
+transfer - перевод
+squirrel -　りす　－　белочка
+to remove it for the time being - чтобы удалить его на время
+Cross-Origin Resource Sharing - CORS
+These are the same kinds of cross-site requests - это те же самые виды межсайтовых запросов
+if you are serving different content to mobile users - Если вы предостовляете различный контент для мобильных пользователей
+indentation guides - направляющие отступов
+Indicates that the response body will not change over time - указывает на то, что тело ответа не будет меняться с течением времени
+
+
+should consider - следует рассмотреть
+should revise - следует пересмотреть
+be crowded - быть переполненным
+tension - натяжение, напряжение, упругость
+evidence - данные, свидетельство, доказательство
+
+is mostly via droplets - в основном через капли
+
+a relative path - относительный путь
+this is bound to the handler. -  оно привязывается к обработчику
+subpart - подраздел
+Used on the body itself - используется в самом теле
+Used on the body itself, Content-Disposition has no effect. - при использовании на самом теле Content-Dispoition не имеет никакого эффекта
+as well as - а также
+taking into consideration - принимая во вниманиеd
+at - в, на, у
+by - при помощи
+with - c
+since - с тех пор, поскольку
+again - опять, снова
+any - любой
+some - какой-нибудь
+
+
+snow - снег
+rain - дождь
+sun - солнце
+
+
+
+clothes - одежда
+straight - прямой
+buy - покупать
+see - видеть
+hear - слышать
+fat node - жирный узел
+Other than by throwing or rethrowing the exception - кроме как путём отбрасывания или повторного отбрасывания
+in any case - в любом случае
+is assuredly matched by any pointer - гарантированно сопоставляется с любым указателем
+assuredly - гарантированно, несомненно, бесспорно, конечно
+Composite structure diagrams - диаграммы составно структуры
+As the most known - как самый известный тип
+and how these different functions interact. - и как эти различные функции взаимодействуют
+To be honest - если быть честным
+I could sue you for harassment - Я могла бы подоть на вас в суд за сексуальное домогательство
+but i'll forget it for now. - но я пока забуду
+for now - на данный момент
+Resampling - повторная выборка
+whole - целый весь
+
+
+
+established - əˈstabliSHt
+
+having been in existence for a long time and therefore recognized and generally accepted. - существует уже давно и, следовательно, признан и общепринят.
+
+
+fellow - товарищ, друг, коллега
+companion - спутник, спутница
+239FHwe34fds
+concatenate - конкатенировать, сцеплять
+
+belong - принадлежать, относиться
+unfold - развёртывать, расстилать
+cohesion(kōˈhēZHən) - сплоченность, связь, связность
+backbone - core network - магистраль
+data centers - control point -  информационные центры или центры управления сервисами

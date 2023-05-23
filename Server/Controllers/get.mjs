@@ -69,24 +69,58 @@ router.get('/', async (req, res) => {
 	videoStream.pipe(res);
 })
 
-router.post('/ch1', async (req, res) => {
-	
-	
-	if (req.body.partion=='book') {
-		console.log('нормальное видео')
-		config.folders.files='Share/books'
-	} else if (req.body.partion=='file') {
-		console.log('о неет тут порно')
-		config.folders.files='Share/files'
-	}
 
+
+router.post('/lang', (req, res) => {
+
+	let lang=req.body.lang
+	console.log('я тут я тут сука')
+	console.log(path.resolve('Share','txt','1.txt'))
+	let txt
+	// let filename=(lang=='jp')? '1.txt' : '2.txt'
+	if (lang=='jp') {
+		txt = fs.readFileSync(path.resolve('Share','txt', '1.txt'), {
+			encoding: 'utf-8'
+		})
+		console.log(txt)
+		txt=txt.split('\r\n')
+		txt=txt.filter(n=>!(n.trim()==''))
+	} else {
+		txt = fs.readFileSync(path.resolve('Share','txt', '2.txt'), {
+			encoding: 'utf-8'
+		})
+		console.log(txt) 
+		
+		txt=txt.split('\r\n')
+		txt=txt.filter(n=>!(n.trim()==''))
+		txt=txt.map(item => item.split(' - '))
+	}
+	console.log(txt)
+	
+
+	res.send(JSON.stringify({'res': txt}))
 })
+
+// router.post('/ch1', async (req, res) => {
+	
+	
+// 	if (req.body.partion=='book') {
+// 		console.log('нормальное видео')
+// 		config.folders.files='Share/books'
+// 	} else if (req.body.partion=='file') {
+// 		console.log('о неет тут порно')
+// 		config.folders.files='Share/files'
+// 	}
+
+// })
 
 // тут загрузка видео через ytb-dl и тут ещё redis тестирую
 router.get('/s', async (req, res) => {
 	let url = req.query.url
 
 	console.log(url)
+	/*
+
 
 
 	// const redisConfig = {
@@ -158,7 +192,7 @@ router.get('/s', async (req, res) => {
 	const arr1=['tr34', 'prfs4', '234fd']
 	await client.sAdd('names1', arr1)
 	await client.sAdd('names1', 'privet')
-
+	*/
 
 
 
@@ -237,10 +271,10 @@ router.get('/s', async (req, res) => {
 
 // тут запросы для различных типов файлов
 router.post('/', async (req, res) => {
-
+	console.log('nsdlfnsdflsf23449fs')
 	console.log(req.body.type)
 	if (req.body.type == 'file') {
-
+		console.log('nsdlfnsdflsf23449fs')
 		let dir = config.folders.files
 		let route = config.routes.files
 

@@ -7,6 +7,9 @@ import musics from '../views/musics.vue'
 import works from '../views/works.vue'
 import books from '../views/books.vue'
 import search from '../views/search.vue'
+import lang from '../views/lang.vue'
+import crypt from '../views/crypt.vue'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,9 +21,19 @@ const router = createRouter({
       component: home
     },
     {
+      path: '/g/lang',
+      name: 'lang',
+      component: lang
+    },
+    {
       path: '/g/books',
       name: 'books',
       component: books
+    },
+    {
+      path: '/g/crypt',
+      name: 'crypt',
+      component: crypt
     },
     {
       path: '/g/files',
