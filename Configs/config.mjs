@@ -13,6 +13,7 @@ export default {
         videos: "Share/videos",
         images: "Share/images",
         public: "public",
+        code: "Share/code",
         books: "Share/books",
         gifs: "Share/gifs"
     },
