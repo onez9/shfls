@@ -10,9 +10,9 @@ import aesjs from 'aes-js'
       <textarea v-model="text" class="form-control mt-2 mb-1" name="ta1" id="id_ta1" placeholder="Открытый текст"
         cols="20" rows="10"></textarea>
       <div class="d-flex">
-        <button v-if="enc_mode==1" @click="crypt('enc')" class="btn btn-sm btn-dark mb-1 form-control me-1">Зашифровать</button>
-        <button v-if="enc_mode==-1" @click="crypt('dec')" class="btn btn-sm btn-success mb-1 form-control me-1">Расшифровать</button>
-        <button @click="this.text=''" class="btn btn-sm btn-success mb-1 form-control me-1">Очистить</button>
+        <button v-if="enc_mode==1" @click="crypt('enc')" class="btn btn-sm btn-info mb-1 form-control me-1">Зашифровать</button>
+        <button v-if="enc_mode==-1" @click="crypt('dec')" class="btn btn-sm btn-danger mb-1 form-control me-1">Расшифровать</button>
+        <button @click="this.text=''" class="btn btn-sm btn-info mb-1 form-control me-1">Очистить</button>
         <button class="btn btn-sm btn-success mb-1 form-control me-1">Скопировать</button>
         <button @click="metathesis" class="btn btn-sm btn-success mb-1 form-control"><i class="bi bi-arrow-down-up"></i></button>
       </div>

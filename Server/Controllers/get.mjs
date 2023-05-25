@@ -70,6 +70,85 @@ router.get('/', async (req, res) => {
 })
 
 
+router.post('/f_file', (req, res)=>{
+	console.log(`req body p: ${req.body.p}`)
+
+
+	fs.readFile(req.body.p, {encoding: 'utf-8'}, function(err,data){
+		if (!err) {
+			console.log('received data: ' + data);
+			// res.writeHead(200, {'Content-Type': 'application/json'});
+			// res.write(data);
+			// res.end();
+			res.json({p: data})
+		} else {
+			console.log(err);
+		}
+	});
+})
+
+router.post('/code', (req, res) => {
+	let dir = config.folders.code
+	let route = config.routes.images
+
+	let files = [];
+
+	const rd = (dir) => {
+		let f1=fs.readdirSync(dir);
+
+		for (let item of f1) {
+			console.log(fs.lstatSync(path.resolve(dir, item)).isDirectory())
+			if (fs.lstatSync(path.resolve(dir, item)).isDirectory() && item.toLowerCase()!='.git') {
+				rd(path.resolve(dir, item), files)
+			} else {
+				let file=path.resolve(dir, item)
+				// let file=item
+				console.log(file)
+				files.push(file)
+			}
+
+		}
+	}
+	
+	rd(dir)
+
+	// rd(dir)
+	// console.log(`f1: ${f1}`)
+
+
+
+	// fs.readdir(dir, (err, items) => {
+	// 	if (err) console.log(err);
+	// 	let files = Array()
+	// 	for (let item of items) {
+	// 		// (async () => {
+	// 		// 	let r1 = await fs.promises.stat(`${dir}/${item}`)
+	// 		// 	res1.push(r1.ctime)
+	// 		// })().catch(console.error)
+	// 		// var fileStats = fs.statSync(`${dir}/${item}`)
+	// 		// res1.push()
+	// 		console.log(path.resolve(dir, item))
+	// 		if (fs.lstatSync(path.resolve(dir, item))) {
+
+	// 		} else {
+	// 			files.push(item)
+	// 		}
+	// 		// if (['.jpg', '.png', 'jpeg'].indexOf(path.parse(item).ext.toLowerCase()) > -1) {
+	// 		// 	result.push({
+	// 		// 		name: item,
+	// 		// 		ctime: fileStats.ctime
+	// 		// 	})
+	// 		// }
+	// 	}
+
+
+	// 	// console.log(1213123213,123, res1)
+	// 	// result.sort(function (a, b) {
+	// 	// 	return a.ctime - b.ctime
+	// 	// })
+	res.json({ items: files })
+	// })
+})
 
 router.post('/lang', (req, res) => {
 

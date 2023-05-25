@@ -9,7 +9,7 @@ import books from '../views/books.vue'
 import search from '../views/search.vue'
 import lang from '../views/lang.vue'
 import crypt from '../views/crypt.vue'
-
+import code from '../views/code.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -54,6 +54,11 @@ const router = createRouter({
       path: '/g/musics',
       name: 'musics',
       component: musics
+    },
+    {
+      path: '/g/code',
+      name: 'code',
+      component: code
     },
     {
       path: '/g/works',

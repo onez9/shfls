@@ -19,9 +19,10 @@ import Swal from 'sweetalert2';
     <RouterView :wait="wait" :theme="theme" />
 
   </main>
-  <footer>
 
-  </footer>
+  <!-- <footer>
+
+  </footer> -->
 
 </template>
 
