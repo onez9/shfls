@@ -98,7 +98,9 @@ router.post('/code', (req, res) => {
 
 		for (let item of f1) {
 			console.log(fs.lstatSync(path.resolve(dir, item)).isDirectory())
-			if (fs.lstatSync(path.resolve(dir, item)).isDirectory() && item.toLowerCase()!='.git') {
+			if (fs.lstatSync(path.resolve(dir, item)).isDirectory() && 
+				item.toLowerCase()!='node_modules' && 
+				item.toLowerCase()!='.git') {
 				rd(path.resolve(dir, item), files)
 			} else {
 				let file=path.resolve(dir, item)
@@ -293,9 +295,9 @@ router.get('/s', async (req, res) => {
 		const video = await youtubedl(url, {
 			//noWarnings: true,
 			// preferFreeFormats: true,
-			cacheDir: path.resolve('videos'),
+			cacheDir: config.folders.videos,
 			progress: true,
-			paths: path.resolve('videos')
+			paths: config.folders.videos
 			// cwd: path.resolve('videos')
 		}).then((output) => {
 			// console.log(output)
@@ -369,6 +371,49 @@ router.post('/', async (req, res) => {
 
 		let dir = config.folders.images
 		let route = config.routes.images
+
+
+
+		// let files = [];
+
+		// const rd = (dir) => {
+		// 	let f1=fs.readdirSync(dir);
+	
+		// 	for (let item of f1) {
+		// 		console.log(fs.lstatSync(path.resolve(dir, item)).isDirectory())
+		// 		if (fs.lstatSync(path.resolve(dir, item)).isDirectory() && item.toLowerCase()!='.git') {
+		// 			rd(path.resolve(dir, item), files)
+		// 		} else {
+		// 			let file=path.join(dir, item)
+		// 			// let file=item
+		// 			var fileStats = fs.statSync(`${dir}/${item}`)
+		// 			if (['.jpg', '.png', 'jpeg'].indexOf(path.parse(item).ext.toLowerCase()) > -1) {
+		// 				files.push({
+		// 					name: file,
+		// 					ctime: fileStats.ctime
+		// 				})
+		// 			}
+
+
+
+
+
+		// 			// console.log(file)
+		// 			// files.push(file)
+		// 		}
+	
+		// 	}
+		// }
+		
+		// rd(dir)
+	
+		// res.json({ items: files, route: route })
+
+
+
+
+
+
 
 		fs.readdir(dir, (err, items) => {
 			if (err) console.log(err);

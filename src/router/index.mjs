@@ -10,6 +10,9 @@ import search from '../views/search.vue'
 import lang from '../views/lang.vue'
 import crypt from '../views/crypt.vue'
 import code from '../views/code.vue'
+import poligon from '../views/poligon.vue'
+import chat from '../views/chat.vue'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,9 +29,19 @@ const router = createRouter({
       component: lang
     },
     {
+      path: '/g/chat',
+      name: 'chat',
+      component: chat
+    },
+    {
       path: '/g/books',
       name: 'books',
       component: books
+    },
+    {
+      path: '/g/poligon',
+      name: 'poligon',
+      component: poligon
     },
     {
       path: '/g/crypt',

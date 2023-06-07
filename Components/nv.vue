@@ -51,11 +51,11 @@ export default {
             <li class="nav-item">
               <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
               <!-- <router-link class="nav-link" to="/"><i class="bi-house"></i> Главная</router-link> -->
-              <router-link class="nav-link" to="/">main</router-link>
+              <router-link class="nav-link" to="/"><i class="bi bi-globe"></i></router-link>
             </li>
             <li class="nav-item">
               <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
-              <router-link class="nav-link" to="/g/files"><i class="bi bi-card-list"></i> Файлообменник</router-link>
+              <router-link class="nav-link" to="/g/files"><i class="bi bi-card-list"></i> Файлы</router-link>
             </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -68,14 +68,37 @@ export default {
                   <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
                   <router-link class="dropdown-item" to="/g/images"><i class="bi bi-images"></i> Картинки</router-link>
                 </li>
-                <li><router-link class="dropdown-item" to="/g/videos"><i class="bi bi-file-play"></i> Видео</router-link>
+                <li><router-link class="dropdown-item" to="/g/videos"><i class="bi bi-play-circle"></i> Видео</router-link>
                 </li>
+                <!-- <li><router-link class="dropdown-item" to="/g/videos"><i class="bi bi-file-play"></i> Видео</router-link>
+                </li> -->
                 <li><router-link class="dropdown-item" to="/g/musics"><i class="bi bi-music-player"></i>
                     Музыка</router-link></li>
                 <li><router-link class="dropdown-item" to="/g/books"><i class="bi bi-book"></i> Книги</router-link></li>
                 <li><router-link class="dropdown-item" to="/g/works"><i class="bi bi-person-workspace"></i>
                     Работа</router-link></li>
+                <li>
+                  <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
+                  <router-link class="dropdown-item" to="/g/lang"><i class="bi bi-translate"></i> Язык</router-link>
+                </li>
 
+                <li>
+                  <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
+                  <router-link class="dropdown-item" to="/g/crypt"><i class="bi bi-terminal-fill"></i>
+                    Шифрование</router-link>
+                </li>
+                <li>
+                  <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
+                  <router-link class="dropdown-item" to="/g/code"><i class="bi bi-terminal-fill"></i> Code</router-link>
+                </li>
+                <li>
+                  <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
+                  <router-link class="dropdown-item" to="/g/poligon"><i class="bi bi-back"></i> Полигон</router-link>
+                </li>
+                <li>
+                  <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
+                  <router-link class="dropdown-item" to="/g/chat"><i class="bi bi-chat-dots"></i> Чат</router-link>
+                </li>
 
 
 
@@ -83,7 +106,7 @@ export default {
             </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                aria-expanded="false">Тема</a>
+                aria-expanded="false"><i class="bi bi-gear-wide-connected"></i> Настройки </a>
               <!-- <ul class="dropdown-menu dropdown-menu-dark"> -->
               <ul class="dropdown-menu">
                 <li><a class="dropdown-item" href="#" @click="theme = 'dark'"><i
@@ -92,22 +115,11 @@ export default {
                       class="bi bi-brightness-alt-low-fill"></i>Светлая</a></li>
               </ul>
             </li>
-            <li class="nav-item">
-              <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
+            <!-- <li class="nav-item">
               <router-link class="nav-link" to="/g/search"><i class="bi bi-search-heart"></i> поиск</router-link>
-            </li>
-            <li class="nav-item">
-              <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
-              <router-link class="nav-link" to="/g/lang"><i class="bi bi-translate"></i> Язык</router-link>
-            </li>
-            <li class="nav-item">
-              <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
-              <router-link class="nav-link" to="/g/crypt"><i class="bi bi-terminal-fill"></i> Шифрование</router-link>
-            </li>
-            <li class="nav-item">
-              <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
-              <router-link class="nav-link" to="/g/code"><i class="bi bi-terminal-fill"></i> Code</router-link>
-            </li>
+            </li> -->
+
+
           </ul>
         </div>
       </div>

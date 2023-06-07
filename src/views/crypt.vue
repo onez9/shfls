@@ -35,11 +35,11 @@ import aesjs from 'aes-js'
       <ul class="list-unstyled mb-2 mt-2">
 
         <li class="mb-1">
-          <button @click="type_crypt='caesar'" class="btn btn-sm btn-info w-100 btn-toggle d-inline-flex align-items-center rounded border-0 collapsed"
-            data-bs-toggle="collapse" data-bs-target="#download-collapse" aria-expanded="true">
+          <button class="btn btn-sm btn-info w-100 btn-toggle d-inline-flex align-items-center rounded border-0 collapsed"
+            data-bs-toggle="collapse" data-bs-target="#history1" aria-expanded="true">
             История
           </button>
-          <div class="collapse mt-1" id="download-collapse">
+          <div class="collapse mt-1" id="history1">
             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
               <!-- <li><a href="#" @click="func_stock" class="link-dark d-inline-flex text-decoration-none rounded">Акции</a> -->
               <li><textarea v-model="history" class="form-control mе-1" name="ta1" id="id_ta1" placeholder="История"
@@ -99,7 +99,7 @@ import aesjs from 'aes-js'
             </ul>
           </div> -->
         </li>
-        <li class="border-top my-3"></li>
+        <!-- <li class="border-top my-3"></li> -->
         <li class="mb-1">
           <button @click="type_crypt='base64'" class="btn btn-sm btn-info w-100 btn-toggle d-inline-flex align-items-center rounded border-0 collapsed"
             data-bs-toggle="collapse" data-bs-target="#account-collapse" aria-expanded="false">
@@ -251,7 +251,7 @@ export default {
 
       }
     },
-    caesar(d) {
+    async caesar(d) {
 
       // window.addEventListener('DOMContentLoaded', function () {
 
