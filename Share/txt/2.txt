@@ -220,6 +220,8 @@ namely - а именно, именно, то есть
 modular - модульный
 Variable not in scope - переменная не в области видимости
 List comprehension - Абстракция списков
+Proposed - Предполагаемый
+prove - доказать
 
 
 

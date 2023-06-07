@@ -50,10 +50,13 @@ const wsServer = new WebSocketServer({
 })
 
 wsServer.on('connection', ws => {
+
+	ws.id = v4()
 	ws.on('message', m => {
 		console.log('Новое сообщение')
 		// console.log(m.toString())
 		console.log('Тип сообщения: ', typeof m)
+		console.log
 		// let message = new Blob(['привет я с сервера'], {
 		// 	type: 'text/plain'
 		// })
@@ -61,10 +64,23 @@ wsServer.on('connection', ws => {
 		console.log('m', m)
 		let buffer = new Buffer(m)
 		console.log('buffer', buffer)
+		console.log(buffer.toString())
+		console.log(wsServer.clients)
+		wsServer.clients.forEach(client => {
+			if (ws.id!==client.id) { // отправка только не мне
+				// client.send(buffer.toString()+" "+ws.id+"\n"+client.id)
+				client.send(buffer.toString())
+			}
+		})
+		
+		/*
 		fs.writeFile('file888888', buffer, (data)=>{
 			console.log(data)
 			wsServer.clients.forEach(client => client.send("Загрузка завершена"))
+			
 		})
+		*/
+		
 		// let message = 'Привет я с сервера, а ты кто такой?'
 		
 		// setInterval(() => {
