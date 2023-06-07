@@ -207,7 +207,6 @@ having been in existence for a long time and therefore recognized and generally 
 
 fellow - товарищ, друг, коллега
 companion - спутник, спутница
-239FHwe34fds
 concatenate - конкатенировать, сцеплять
 
 belong - принадлежать, относиться
@@ -215,3 +214,16 @@ unfold - развёртывать, расстилать
 cohesion(kōˈhēZHən) - сплоченность, связь, связность
 backbone - core network - магистраль
 data centers - control point -  информационные центры или центры управления сервисами
+arising - возникающий
+lacks an accompanying binding - отсутсвует сопроваждающаю привязка
+namely - а именно, именно, то есть
+modular - модульный
+Variable not in scope - переменная не в области видимости
+List comprehension - Абстракция списков
+
+
+
+
+
+
+

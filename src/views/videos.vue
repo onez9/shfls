@@ -11,14 +11,20 @@ import search from '../../Components/search.vue'
         <label class="form-check-label" for="flexSwitchCheckDefault">Нормальное видео</label>
       </div>
       {{ v1 }} -->
-      <div class="col-12 mb-1 mt-1 input-group">
-        <button :class="{'btn btn-warning': true}" @click="sendMessage('здравствуйте я с клиента')">WebSocket</button>
-        <button :class="{'btn btn-secondary': true, 'btn-success': (aaa>0)}" @click="sorting">Сортировать</button>
-        <button :class="{'btn btn-secondary': true, 'btn-success': (show_names==true)}" @click="show_names_f">{{ name_button_spidoznoe_govno }}</button>
-        <button :class="{'btn btn-secondary': true, 'btn-success': (show_download_panel==true)}" @click="show_download_panel_func">yt-dlp</button>
-
-
-
+      <div class="col mb-1 mt-1">
+        <button :class="{'btn btn-warning form-control mt-1': true}" @click="sendMessage('здравствуйте я с клиента')">WebSocket</button>
+      </div>
+      <div class="col mb-1 mt-1">
+        <button :class="{'btn btn-secondary form-control mt-1': true, 'btn-success': (aaa>0)}" @click="sorting">Сортировать</button>
+      </div>
+      <div class="col mb-1 mt-1">
+        <button :class="{'btn btn-secondary form-control mt-1': true, 'btn-success': (show_names==true)}" @click="show_names_f">{{ name_button_spidoznoe_govno }}</button>
+      </div>
+      <div class="col mb-1 mt-1">
+        <button :class="{'btn btn-secondary form-control mt-1': true, 'btn-success': (show_download_panel==true)}" @click="show_download_panel_func">yt-dlp</button>
+      </div>
+      <div class="col mb-1 mt-1">
+        <button :class="{'btn btn-secondary form-control mt-1': true, 'btn-success': (show_poster==true)}" @click="show_poster_func">{{ button_text_poster }}</button>
       </div>
       
       
@@ -49,12 +55,15 @@ import search from '../../Components/search.vue'
 
 
             <!-- :poster="`/gifs/${encodeURIComponent(item.replace('.mp4', '.gif'))}`" -->
-      <div class="col-sm-3 pb-1 pt-1" v-for="(item, i) in rx_array" :key="i">
+      <div class="col-sm-4 pb-1 pt-1" v-for="(item, i) in rx_array" :key="i">
         <figure class="">
-          <video class="w-100" controls loop>
-
-
+          <video class="w-100" 
+          controls loop>
+          <!-- :poster="{'/gifs/space.jpg': (show_poster==true)}" > -->
             <source :src="`/g?name=${encodeURIComponent(item)}`" type="video/mp4" />
+
+
+
           </video>
           <figcaption v-if="show_names" class="text-break">{{ item }}</figcaption>
         </figure>
@@ -75,7 +84,7 @@ import search from '../../Components/search.vue'
 export default {
   data() {
     return {
-      // img: '/files/192.168.68.184-kartinkin-com-p-anime-v-realnoi-zhizni-oboi-anime-krasivo-6.jpg',
+      // img: '/files/192.168.1.184-kartinkin-com-p-anime-v-realnoi-zhizni-oboi-anime-krasivo-6.jpg',
       array_videos: [],
       url: "",
       re1: '',
@@ -88,7 +97,9 @@ export default {
       rx_array: [],
       show_names: true,
       name_button_spidoznoe_govno: 'Скрыть названия',
-      v1: ''
+      v1: '',
+      show_poster: true,
+      button_text_poster: 'скрыть'
 
     }
   },
@@ -100,7 +111,7 @@ export default {
   },
   created() {
     console.log("Запускаю процедуру подключения к WebSocket Server")
-    this.connection = new WebSocket("ws://192.168.68.184:3000")
+    this.connection = new WebSocket("ws://192.168.1.184:3000")
     this.connection.binaryData = "blob";
     this.connection.onmessage = function (event) {
       // console.log(event.data.text());
@@ -154,6 +165,11 @@ export default {
     //   this.array_videos=[]
     //   await this.g()
     // },
+    async show_poster_func() {
+      this.show_poster=!this.show_poster
+      if (this.show_poster) this.button_text_poster='показать'
+      else this.button_text_poster='скрыть'
+    },
 
     async show_download_panel_func() {
       if (this.show_download_panel) {

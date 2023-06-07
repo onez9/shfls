@@ -8,14 +8,14 @@ import search from '../../Components/search.vue'
       <!-- <search></search>  -->
       <div class="col-12 input-group mb-2 mt-2">
         <span class="input-group-text" id=""><i class="bi bi-search"></i></span>
-        <input type="text" placeholder="Название видео" class="form-control" v-on:input="searching(name)" v-model="name">
+        <input type="text" placeholder="Поиск картинок" class="form-control" v-on:input="searching(name)" v-model="name">
       </div>
       <div class="col-12">
         <!-- {{ computed_func }} -->
         <!-- {{ theme }} -->
-        <div class="mt-2 mb-2 input-group">
-          <button class="btn btn-danger" @click="sorting"><i class="bi bi-filter"></i></button>
-          <button class="btn btn-info" @click="reversing">
+        <div class="mt-2 mb-2">
+          <button class="btn btn-danger me-1" @click="sorting"><i class="bi bi-filter"></i></button>
+          <button class="btn btn-info me-1" @click="reversing">
             <i :class="{'bi bi-sort-alpha-down': true, 'bi bi-sort-alpha-up': (reverse==false)}"></i>
           </button>
           <button v-if="show_image==true" class="btn btn-success" @click="show_image=false">
@@ -24,7 +24,7 @@ import search from '../../Components/search.vue'
           <button v-if="show_image==false" class="btn btn-warning" @click="show_image=true">
             Показать изображения
           </button>
-          <input type="number" class="form-control" aria-describedby="passwordHelpInline">
+          <!-- <input type="number" class="form-control" aria-describedby="passwordHelpInline"> -->
           <!-- <span id="passwordHelpInline" class="form-text">
             Пароль должен быть от 8 до 20 символов
           </span> -->
@@ -35,11 +35,11 @@ import search from '../../Components/search.vue'
 
 
 
-      <div :class="{'col-12': true, 'col-sm-4': (show_image==true)}" v-for="(item, i) in find_arr" :key="i">
+      <div :class="{'col-12': true, 'col-sm-2': (show_image==true)}" v-for="(item, i) in find_arr" :key="i">
         <!-- {{ item }} -->
         <figure v-if="show_image==true">
           <!-- {{ folder }} -->
-          <img class="img-thumbnail" :src="`${route}/${encodeURIComponent(item['name'])}`" @click="canvas2(item['name'])" alt="">
+          <img loading="lazy" class="img-thumbnail" :src="`${route}/${encodeURIComponent(item['name'])}`" @click="canvas2(item['name'])" alt="">
           <figcaption class="text-break">{{ item['name'] }}</figcaption>
         </figure>
         <p v-else class="mt-0 mb-0">{{ `${item['name']}` }}</p>

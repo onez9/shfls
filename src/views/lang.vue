@@ -154,6 +154,7 @@ export default {
   methods: {
     async lang(l1) {
       // alert(this.v1)
+      console.log('sofsfjoffejw wejrowjrj owerjewo')
       const response = await fetch('/g/lang', {
         method: 'POST',
         credentials: 'include',

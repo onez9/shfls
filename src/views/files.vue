@@ -33,14 +33,14 @@ import Swal from 'sweetalert2';
 				</li>
 			</ol> -->
 			<div class="row">
-				<div class="col">
-					<button class="btn btn-danger me-1 mb-3" @click="upload_file">
-						<i class="bi bi-upload"></i> Загрузить
+				<div class="col-6">
+					<button class="btn btn-danger me-1 mb-3 w-100" @click="upload_file">
+						<i class="bi bi-upload"></i>
 					</button>
-
-
-					<button class="btn btn-dark me-1 mb-3" @click="show_qr">
-						<i class="bi bi-qr-code"></i> Создать qr-код
+				</div>
+				<div class="col-6">
+					<button class="btn btn-dark me-1 mb-3 w-100" @click="show_qr">
+						<i class="bi bi-qr-code"></i>
 					</button>
 					<!-- <button @click="send_on_download" class="btn btn-info mb-3">Стандартная папка</button> -->
 				</div>
@@ -55,10 +55,12 @@ import Swal from 'sweetalert2';
 						<td class="m-0 p-0 align-middle text-break">{{ item }}</td>
 						<td class='m-0 p-0' align="right">
 
-							<button @click="delete_file(item)" class="btn btn-dark mt-1 mb-1 me-1"><i
-									class="bi bi-recycle"></i></button>
-							<button @click="download_file(item)" class="btn btn-info mt-1 mb-1"><i
-									class="bi bi-download"></i></button>
+							<div class="d-flex justify-content-end">
+								<button @click="delete_file(item)" class="btn btn-dark mt-1 mb-1 me-1"><i
+										class="bi bi-recycle"></i></button>
+								<button @click="download_file(item)" class="btn btn-info mt-1 mb-1"><i
+										class="bi bi-download"></i></button>
+							</div>
 						</td>
 
 					</tr>
@@ -134,7 +136,7 @@ export default {
 			const file = document.querySelector('input[type="file"]').files[0]
 			var reader = new FileReader();
 
-            var rawData = new ArrayBuffer();   
+			var rawData = new ArrayBuffer();
 
 			const slice = file.slice(0, 100000);
 
@@ -146,12 +148,12 @@ export default {
 				// const int8Array = new Int8Array(reader.result);
 
 				// const data = [];
-				
+
 				// this.forEach(int8Array, (item) => {
 				// 	data.push(item);
 				// });
 
-				
+
 
 				rawData = e.target.result;
 				console.log('rawData: ', rawData)
@@ -428,21 +430,21 @@ export default {
 			}, 3000);
 			*/
 		},
-        // async send_on_download() {
-        //     // alert(this.v1)
+		// async send_on_download() {
+		//     // alert(this.v1)
 		// 	console.log('files')
 		// 	this.array=[]
-        //     fetch('/g/ch1', {
-        //         method: 'POST',
-        //         credentials: 'include',
-        //         headers: {
-        //         	'Content-Type': 'application/json',
-        //         },
-        //         body: JSON.stringify({'partion': 'file'})
-        //     }).then(()=>{
+		//     fetch('/g/ch1', {
+		//         method: 'POST',
+		//         credentials: 'include',
+		//         headers: {
+		//         	'Content-Type': 'application/json',
+		//         },
+		//         body: JSON.stringify({'partion': 'file'})
+		//     }).then(()=>{
 		// 		this.g()
 		// 	})
-        // },
+		// },
 
 		async somefunc(image) {
 			image.remove();
