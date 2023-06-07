@@ -12,6 +12,24 @@ import webbrowser
 
 clear = lambda: os.system('clear')
 
+
+def changeIP(name, ip):
+
+
+    print(f'ip: {ip}')
+    print(f'name: {name}')
+    file = io.open(name, 'r', buffering=5)
+    # txt = file.read()
+    txt=file.read()
+    res = re.findall(r'\d+.\d+.\d+.\d+', txt)
+    for element in res:
+        txt=txt.replace(element, ip)
+
+    file.close()
+
+    with io.open(name, 'w') as fo:
+        fo.write(txt)
+
 if __name__=='__main__':
     logging.basicConfig(level=logging.INFO)
     path_config='./Configs/config.mjs'
@@ -55,6 +73,11 @@ if __name__=='__main__':
 
         with io.open(path_file, mode='w') as fo:
             fo.write(text)
+
+
+        changeIP('src/views/chat.vue', ip)
+
+
 
         def f1():
             subprocess.call(['npm', 'start'])
