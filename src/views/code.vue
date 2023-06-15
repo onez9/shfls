@@ -26,7 +26,7 @@ import aesjs from 'aes-js'
 
       <div class="col-12 input-group mb-2 mt-2">
         <span class="input-group-text" id=""><i class="bi bi-search"></i></span>
-        <input type="text" placeholder="Поиск файлов" class="form-control" v-on:input="searching" v-model="name">
+        <input type="text" placeholder="Поиск файлов" class="form-control p-2" v-on:input="searching" v-model="name">
         <button @click="name=''; rx_files=files" class="input-group-text" id=""><i class="bi bi-backspace"></i></button>
       </div>
 
@@ -70,7 +70,8 @@ table:hover{
 textarea {
 
   font-size: 10px;
-  border-radius: 0;
+  border-radius: 10px;
+  
   /* overflow:auto; */
   /* direction:rtl; */
   /* transform: scaleX(-1);  */

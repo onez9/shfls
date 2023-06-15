@@ -4,21 +4,34 @@ import Swal from 'sweetalert2';
 
 <template>
     <div class="row">
-        <div class="col-sm-6" style="">
-            <div v-for="(item, i) in messages" :key="i" :class="{'alert my-1 py-2 myclass': true, 'alert-success': item[1], 'alert-secondary': !item[1]}">
-                {{ item[0] }}
+        <div class="col-sm-6 parent" id="cont1">
+            <div v-for="(item, i) in messages" :key="i" 
+            :class="{'alert my-1 myclass input-group p-0': true, 'alert-success': item[1], 'alert-secondary': !item[1]}">
+            <!-- class="alert alert-warning my-1 py-2 myclass child" -->
+                <span class="input-group-text bg-transparent ps-1 p-0 pe-2">{{ item[2] }}</span>
+                <span class="input-group-text flex-fill p-0 ps-1">{{ item[0] }}</span>
             </div>
 
             <!-- <div class="alert alert-info">
             
         </div> -->
         </div>
+
+        <div class="col-sm-6">
+            <div class="input-group my-1">
+                <input v-model="name" type="text" class="form-control p-0 pe-1 ps-1">
+                <button @click="setNewName" class="btn btn-dark p-0 ps-1 pe-1">Изменить имя</button>
+                
+            </div>
+            <!-- {{ $attrs }} -->
+        </div>
     </div>
 
     <div class="row">
         <div class="col-sm-6">
-            <div class="input-group">
-                <input v-on:keyup.enter="send" v-model="message" type="text" class="form-control">
+            <div class="input-group my-2">
+                <input v-on:keyup.enter="send" v-model="message" type="text" class="form-control ps-2">
+                <span class="input-group-text" id="">{{ messages.length }}</span>
                 <button id="send1" class="btn btn-dark" @click="send"><i class="bi bi-send"></i></button>
             </div>
         </div>
@@ -29,6 +42,23 @@ import Swal from 'sweetalert2';
 <style scoped>
 .myclass {
     word-wrap: break-word;
+}
+
+.child {
+  /* display: flex; */
+  /* flex-direction: column; */
+
+  /* overflow: ; */
+  
+}
+
+
+.parent {
+  overflow-y: auto;
+  max-height:80vh;
+  /* display: flex; */
+  /* flex-direction: column-reverse; */
+  
 }
 </style>
 
@@ -42,24 +72,31 @@ import Swal from 'sweetalert2';
 export default {
     data() {
         return {
+            inheritAttrs:false,
             messages: [],
             message: '',
+            name: '',
         }
     },
     async mounted() {
-
+        this.name=window.localStorage.getItem('user');
+    },
+    props: {
+        theme: String
     },
     created() {
         console.log("Запускаю процедуру подключения к WebSocket Server")
+        console.log(this.$attrs)
 
-
-        this.connection = new WebSocket("ws://192.168.175.184:3000")
+        this.connection = new WebSocket("ws://192.168.96.184:3000")
         this.connection.binaryData = "blob";
         this.connection.onmessage = (event) => {
             // console.log(event.data.text());
-            console.log(event.data);
+            // console.log(event.data);
+            console.log('this value: ', JSON.parse(event.data))
+            // JSON.stringify
             this.my=false
-            this.messages.push([event.data, false])
+            this.messages.push([JSON.parse(event.data)['message'], false, JSON.parse(event.data)['name']])
 
         }
 
@@ -95,15 +132,27 @@ export default {
     },
     methods: {
         async send() {
-            this.messages.push([this.message, true])
-            await this.sendMessage()
+            if (this.message!=="") {
+                this.messages.push([this.message, true, this.name])
+                await this.sendMessage()
+                document.getElementById('cont1').scrollTop+=[...document.getElementsByClassName('myclass')].slice(-1)[0].offsetHeight + 4
+                // alert(document.getElementsByClassName('child').heigth()); //document.getElementsByClassName('child').height();
+                // this.messages.reverse()
+                console.log()
+            }
+            
         },
         async sendMessage() {
             // alert(message)
             console.log(this.connection);
-            await this.connection.send(this.message);
+            await this.connection.send(JSON.stringify({'name': this.name, 'message': this.message}));
+            this.message=""
             
         },
+
+        async setNewName() {
+            window.localStorage.setItem('user', this.name);
+        }
     }
 }
 </script>

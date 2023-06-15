@@ -52,6 +52,7 @@ const wsServer = new WebSocketServer({
 wsServer.on('connection', ws => {
 
 	ws.id = v4()
+	ws.name = "";
 	ws.on('message', m => {
 		console.log('Новое сообщение')
 		// console.log(m.toString())
@@ -65,7 +66,9 @@ wsServer.on('connection', ws => {
 		let buffer = new Buffer(m)
 		console.log('buffer', buffer)
 		console.log(buffer.toString())
-		console.log(wsServer.clients)
+		console.log(JSON.parse(buffer))
+		ws.name=JSON.parse(buffer)['name']
+		// console.log(wsServer.clients)
 		wsServer.clients.forEach(client => {
 			if (ws.id!==client.id) { // отправка только не мне
 				// client.send(buffer.toString()+" "+ws.id+"\n"+client.id)
@@ -91,8 +94,11 @@ wsServer.on('connection', ws => {
 	})
 
 	ws.on("error", e => ws.send(e));
-
-	ws.send('Привет всем, я сервер websocket');
+	const m1=JSON.stringify({
+		'name': ws.name,
+		'message': "Прибыл на вечеринку!"
+	})
+	ws.send(m1.toString());
 })
 
 

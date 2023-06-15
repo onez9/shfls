@@ -35,11 +35,11 @@ import search from '../../Components/search.vue'
 
 
 
-      <div :class="{'col-12': true, 'col-sm-2': (show_image==true)}" v-for="(item, i) in find_arr" :key="i">
+      <div :class="{'col-12 p-1': true, 'col-sm-6': (show_image==true)}" v-for="(item, i) in find_arr" :key="i">
         <!-- {{ item }} -->
         <figure v-if="show_image==true">
           <!-- {{ folder }} -->
-          <img loading="lazy" class="img-thumbnail" :src="`${route}/${encodeURIComponent(item['name'])}`" @click="canvas2(item['name'])" alt="">
+          <img loading="lazy" class="img-thumbnail p-0" :src="`${route}/${encodeURIComponent(item['name'])}`" @click="canvas2(item['name'])" alt="">
           <figcaption class="text-break">{{ item['name'] }}</figcaption>
         </figure>
         <p v-else class="mt-0 mb-0">{{ `${item['name']}` }}</p>
