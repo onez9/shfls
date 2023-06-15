@@ -79,7 +79,7 @@ import search from '../../Components/search.vue'
     <div class="col-sm-8">
 
 
-      <table class="table table-bordered border-secondary mt-2">
+      <table class="table table-bordered border-secondary mt-2 bg-dark" >
         <!-- 
         <thead>
         </thead> -->

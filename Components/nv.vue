@@ -68,7 +68,7 @@ export default {
                   <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
                   <router-link class="dropdown-item" to="/g/images"><i class="bi bi-images"></i> Картинки</router-link>
                 </li>
-                <li><router-link class="dropdown-item" to="/g/videos"><i class="bi bi-play-circle"></i> Видео</router-link>
+                <li><router-link class="dropdown-item" to="/g/videos"><i class="bi bi-play-circle"></i> Видео (порнография)</router-link>
                 </li>
                 <!-- <li><router-link class="dropdown-item" to="/g/videos"><i class="bi bi-file-play"></i> Видео</router-link>
                 </li> -->

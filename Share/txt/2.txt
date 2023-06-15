@@ -222,10 +222,11 @@ Variable not in scope - переменная не в области видимо
 List comprehension - Абстракция списков
 Proposed - Предполагаемый
 prove - доказать
-
-
-
-
-
-
-
+I wonder - Я интересуюсь
+colon - двоеточие
+endless loop - бесконечная петля
+is costlier - дороже
+must be co-prime to 10 - должны быть сокрытны 10
+The majority of answers - большинство ответов
+greedy algorithm - жадный алгоритм
+ask for confirmation - запросить подтверждение

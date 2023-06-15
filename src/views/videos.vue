@@ -11,20 +11,20 @@ import search from '../../Components/search.vue'
         <label class="form-check-label" for="flexSwitchCheckDefault">Нормальное видео</label>
       </div>
       {{ v1 }} -->
-      <div class="col mb-1 mt-1">
+      <!-- <div class="col mb-1 mt-1">
         <button :class="{'btn btn-warning form-control mt-1': true}" @click="sendMessage('здравствуйте я с клиента')">WebSocket</button>
-      </div>
+      </div> -->
       <div class="col mb-1 mt-1">
-        <button :class="{'btn btn-secondary form-control mt-1': true, 'btn-success': (aaa>0)}" @click="sorting">Сортировать</button>
+        <button :class="{'btn btn-secondary form-control mt-1': true, 'btn-success': (aaa>0)}" @click="sorting"><i class="bi bi-filter"></i></button>
       </div>
       <div class="col mb-1 mt-1">
         <button :class="{'btn btn-secondary form-control mt-1': true, 'btn-success': (show_names==true)}" @click="show_names_f">{{ name_button_spidoznoe_govno }}</button>
       </div>
       <div class="col mb-1 mt-1">
-        <button :class="{'btn btn-secondary form-control mt-1': true, 'btn-success': (show_download_panel==true)}" @click="show_download_panel_func">yt-dlp</button>
+        <button :class="{'btn btn-secondary form-control mt-1': true, 'btn-success': (show_download_panel==true)}" @click="show_download_panel_func"><i class="bi bi-download"></i></button>
       </div>
       <div class="col mb-1 mt-1">
-        <button :class="{'btn btn-secondary form-control mt-1': true, 'btn-success': (show_poster==true)}" @click="show_poster_func">{{ button_text_poster }}</button>
+        <button :class="{'btn btn-secondary form-control mt-1': true, 'btn-success': (show_poster==true)}" @click="show_poster_func"><i class="bi bi-stickies-fill"></i> {{ button_text_poster }}</button>
       </div>
       
       
@@ -84,7 +84,7 @@ import search from '../../Components/search.vue'
 export default {
   data() {
     return {
-      // img: '/files/192.168.175.184-kartinkin-com-p-anime-v-realnoi-zhizni-oboi-anime-krasivo-6.jpg',
+      // img: '/files/192.168.96.184-kartinkin-com-p-anime-v-realnoi-zhizni-oboi-anime-krasivo-6.jpg',
       array_videos: [],
       url: "",
       re1: '',
@@ -104,35 +104,37 @@ export default {
     }
   },
   async mounted() {
+    console.log('Выполнился метод: mounted')
     await this.g()
   },
   props: {
     // wait: Boolean,
   },
   created() {
-    console.log("Запускаю процедуру подключения к WebSocket Server")
-    this.connection = new WebSocket("ws://192.168.175.184:3000")
-    this.connection.binaryData = "blob";
-    this.connection.onmessage = function (event) {
-      // console.log(event.data.text());
-      console.log(event.data);
+    console.log('Выполнился метод: created')
+    // console.log("Запускаю процедуру подключения к WebSocket Server")
+    // this.connection = new WebSocket("ws://192.168.96.184:3000")
+    // this.connection.binaryData = "blob";
+    // this.connection.onmessage = function (event) {
+    //   // console.log(event.data.text());
+    //   console.log(event.data);
 
-    }
+    // }
 
-    this.connection.onopen = function (event) {
-      console.log('onopen connection', event)
-      // alert("Соединение установлено.");
-      console.log("Подключение успешно завершено к websocket server...")
-    }
+    // this.connection.onopen = function (event) {
+    //   console.log('onopen connection', event)
+    //   // alert("Соединение установлено.");
+    //   console.log("Подключение успешно завершено к websocket server...")
+    // }
 
-    this.connection.onclose = function (event) {
-      if (event.wasClean) {
-        console.log('Соединение закрыто чисто');
-      } else {
-        console.log('Обрыв соединения'); // например, "убит" процесс сервера
-      }
-      console.log('Код: ' + event.code + ' причина: ' + event.reason);
-    };
+    // this.connection.onclose = function (event) {
+    //   if (event.wasClean) {
+    //     console.log('Соединение закрыто чисто');
+    //   } else {
+    //     console.log('Обрыв соединения'); // например, "убит" процесс сервера
+    //   }
+    //   console.log('Код: ' + event.code + ' причина: ' + event.reason);
+    // };
 
     // const wsSend = function (data) {
     //   // readyState - true, если есть подключение
