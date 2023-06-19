@@ -30,7 +30,7 @@
     "qrcode": "^1.5.3",
     "redis": "^4.6.6",
     "selenium-webdriver": "^4.9.2",
-    "sweetalert2": "^11.7.5",
+    "sweetalert2": "^11.7.12",
     "tedious": "^16.1.0",
     "three": "^0.152.2",
     "uuid": "^9.0.0",
