@@ -68,7 +68,7 @@ export default {
                   <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
                   <router-link class="dropdown-item" to="/g/images"><i class="bi bi-images"></i> Картинки</router-link>
                 </li>
-                <li><router-link class="dropdown-item" to="/g/videos"><i class="bi bi-play-circle"></i> Видео (порнография)</router-link>
+                <li><router-link class="dropdown-item" to="/g/videos"><i class="bi bi-play-circle"></i> Видео</router-link>
                 </li>
                 <!-- <li><router-link class="dropdown-item" to="/g/videos"><i class="bi bi-file-play"></i> Видео</router-link>
                 </li> -->
@@ -99,22 +99,25 @@ export default {
                   <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
                   <router-link class="dropdown-item" to="/g/chat"><i class="bi bi-chat-dots"></i> Чат</router-link>
                 </li>
+                <li>
+                  <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
+                  <router-link class="dropdown-item" to="/g/settings"><i class="bi bi-gear-wide-connected"></i> Настройки</router-link>
+                </li>
 
 
 
               </ul>
             </li>
-            <li class="nav-item dropdown">
+            <!-- <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                 aria-expanded="false"><i class="bi bi-gear-wide-connected"></i> Настройки </a>
-              <!-- <ul class="dropdown-menu dropdown-menu-dark"> -->
               <ul class="dropdown-menu">
                 <li><a class="dropdown-item" href="#" @click="theme = 'dark'"><i
                       class="bi bi-brightness-alt-low"></i>Тёмная</a></li>
                 <li><a class="dropdown-item" href="#" @click="theme = 'white'"><i
                       class="bi bi-brightness-alt-low-fill"></i>Светлая</a></li>
               </ul>
-            </li>
+            </li> -->
             <!-- <li class="nav-item">
               <router-link class="nav-link" to="/g/search"><i class="bi bi-search-heart"></i> поиск</router-link>
             </li> -->

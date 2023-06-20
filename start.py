@@ -14,25 +14,24 @@ clear = lambda: os.system('clear')
 
 
 def changeIP(name, ip):
-
-
     print(f'ip: {ip}')
     print(f'name: {name}')
-    file = io.open(name, 'r', buffering=5)
-    # txt = file.read()
-    txt=file.read()
-    res = re.findall(r'\d+.\d+.\d+.\d+', txt)
-    for element in res:
-        txt=txt.replace(element, ip)
 
-    file.close()
+    with io.open(name, 'r', buffering=5) as file:
+        # txt = file.read()
+        txt=file.read()
+        res = re.findall(r'\d+.\d+.\d+.\d+', txt)
+        for element in res:
+            txt=txt.replace(element, ip)
 
     with io.open(name, 'w') as fo:
         fo.write(txt)
 
+
+
 if __name__=='__main__':
     logging.basicConfig(level=logging.INFO)
-    path_config='./Configs/config.mjs'
+    # path_config='./Configs/config.mjs'
     print('Начинаю запуск')
     os.chdir(os.path.dirname(__file__))
     try:
@@ -41,41 +40,43 @@ if __name__=='__main__':
         # ip='0.0.0.0'
 
         print(f'ip: {ip}')
-        with open(path_config, 'r') as fi:
-            txt=fi.read()
-            result = re.findall(r'\d+.\d+.\d+.\d+', txt)
+        # with open(path_config, 'r') as fi:
+        #     txt=fi.read()
+        #     result = re.findall(r'\d+.\d+.\d+.\d+', txt)
 
-            print(result)
-            with open(path_config, 'w') as fo:
-                for item in result:
-                    txt = txt.replace(item, ip)
-                    fo.write(txt)
+        #     print(result)
+        #     with open(path_config, 'w') as fo:
+        #         for item in result:
+        #             txt = txt.replace(item, ip)
+        #             fo.write(txt)
         
-        file = io.open('index.html', 'r', buffering=5)
-        # txt = file.read()
-        txt=file.read()
-        res = re.findall(r'\d+.\d+.\d+.\d+', txt)
-        for element in res:
-            txt=txt.replace(element, ip)
+        # file = io.open('index.html', 'r', buffering=5)
+        # # txt = file.read()
+        # txt=file.read()
+        # res = re.findall(r'\d+.\d+.\d+.\d+', txt)
+        # for element in res:
+        #     txt=txt.replace(element, ip)
 
-        file.close()
+        # file.close()
 
-        with io.open('index.html', 'w') as fo:
-            fo.write(txt)
+        # with io.open('index.html', 'w') as fo:
+        #     fo.write(txt)
 
-        path_file = 'src/views/videos.vue'
-        file = io.open(path_file, mode='r')
-        text=file.read()
-        res = re.findall(r'\d+.\d+.\d+.\d+', text)
-        for element in res:
-            text=text.replace(element, ip)
-        file.close()
+        # path_file = 'src/views/videos.vue'
+        # file = io.open(path_file, mode='r')
+        # text=file.read()
+        # res = re.findall(r'\d+.\d+.\d+.\d+', text)
+        # for element in res:
+        #     text=text.replace(element, ip)
+        # file.close()
 
-        with io.open(path_file, mode='w') as fo:
-            fo.write(text)
+        # with io.open(path_file, mode='w') as fo:
+        #     fo.write(text)
+        changeIP('Configs/config.mjs', ip)
+        changeIP('index.html', ip)
 
-
-        changeIP('src/views/chat.vue', ip)
+        # changeIP('src/views/chat.vue', ip)
+        changeIP('.env', ip)
 
 
 

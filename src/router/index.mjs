@@ -12,7 +12,7 @@ import crypt from '../views/crypt.vue'
 import code from '../views/code.vue'
 import poligon from '../views/poligon.vue'
 import chat from '../views/chat.vue'
-
+import settings from '../views/settings.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -33,6 +33,12 @@ const router = createRouter({
       name: 'chat',
       component: chat
     },
+    {
+      path: '/g/settings',
+      name: 'settings',
+      component: settings
+    }
+    ,
     {
       path: '/g/books',
       name: 'books',

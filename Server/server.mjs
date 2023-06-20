@@ -9,7 +9,7 @@ import dotenv from 'dotenv' //  используется для чтения п�
 const urlencodedParser = express.urlencoded({ extended: false })
 import fs from 'fs'
 import bodyParser from 'body-parser'
-
+import redis from 'redis' 
 
 
 
@@ -34,7 +34,10 @@ const app = express()
 const http = createServer(app)
 
 
-
+const redisConfig = {
+	url: 'redis://0.0.0.0:6379',
+	password: '123'
+}
 // const dispatchEvent = (message, ws) => {
 // 	const json = JSON.parse(message);
 // 	switch (json.event) {
@@ -53,11 +56,37 @@ wsServer.on('connection', ws => {
 
 	ws.id = v4()
 	ws.name = "";
-	ws.on('message', m => {
+	ws.on('message', async m => {
+
+
+		const redisConfig = {
+			url: 'redis://0.0.0.0:6379',
+			password: '123'
+		}
+	
+		const client = redis.createClient(redisConfig)
+		await client.connect()
+
+		client.on('ready', () => {
+			console.log("Connected! Success! Ready!");
+			// client.set("variable34", "zakhar1101", redis.print)
+			// client.get('variable34', redis.print)
+		});
+	
+		client.on('connect', () => {
+			console.log("Connected! Success! Connect!");
+	
+		});
+	
+		client.on('error', (err) => {
+			console.error(err);
+		});
+
+
 		console.log('Новое сообщение')
 		// console.log(m.toString())
 		console.log('Тип сообщения: ', typeof m)
-		console.log
+		// console.log
 		// let message = new Blob(['привет я с сервера'], {
 		// 	type: 'text/plain'
 		// })
@@ -66,7 +95,16 @@ wsServer.on('connection', ws => {
 		let buffer = new Buffer(m)
 		console.log('buffer', buffer)
 		console.log(buffer.toString())
+
+		await client.lPush('conversation', buffer.toString())
+
+		// console.log(await client.lRange('conversation', 0, -1))
+
 		console.log(JSON.parse(buffer))
+
+		await client.disconnect();
+		
+
 		ws.name=JSON.parse(buffer)['name']
 		// console.log(wsServer.clients)
 		wsServer.clients.forEach(client => {

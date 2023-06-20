@@ -16,7 +16,8 @@ import Swal from 'sweetalert2';
 
     <!-- <content-header></content-header> -->
   </header>
-  <main class="container-fluid">
+  
+  <main class="container">
     <RouterView :wait="wait" :theme="theme" />
 
   </main>
@@ -68,6 +69,8 @@ export default {
     // console.log(process.env)
     console.log(import.meta.env.VITE_TEST_VAR)
     console.log(import.meta.env.VITE_APP_F23)
+    console.log(import.meta.env.VITE_HOST)
+    console.log(import.meta.env.VITE_PORT)
   },
 
   methods: {

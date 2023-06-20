@@ -14,9 +14,9 @@ import search from '../../Components/search.vue'
       <!-- <div class="col mb-1 mt-1">
         <button :class="{'btn btn-warning form-control mt-1': true}" @click="sendMessage('здравствуйте я с клиента')">WebSocket</button>
       </div> -->
-      <div class="col mb-1 mt-1">
+      <!-- <div class="col mb-1 mt-1">
         <button :class="{'btn btn-secondary form-control mt-1': true, 'btn-success': (aaa>0)}" @click="sorting"><i class="bi bi-filter"></i></button>
-      </div>
+      </div> -->
       <div class="col mb-1 mt-1">
         <button :class="{'btn btn-secondary form-control mt-1': true, 'btn-success': (show_names==true)}" @click="show_names_f">{{ name_button_spidoznoe_govno }}</button>
       </div>
@@ -24,8 +24,19 @@ import search from '../../Components/search.vue'
         <button :class="{'btn btn-secondary form-control mt-1': true, 'btn-success': (show_download_panel==true)}" @click="show_download_panel_func"><i class="bi bi-download"></i></button>
       </div>
       <div class="col mb-1 mt-1">
-        <button :class="{'btn btn-secondary form-control mt-1': true, 'btn-success': (show_poster==true)}" @click="show_poster_func"><i class="bi bi-stickies-fill"></i> {{ button_text_poster }}</button>
+        <!-- <input type="number" class="form-control mt-1" min="1" max="4"> -->
+        <select v-model="selected" class="form-select mt-1" name="" id="">
+          <option value="1">One</option>
+          <option value="2">Two</option>
+          <option value="3">Three</option>
+          <option value="4">Four</option>
+          <option value="6">Six</option>
+          <option value="12">Twelve</option>
+        </select>
       </div>
+      <!-- <div class="col mb-1 mt-1">
+        <button :class="{'btn btn-secondary form-control mt-1': true, 'btn-success': (show_poster==true)}" @click="show_poster_func"><i class="bi bi-stickies-fill"></i> {{ button_text_poster }}</button>
+      </div> -->
       
       
       
@@ -55,7 +66,15 @@ import search from '../../Components/search.vue'
 
 
             <!-- :poster="`/gifs/${encodeURIComponent(item.replace('.mp4', '.gif'))}`" -->
-      <div class="col-sm-4 pb-1 pt-1" v-for="(item, i) in rx_array" :key="i">
+      <div :class="{'col-sm-4 pb-1 pt-1': true, 
+      'col-sm-12': (selected==1),
+      'col-sm-6': (selected==2),
+      'col-sm-4': (selected==3),
+      'col-sm-3': (selected==4),
+      'col-sm-2': (selected==6),
+      'col-sm-1': (selected==12)
+      }" 
+      v-for="(item, i) in rx_array" :key="i">
         <figure class="">
           <video class="w-100" 
           controls loop>
@@ -84,7 +103,7 @@ import search from '../../Components/search.vue'
 export default {
   data() {
     return {
-      // img: '/files/192.168.1.9-kartinkin-com-p-anime-v-realnoi-zhizni-oboi-anime-krasivo-6.jpg',
+      // img: '/files/192.168.160.184-kartinkin-com-p-anime-v-realnoi-zhizni-oboi-anime-krasivo-6.jpg',
       array_videos: [],
       url: "",
       re1: '',
@@ -99,7 +118,8 @@ export default {
       name_button_spidoznoe_govno: 'Скрыть названия',
       v1: '',
       show_poster: true,
-      button_text_poster: 'скрыть'
+      button_text_poster: 'скрыть',
+      selected: ''
 
     }
   },
@@ -113,7 +133,7 @@ export default {
   created() {
     console.log('Выполнился метод: created')
     // console.log("Запускаю процедуру подключения к WebSocket Server")
-    // this.connection = new WebSocket("ws://192.168.1.9:3000")
+    // this.connection = new WebSocket("ws://192.168.160.184:3000")
     // this.connection.binaryData = "blob";
     // this.connection.onmessage = function (event) {
     //   // console.log(event.data.text());

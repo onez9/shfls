@@ -1,7 +1,7 @@
 export default {
     wlan0: {
         secret: 'secret',
-        host: '192.168.1.9',
+        host: '192.168.160.184',
         port: 3000
     },
     ws: {
@@ -10,7 +10,7 @@ export default {
     folders: {
         files: "Share/files",
         musics: "Share/musics",
-        videos: "Share/videos1",
+        videos: "Share/videos",
         images: "Share/images",
         public: "public",
         code: "Share/code",

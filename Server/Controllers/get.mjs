@@ -204,75 +204,6 @@ router.get('/s', async (req, res) => {
 
 
 
-	// const redisConfig = {
-	// 	host: 'localhost',
-	// 	port: 6379,
-	// 	pass: ''
-	// }
-
-	// another example
-	// redis[s]://[[username][:password]@][host][:port][/db-number]:
-
-	// createClient({
-	// 	url: 'redis://alice:foobared@awesome.redis.server:6380'
-	// });
-
-	const redisConfig = {
-		url: 'redis://0.0.0.0:6379',
-		password: '123'
-	}
-
-	const client = redis.createClient(redisConfig)
-	await client.connect()
-
-
-	client.on('ready', () => {
-		console.log("Connected! Success! Ready!");
-		// client.set("variable34", "zakhar1101", redis.print)
-		// client.get('variable34', redis.print)
-	});
-
-	client.on('connect', () => {
-		console.log("Connected! Success! Connect!");
-
-	});
-
-	client.on('error', (err) => {
-		console.error(err);
-	});
-
-
-
-	await client.set("variable33", "zakhar1101", redis.print)
-	await client.set("variable34", "maxim1101", function (err, res) {
-		console.log('this.data', res)
-	})
-	await client.get('variable35', function (err, res) {
-		if (err) console.log(err)
-		console.log('this data', res)
-	})
-
-
-	await client.del("variable33")
-
-
-
-	await client.lPush('names', 'zakhar')
-	await client.rPush('names', 'maxim')
-	await client.rPush('names', 'alex')
-	await client.rPush('names', 'petya')
-	await client.rPush('names', 'masha')
-	await client.rPush('names', 'sasha')
-
-	const result = await client.lRange('names', 1, -1)
-	console.log(result)
-
-
-	await client.sAdd('names1', 'privet')
-	await client.sAdd('names1', 'Popen')
-	const arr1=['tr34', 'prfs4', '234fd']
-	await client.sAdd('names1', arr1)
-	await client.sAdd('names1', 'privet')
 	*/
 
 
@@ -494,6 +425,93 @@ router.post('/', async (req, res) => {
 
 })
 
+
+router.post('/message', async (req, res) => {
+
+	// const redisConfig = {
+	// 	host: 'localhost',
+	// 	port: 6379,
+	// 	pass: ''
+	// }
+
+	// another example
+	// redis[s]://[[username][:password]@][host][:port][/db-number]:
+
+	// createClient({
+	// 	url: 'redis://alice:foobared@awesome.redis.server:6380'
+	// });
+
+	const redisConfig = {
+		url: 'redis://0.0.0.0:6379',
+		password: '123'
+	}
+
+	const client = redis.createClient(redisConfig)
+	await client.connect()
+
+
+	client.on('ready', () => {
+		console.log("Connected! Success! Ready!");
+		// client.set("variable34", "zakhar1101", redis.print)
+		// client.get('variable34', redis.print)
+	});
+
+	client.on('connect', () => {
+		console.log("Connected! Success! Connect!");
+
+	});
+
+	client.on('error', (err) => {
+		console.error(err);
+	});
+
+
+
+	// await client.set("variable33", "zakhar1101", redis.print)
+	// await client.set("variable34", "maxim1101", function (err, res) {
+	// 	console.log('this.data', res)
+	// })
+	// await client.get('variable35', function (err, res) {
+	// 	if (err) console.log(err)
+	// 	console.log('this data', res)
+	// })
+
+
+	// await client.del("variable33")
+
+
+
+	// await client.lPush('names', 'zakhar')
+	// await client.rPush('names', 'maxim')
+	// await client.rPush('names', 'alex')
+	// await client.rPush('names', 'petya')
+	// await client.rPush('names', 'masha')
+	// await client.rPush('names', 'sasha')
+
+	const result = await client.lRange('conversation', 0, -1)
+	for (let i=0;i<result.length;i++){
+		result[i]=JSON.parse(result[i])
+		console.log(result[i])
+	}
+	// console.log(result)
+
+
+
+	// await client.sAdd('names1', 'privet')
+	// await client.sAdd('names1', 'Popen')
+	// const arr1=['tr34', 'prfs4', '234fd']
+	// await client.sAdd('names1', arr1)
+	// await client.sAdd('names1', 'privet')
+
+	await client.disconnect()
+	res.json(result.reverse())
+	// res.json(result)
+
+
+
+})
+
+// парсер работы не завершено 000000
 router.get('/work', async (req, res)=>{
 	const url = 'https://kwork.ru/projects?c=39&prices-filters%5B%5D=4'
 	const response=await axios.get(url, user_agent.request_config)
