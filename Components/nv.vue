@@ -48,11 +48,11 @@ export default {
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
+            <!-- <li class="nav-item"> -->
               <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
               <!-- <router-link class="nav-link" to="/"><i class="bi-house"></i> Главная</router-link> -->
-              <router-link class="nav-link" to="/"><i class="bi bi-globe"></i></router-link>
-            </li>
+              <!-- <router-link class="nav-link" to="/"><i class="bi bi-globe"></i></router-link> -->
+            <!-- </li> -->
             <li class="nav-item">
               <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
               <router-link class="nav-link" to="/g/files"><i class="bi bi-card-list"></i> Файлы</router-link>

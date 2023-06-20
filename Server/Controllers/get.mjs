@@ -176,17 +176,19 @@ router.post('/lang', (req, res) => {
 				encoding: 'utf-8'
 			})
 			console.log(txt)
-			txt = txt.split('\n')
-			txt = txt.filter(n => !(n.trim() == ''))
+			txt = txt
+				.split('\n')
+				.filter(n => !(n.trim() == ''))
 		} else {
 			txt = fs.readFileSync(path.resolve('Share', 'txt', '2.txt'), {
 				encoding: 'utf-8'
 			})
 			console.log(txt)
 
-			txt = txt.split('\n')
-			txt = txt.filter(n => !(n.trim() == ''))
-			txt = txt.map(item => item.split(' - '))
+			txt = txt
+				.split('\n')
+				.filter(n => !(n.trim() == ''))
+				.map(item => item.split(' - '))
 		}
 		console.log(txt)
 
@@ -253,7 +255,7 @@ router.get('/s', async (req, res) => {
 
 			req.wsServer.on('connection', ws => {
 				ws.on('message', m => {
-					console.log('Загрузка завершена успешно поздравляю')
+					console.log('Загрузка завершена')
 					console.log(m.toString())
 					console.log(typeof m)
 					// let message = new Blob(['привет я с сервера'], {
@@ -505,7 +507,7 @@ router.post('/message', async (req, res) => {
 		console.log(e)
 		// if (e instanceof ECONNREFUSED) {
 		if (e['code'] == 'ECONNREFUSED') {
-			res.json([{ 'name': 'Server', 'message': 'БД запусти. Твои сообщения не сохранятся!', 'time': new Date() }])
+			res.json([{ 'name': 'Server', 'message': 'Сообщения после перезагрузки страницы будут унечтожены!', 'time': new Date() }])
 		} else {
 			throw e;
 		}
