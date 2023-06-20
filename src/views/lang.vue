@@ -79,7 +79,7 @@ import search from '../../Components/search.vue'
     <div class="col-sm-8">
 
 
-      <table class="table table-bordered border-secondary mt-2 bg-dark" >
+      <table class="table table-bordered border-secondary mt-2" >
         <!-- 
         <thead>
         </thead> -->
@@ -90,6 +90,7 @@ import search from '../../Components/search.vue'
             <td v-if="ll1 == false">{{ string[0] }}</td>
             <td v-if="ll1 == false">{{ string[1] }}</td>
           </tr>
+          <!-- {{ text }} -->
         </tbody>
 
       </table>

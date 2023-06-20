@@ -58,51 +58,62 @@ wsServer.on('connection', ws => {
 	ws.name = "";
 	ws.on('message', async m => {
 
-
-		const redisConfig = {
-			url: 'redis://0.0.0.0:6379',
-			password: '123'
-		}
-	
-		const client = redis.createClient(redisConfig)
-		await client.connect()
-
-		client.on('ready', () => {
-			console.log("Connected! Success! Ready!");
-			// client.set("variable34", "zakhar1101", redis.print)
-			// client.get('variable34', redis.print)
-		});
-	
-		client.on('connect', () => {
-			console.log("Connected! Success! Connect!");
-	
-		});
-	
-		client.on('error', (err) => {
-			console.error(err);
-		});
-
-
-		console.log('Новое сообщение')
-		// console.log(m.toString())
-		console.log('Тип сообщения: ', typeof m)
-		// console.log
-		// let message = new Blob(['привет я с сервера'], {
-		// 	type: 'text/plain'
-		// })
-
 		console.log('m', m)
 		let buffer = new Buffer(m)
 		console.log('buffer', buffer)
 		console.log(buffer.toString())
+		console.log('Новое сообщение')
+		// console.log(m.toString())
+		console.log('Тип сообщения: ', typeof m)
 
-		await client.lPush('conversation', buffer.toString())
 
-		// console.log(await client.lRange('conversation', 0, -1))
 
-		console.log(JSON.parse(buffer))
+		try {
+			const redisConfig = {
+				url: 'redis://0.0.0.0:6379',
+				password: '123'
+			}
+		
+			const client = redis.createClient(redisConfig)
+			await client.connect()
 
-		await client.disconnect();
+			client.on('ready', () => {
+				console.log("Connected! Success! Ready!");
+				// client.set("variable34", "zakhar1101", redis.print)
+				// client.get('variable34', redis.print)
+			});
+		
+			client.on('connect', () => {
+				console.log("Connected! Success! Connect!");
+		
+			});
+		
+			client.on('error', (err) => {
+				console.error(err);
+			});
+
+
+			// console.log
+			// let message = new Blob(['привет я с сервера'], {
+			// 	type: 'text/plain'
+			// })
+
+
+			await client.lPush('conversation', buffer.toString())
+
+			// console.log(await client.lRange('conversation', 0, -1))
+
+			console.log(JSON.parse(buffer))
+
+			await client.disconnect();
+		} catch (e) {
+
+			if (e['code']=='ECONNREFUSED') {
+				console.log('Необходимо запустить бд')
+			} else {
+				throw e;
+			}
+		}
 		
 
 		ws.name=JSON.parse(buffer)['name']

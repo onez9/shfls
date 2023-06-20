@@ -37,154 +37,169 @@ const __dirname = dirname(__filename);
 
 // показ видео через разбитие на маленькие кусочки
 router.get('/', async (req, res) => {
-	let range = req.headers.range;
-	// console.log(`range: ${range}`);
-	if (!range) {
-		res.status(400).send("Requires Range header");
+	try {
+		let range = req.headers.range;
+		// console.log(`range: ${range}`);
+		if (!range) {
+			res.status(400).send("Requires Range header");
+		}
+
+		// let name = req.query.name.replaceAll(' ', '\\ ')
+		// let name = location.assign(encodeURIComponent(req.query.name))
+		let name = req.query.name
+		// console.log(`this name: ${name}`)
+		let videoPath = path.resolve(config.folders.videos, name);
+		// console.log(`this name: ${videoPath}`)
+		let videoSize = fs.statSync(videoPath).size;
+		let CHUNK_SIZE = 10 ** 6;
+		let start = Number(range.replace(/\D/g, ""));
+		// console.log(`start: ${range.replace(/\D/g, "")}`)
+		let end = Math.min(start + CHUNK_SIZE, videoSize - 1);
+		let contentLength = end - start + 1;
+		let headers = {
+			"Content-Range": `bytes ${start}-${end}/${videoSize}`,
+			"Accept-Ranges": "bytes",
+			"Content-Length": contentLength,
+			"Content-Type": "video/mp4",
+		};
+
+		res.writeHead(206, headers);
+		// console.log(headers);
+		const videoStream = fs.createReadStream(videoPath, { start, end });
+
+		videoStream.pipe(res);
+	} catch (e) {
+		console.log(e)
 	}
-
-	// let name = req.query.name.replaceAll(' ', '\\ ')
-	// let name = location.assign(encodeURIComponent(req.query.name))
-	let name = req.query.name
-	// console.log(`this name: ${name}`)
-	let videoPath = path.resolve(config.folders.videos, name);
-	// console.log(`this name: ${videoPath}`)
-	let videoSize = fs.statSync(videoPath).size;
-	let CHUNK_SIZE = 10 ** 6;
-	let start = Number(range.replace(/\D/g, ""));
-	// console.log(`start: ${range.replace(/\D/g, "")}`)
-	let end = Math.min(start + CHUNK_SIZE, videoSize - 1);
-	let contentLength = end - start + 1;
-	let headers = {
-		"Content-Range": `bytes ${start}-${end}/${videoSize}`,
-		"Accept-Ranges": "bytes",
-		"Content-Length": contentLength,
-		"Content-Type": "video/mp4",
-	};
-
-	res.writeHead(206, headers);
-	// console.log(headers);
-	const videoStream = fs.createReadStream(videoPath, { start, end });
-
-	videoStream.pipe(res);
 })
 
 
-router.post('/f_file', (req, res)=>{
-	console.log(`req body p: ${req.body.p}`)
+router.post('/f_file', (req, res) => {
+	try {
+		console.log(`req body p: ${req.body.p}`)
 
 
-	fs.readFile(req.body.p, {encoding: 'utf-8'}, function(err,data){
-		if (!err) {
-			console.log('received data: ' + data);
-			// res.writeHead(200, {'Content-Type': 'application/json'});
-			// res.write(data);
-			// res.end();
-			res.json({p: data})
-		} else {
-			console.log(err);
-		}
-	});
+		fs.readFile(req.body.p, { encoding: 'utf-8' }, function (err, data) {
+			if (!err) {
+				console.log('received data: ' + data);
+				// res.writeHead(200, {'Content-Type': 'application/json'});
+				// res.write(data);
+				// res.end();
+				res.json({ p: data })
+			} else {
+				console.log(err);
+			}
+		});
+	} catch (e) {
+		console.log(e);
+	}
 })
 
 router.post('/code', (req, res) => {
-	let dir = config.folders.code
-	let route = config.routes.images
+	try {
+		let dir = config.folders.code
+		let route = config.routes.images
 
-	let files = [];
+		let files = [];
 
-	const rd = (dir) => {
-		let f1=fs.readdirSync(dir);
+		const rd = (dir) => {
+			let f1 = fs.readdirSync(dir);
 
-		for (let item of f1) {
-			console.log(fs.lstatSync(path.resolve(dir, item)).isDirectory())
-			if (fs.lstatSync(path.resolve(dir, item)).isDirectory() && 
-				item.toLowerCase()!='node_modules' && 
-				item.toLowerCase()!='.git') {
-				rd(path.resolve(dir, item), files)
-			} else {
-				let file=path.resolve(dir, item)
-				// let file=item
-				console.log(file)
-				files.push(file)
+			for (let item of f1) {
+				console.log(fs.lstatSync(path.resolve(dir, item)).isDirectory())
+				if (fs.lstatSync(path.resolve(dir, item)).isDirectory() &&
+					item.toLowerCase() != 'node_modules' &&
+					item.toLowerCase() != '.git') {
+					rd(path.resolve(dir, item), files)
+				} else {
+					let file = path.resolve(dir, item)
+					// let file=item
+					console.log(file)
+					files.push(file)
+				}
+
 			}
-
 		}
+
+		rd(dir)
+
+		// rd(dir)
+		// console.log(`f1: ${f1}`)
+
+
+
+		// fs.readdir(dir, (err, items) => {
+		// 	if (err) console.log(err);
+		// 	let files = Array()
+		// 	for (let item of items) {
+		// 		// (async () => {
+		// 		// 	let r1 = await fs.promises.stat(`${dir}/${item}`)
+		// 		// 	res1.push(r1.ctime)
+		// 		// })().catch(console.error)
+		// 		// var fileStats = fs.statSync(`${dir}/${item}`)
+		// 		// res1.push()
+		// 		console.log(path.resolve(dir, item))
+		// 		if (fs.lstatSync(path.resolve(dir, item))) {
+
+		// 		} else {
+		// 			files.push(item)
+		// 		}
+		// 		// if (['.jpg', '.png', 'jpeg'].indexOf(path.parse(item).ext.toLowerCase()) > -1) {
+		// 		// 	result.push({
+		// 		// 		name: item,
+		// 		// 		ctime: fileStats.ctime
+		// 		// 	})
+		// 		// }
+		// 	}
+
+
+		// 	// console.log(1213123213,123, res1)
+		// 	// result.sort(function (a, b) {
+		// 	// 	return a.ctime - b.ctime
+		// 	// })
+		res.json({ items: files })
+		// })
+	} catch (e) {
+		console.log(e)
 	}
-	
-	rd(dir)
-
-	// rd(dir)
-	// console.log(`f1: ${f1}`)
-
-
-
-	// fs.readdir(dir, (err, items) => {
-	// 	if (err) console.log(err);
-	// 	let files = Array()
-	// 	for (let item of items) {
-	// 		// (async () => {
-	// 		// 	let r1 = await fs.promises.stat(`${dir}/${item}`)
-	// 		// 	res1.push(r1.ctime)
-	// 		// })().catch(console.error)
-	// 		// var fileStats = fs.statSync(`${dir}/${item}`)
-	// 		// res1.push()
-	// 		console.log(path.resolve(dir, item))
-	// 		if (fs.lstatSync(path.resolve(dir, item))) {
-
-	// 		} else {
-	// 			files.push(item)
-	// 		}
-	// 		// if (['.jpg', '.png', 'jpeg'].indexOf(path.parse(item).ext.toLowerCase()) > -1) {
-	// 		// 	result.push({
-	// 		// 		name: item,
-	// 		// 		ctime: fileStats.ctime
-	// 		// 	})
-	// 		// }
-	// 	}
-
-
-	// 	// console.log(1213123213,123, res1)
-	// 	// result.sort(function (a, b) {
-	// 	// 	return a.ctime - b.ctime
-	// 	// })
-	res.json({ items: files })
-	// })
 })
 
 router.post('/lang', (req, res) => {
+	try {
+		let lang = req.body.lang
+		console.log('я тут я тут сука')
+		console.log(path.resolve('Share', 'txt', '1.txt'))
+		let txt
+		// let filename=(lang=='jp')? '1.txt' : '2.txt'
+		if (lang == 'jp') {
+			txt = fs.readFileSync(path.resolve('Share', 'txt', '1.txt'), {
+				encoding: 'utf-8'
+			})
+			console.log(txt)
+			txt = txt.split('\n')
+			txt = txt.filter(n => !(n.trim() == ''))
+		} else {
+			txt = fs.readFileSync(path.resolve('Share', 'txt', '2.txt'), {
+				encoding: 'utf-8'
+			})
+			console.log(txt)
 
-	let lang=req.body.lang
-	console.log('я тут я тут сука')
-	console.log(path.resolve('Share','txt','1.txt'))
-	let txt
-	// let filename=(lang=='jp')? '1.txt' : '2.txt'
-	if (lang=='jp') {
-		txt = fs.readFileSync(path.resolve('Share','txt', '1.txt'), {
-			encoding: 'utf-8'
-		})
+			txt = txt.split('\n')
+			txt = txt.filter(n => !(n.trim() == ''))
+			txt = txt.map(item => item.split(' - '))
+		}
 		console.log(txt)
-		txt=txt.split('\r\n')
-		txt=txt.filter(n=>!(n.trim()==''))
-	} else {
-		txt = fs.readFileSync(path.resolve('Share','txt', '2.txt'), {
-			encoding: 'utf-8'
-		})
-		console.log(txt) 
-		
-		txt=txt.split('\r\n')
-		txt=txt.filter(n=>!(n.trim()==''))
-		txt=txt.map(item => item.split(' - '))
-	}
-	console.log(txt)
-	
 
-	res.send(JSON.stringify({'res': txt}))
+
+		res.send(JSON.stringify({ 'res': txt }))
+	} catch (e) {
+		console.log(e)
+	}
 })
 
 // router.post('/ch1', async (req, res) => {
-	
-	
+
+
 // 	if (req.body.partion=='book') {
 // 		console.log('нормальное видео')
 // 		config.folders.files='Share/books'
@@ -197,6 +212,7 @@ router.post('/lang', (req, res) => {
 
 // тут загрузка видео через ytb-dl и тут ещё redis тестирую
 router.get('/s', async (req, res) => {
+
 	let url = req.query.url
 
 	console.log(url)
@@ -264,7 +280,7 @@ router.get('/s', async (req, res) => {
 
 			// chdir(point1)
 		});
-	} 
+	}
 	catch (err) {
 		// console.log(err)
 		console.log('Пустое url')
@@ -283,144 +299,149 @@ router.get('/s', async (req, res) => {
 
 // тут запросы для различных типов файлов
 router.post('/', async (req, res) => {
-	console.log('nsdlfnsdflsf23449fs')
-	console.log(req.body.type)
-	if (req.body.type == 'file') {
+	try {
 		console.log('nsdlfnsdflsf23449fs')
-		let dir = config.folders.files
-		let route = config.routes.files
+		console.log(req.body.type)
+		if (req.body.type == 'file') {
+			console.log('nsdlfnsdflsf23449fs')
+			let dir = config.folders.files
+			let route = config.routes.files
 
 
 
-		fs.readdir(dir, (err, items) => {
-			if (err) console.log(err);
-			console.log(items)
-			res.json({ "items": items, "route": route })
-		})
-	}
-	else if (req.body.type == 'image') {
-
-		let dir = config.folders.images
-		let route = config.routes.images
-
-
-
-		// let files = [];
-
-		// const rd = (dir) => {
-		// 	let f1=fs.readdirSync(dir);
-	
-		// 	for (let item of f1) {
-		// 		console.log(fs.lstatSync(path.resolve(dir, item)).isDirectory())
-		// 		if (fs.lstatSync(path.resolve(dir, item)).isDirectory() && item.toLowerCase()!='.git') {
-		// 			rd(path.resolve(dir, item), files)
-		// 		} else {
-		// 			let file=path.join(dir, item)
-		// 			// let file=item
-		// 			var fileStats = fs.statSync(`${dir}/${item}`)
-		// 			if (['.jpg', '.png', 'jpeg'].indexOf(path.parse(item).ext.toLowerCase()) > -1) {
-		// 				files.push({
-		// 					name: file,
-		// 					ctime: fileStats.ctime
-		// 				})
-		// 			}
-
-
-
-
-
-		// 			// console.log(file)
-		// 			// files.push(file)
-		// 		}
-	
-		// 	}
-		// }
-		
-		// rd(dir)
-	
-		// res.json({ items: files, route: route })
-
-
-
-
-
-
-
-		fs.readdir(dir, (err, items) => {
-			if (err) console.log(err);
-			let result = Array()
-			for (let item of items) {
-				// (async () => {
-				// 	let r1 = await fs.promises.stat(`${dir}/${item}`)
-				// 	res1.push(r1.ctime)
-				// })().catch(console.error)
-				var fileStats = fs.statSync(`${dir}/${item}`)
-				// res1.push()
-				// console.log(item)3
-				if (['.jpg', '.png', 'jpeg'].indexOf(path.parse(item).ext.toLowerCase()) > -1) {
-					result.push({
-						name: item,
-						ctime: fileStats.ctime
-					})
-				}
-			}
-			// console.log(1213123213,123, res1)
-			result.sort(function (a, b) {
-				return a.ctime - b.ctime
+			fs.readdir(dir, (err, items) => {
+				if (err) console.log(err);
+				console.log(items)
+				res.json({ "items": items, "route": route })
 			})
-			res.json({ items: result, route: route })
-		})
-	}
-	else if (req.body.type == 'video') {
+		}
+		else if (req.body.type == 'image') {
 
-		let dir = config.folders.videos
-		let route = config.routes.videos
+			let dir = config.folders.images
+			let route = config.routes.images
 
-		fs.readdir(dir, (err, items) => {
-			if (err) console.log(err);
-			let result = Array()
-			items.forEach(item => {
-				if (['.webm', '.avi', '.mp4'].indexOf(path.parse(item).ext.toLowerCase()) > -1) {
-					result.push(item)
+
+
+			// let files = [];
+
+			// const rd = (dir) => {
+			// 	let f1=fs.readdirSync(dir);
+
+			// 	for (let item of f1) {
+			// 		console.log(fs.lstatSync(path.resolve(dir, item)).isDirectory())
+			// 		if (fs.lstatSync(path.resolve(dir, item)).isDirectory() && item.toLowerCase()!='.git') {
+			// 			rd(path.resolve(dir, item), files)
+			// 		} else {
+			// 			let file=path.join(dir, item)
+			// 			// let file=item
+			// 			var fileStats = fs.statSync(`${dir}/${item}`)
+			// 			if (['.jpg', '.png', 'jpeg'].indexOf(path.parse(item).ext.toLowerCase()) > -1) {
+			// 				files.push({
+			// 					name: file,
+			// 					ctime: fileStats.ctime
+			// 				})
+			// 			}
+
+
+
+
+
+			// 			// console.log(file)
+			// 			// files.push(file)
+			// 		}
+
+			// 	}
+			// }
+
+			// rd(dir)
+
+			// res.json({ items: files, route: route })
+
+
+
+
+
+
+
+			fs.readdir(dir, (err, items) => {
+				if (err) console.log(err);
+				let result = Array()
+				for (let item of items) {
+					// (async () => {
+					// 	let r1 = await fs.promises.stat(`${dir}/${item}`)
+					// 	res1.push(r1.ctime)
+					// })().catch(console.error)
+					var fileStats = fs.statSync(`${dir}/${item}`)
+					// res1.push()
+					// console.log(item)3
+					if (['.jpg', '.png', 'jpeg'].indexOf(path.parse(item).ext.toLowerCase()) > -1) {
+						result.push({
+							name: item,
+							ctime: fileStats.ctime
+						})
+					}
 				}
+				// console.log(1213123213,123, res1)
+				result.sort(function (a, b) {
+					return a.ctime - b.ctime
+				})
+				res.json({ items: result, route: route })
 			})
-			res.json({ "items": result, "route": route })
-		})
+		}
+		else if (req.body.type == 'video') {
 
+			let dir = config.folders.videos
+			let route = config.routes.videos
 
-
-
-	}
-	else if (req.body.type == 'music') {
-		let dir = config.folders.musics
-		let route = config.routes.musics
-
-		fs.readdir(dir, (err, items) => {
-			if (err) console.log(err);
-			let result = Array()
-			items.forEach(item => {
-				if (['.WAV', '.MP3', '.FLAC', '.AAC', '.AIFF', '.OGG', '.MQA', '.MKV'].indexOf(path.parse(item).ext.toUpperCase()) > -1) {
-					result.push(item)
-				}
+			fs.readdir(dir, (err, items) => {
+				if (err) console.log(err);
+				let result = Array()
+				items.forEach(item => {
+					if (['.webm', '.avi', '.mp4'].indexOf(path.parse(item).ext.toLowerCase()) > -1) {
+						result.push(item)
+					}
+				})
+				res.json({ "items": result, "route": route })
 			})
-			res.json({ "items": result, "route": route })
-		})
-	}
-	else if (req.body.type == 'book') {
-		let dir = config.folders.books
-		let route = config.routes.libraries
 
-		fs.readdir(dir, (err, items) => {
-			if (err) console.log(err);
-			let result = Array()
-			items.forEach(item => {
-				if (['.pdf', '.pptx', '.odt', '.docx', '.doc', '.ppt'].indexOf(path.parse(item).ext.toLowerCase()) > -1) {
-					result.push(item)
-				}
+
+
+
+		}
+		else if (req.body.type == 'music') {
+			let dir = config.folders.musics
+			let route = config.routes.musics
+
+			fs.readdir(dir, (err, items) => {
+				if (err) console.log(err);
+				let result = Array()
+				items.forEach(item => {
+					if (['.WAV', '.MP3', '.FLAC', '.AAC', '.AIFF', '.OGG', '.MQA', '.MKV'].indexOf(path.parse(item).ext.toUpperCase()) > -1) {
+						result.push(item)
+					}
+				})
+				res.json({ "items": result, "route": route })
 			})
-			console.log(result)
-			res.json({ "items": result, "route": route })
-		})
+		}
+		else if (req.body.type == 'book') {
+			let dir = config.folders.books
+			let route = config.routes.libraries
+
+			fs.readdir(dir, (err, items) => {
+				if (err) console.log(err);
+				let result = Array()
+				items.forEach(item => {
+					if (['.pdf', '.pptx', '.odt', '.docx', '.doc', '.ppt'].indexOf(path.parse(item).ext.toLowerCase()) > -1) {
+						result.push(item)
+					}
+				})
+				console.log(result)
+				res.json({ "items": result, "route": route })
+			})
+		}
+	} catch (e) {
+		console.log('Ошибка в маркеровке директорий')
+		console.log(e)
 	}
 
 })
@@ -445,66 +466,50 @@ router.post('/message', async (req, res) => {
 		url: 'redis://0.0.0.0:6379',
 		password: '123'
 	}
-
-	const client = redis.createClient(redisConfig)
-	await client.connect()
-
-
-	client.on('ready', () => {
-		console.log("Connected! Success! Ready!");
-		// client.set("variable34", "zakhar1101", redis.print)
-		// client.get('variable34', redis.print)
-	});
-
-	client.on('connect', () => {
-		console.log("Connected! Success! Connect!");
-
-	});
-
-	client.on('error', (err) => {
-		console.error(err);
-	});
+	try {
+		const client = redis.createClient(redisConfig)
+		await client.connect()
 
 
+		client.on('ready', () => {
+			console.log("Connected! Success! Ready!");
+			// client.set("variable34", "zakhar1101", redis.print)
+			// client.get('variable34', redis.print)
+		});
 
-	// await client.set("variable33", "zakhar1101", redis.print)
-	// await client.set("variable34", "maxim1101", function (err, res) {
-	// 	console.log('this.data', res)
-	// })
-	// await client.get('variable35', function (err, res) {
-	// 	if (err) console.log(err)
-	// 	console.log('this data', res)
-	// })
+		client.on('connect', () => {
+			console.log("Connected! Success! Connect!");
 
+		});
 
-	// await client.del("variable33")
+		client.on('error', (err) => {
+			console.error(err);
+		});
 
+		// await client.rPush('names', 'sasha')
 
+		const result = await client.lRange('conversation', 0, -1)
+		for (let i = 0; i < result.length; i++) {
+			result[i] = JSON.parse(result[i])
+			console.log(result[i])
+		}
+		// console.log(result)
 
-	// await client.lPush('names', 'zakhar')
-	// await client.rPush('names', 'maxim')
-	// await client.rPush('names', 'alex')
-	// await client.rPush('names', 'petya')
-	// await client.rPush('names', 'masha')
-	// await client.rPush('names', 'sasha')
+		// await client.sAdd('names1', arr1)
+		// await client.sAdd('names1', 'privet')
 
-	const result = await client.lRange('conversation', 0, -1)
-	for (let i=0;i<result.length;i++){
-		result[i]=JSON.parse(result[i])
-		console.log(result[i])
+		await client.disconnect()
+		res.json(result.reverse())
+
+	} catch (e) {
+		console.log(e)
+		// if (e instanceof ECONNREFUSED) {
+		if (e['code'] == 'ECONNREFUSED') {
+			res.json([{ 'name': 'Server', 'message': 'БД запусти. Твои сообщения не сохранятся!', 'time': new Date() }])
+		} else {
+			throw e;
+		}
 	}
-	// console.log(result)
-
-
-
-	// await client.sAdd('names1', 'privet')
-	// await client.sAdd('names1', 'Popen')
-	// const arr1=['tr34', 'prfs4', '234fd']
-	// await client.sAdd('names1', arr1)
-	// await client.sAdd('names1', 'privet')
-
-	await client.disconnect()
-	res.json(result.reverse())
 	// res.json(result)
 
 
@@ -512,47 +517,50 @@ router.post('/message', async (req, res) => {
 })
 
 // парсер работы не завершено 000000
-router.get('/work', async (req, res)=>{
-	const url = 'https://kwork.ru/projects?c=39&prices-filters%5B%5D=4'
-	const response=await axios.get(url, user_agent.request_config)
+router.get('/work', async (req, res) => {
+	try {
+		const url = 'https://kwork.ru/projects?c=39&prices-filters%5B%5D=4'
+		const response = await axios.get(url, user_agent.request_config)
 
-	// console.log(response.data)
-	const $ = load(response.data)
-	console.log($('body').text())
-	//*[@id="app"]/div/div[2]/div[2]/div[3]/div/div[1]
-	// >div.project-list.position-relative
-	// let html = $.html($('div#app'))
-	// let html = $.html($('//*[@id="app"]'))
-	// let html = $('div[class="card want-card js-want-container"]').html()
-	let html = $('div[class="wants-content"]') 
-	// let html = $('div[class="project-list position-relative"]')
-	// let html = $('#googlehtmlcounter')
-	// let items = $('.card')
-	// console.log(html.length3)
-	// console.log(html.html())
-	// console.log(html._root['0'].children)
-	console.log(html._root.children().children().priveObject)
-	// console.log(html.prevObject.children().children())
-	// html._root['0'].children().get().map(el => console.log($(el).text()))
-	// console.log(html)
-	// items.each((i, div) => {
-	// 	console.log(div)
-	// 	console.log($(div).html());
-	// });
+		// console.log(response.data)
+		const $ = load(response.data)
+		console.log($('body').text())
+		//*[@id="app"]/div/div[2]/div[2]/div[3]/div/div[1]
+		// >div.project-list.position-relative
+		// let html = $.html($('div#app'))
+		// let html = $.html($('//*[@id="app"]'))
+		// let html = $('div[class="card want-card js-want-container"]').html()
+		let html = $('div[class="wants-content"]')
+		// let html = $('div[class="project-list position-relative"]')
+		// let html = $('#googlehtmlcounter')
+		// let items = $('.card')
+		// console.log(html.length3)
+		// console.log(html.html())
+		// console.log(html._root['0'].children)
+		console.log(html._root.children().children().priveObject)
+		// console.log(html.prevObject.children().children())
+		// html._root['0'].children().get().map(el => console.log($(el).text()))
+		// console.log(html)
+		// items.each((i, div) => {
+		// 	console.log(div)
+		// 	console.log($(div).html());
+		// });
 
-	// console.log($('#app > div > div.centerwrap.page-projects.pt0.page-projects--new > div.wants-filter-content.wants-filter-content--switcher > div.wants-content > div > div:nth-child(1) > div.card.want-card.js-want-container.js-viewed.js-card-2038156'))
-	// console.log($('div.card'))
-	// $('div.card').each(function(i,e){
-	// 	// let item=$(e).text().trim()
-	// 	console.log($(e).text())
-	// 	// if(item!='') {
-	// 	//   columns.push(item)
-	// 	// }
-	// })
-  
+		// console.log($('#app > div > div.centerwrap.page-projects.pt0.page-projects--new > div.wants-filter-content.wants-filter-content--switcher > div.wants-content > div > div:nth-child(1) > div.card.want-card.js-want-container.js-viewed.js-card-2038156'))
+		// console.log($('div.card'))
+		// $('div.card').each(function(i,e){
+		// 	// let item=$(e).text().trim()
+		// 	console.log($(e).text())
+		// 	// if(item!='') {
+		// 	//   columns.push(item)
+		// 	// }
+		// })
+	} catch (e) {
+		console.log(e)
+	}
 
-	
-  
+
+
 })
 
 
