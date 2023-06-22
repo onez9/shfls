@@ -312,9 +312,14 @@ router.post('/', async (req, res) => {
 
 
 			fs.readdir(dir, (err, items) => {
-				if (err) console.log(err);
-				console.log(items)
-				res.json({ "items": items, "route": route })
+                try {
+                    if (err) console.log(err);
+                    console.log(items)
+                    res.json({ "items": items, "route": route })
+                } catch (e) {
+                    console.log(e)
+                    res.json({ "items": [], "route": route})
+                }
 			})
 		}
 		else if (req.body.type == 'image') {
@@ -322,80 +327,42 @@ router.post('/', async (req, res) => {
 			let dir = config.folders.images
 			let route = config.routes.images
 
-
-
-			// let files = [];
-
-			// const rd = (dir) => {
-			// 	let f1=fs.readdirSync(dir);
-
-			// 	for (let item of f1) {
-			// 		console.log(fs.lstatSync(path.resolve(dir, item)).isDirectory())
-			// 		if (fs.lstatSync(path.resolve(dir, item)).isDirectory() && item.toLowerCase()!='.git') {
-			// 			rd(path.resolve(dir, item), files)
-			// 		} else {
-			// 			let file=path.join(dir, item)
-			// 			// let file=item
-			// 			var fileStats = fs.statSync(`${dir}/${item}`)
-			// 			if (['.jpg', '.png', 'jpeg'].indexOf(path.parse(item).ext.toLowerCase()) > -1) {
-			// 				files.push({
-			// 					name: file,
-			// 					ctime: fileStats.ctime
-			// 				})
-			// 			}
-
-
-
-
-
-			// 			// console.log(file)
-			// 			// files.push(file)
-			// 		}
-
-			// 	}
-			// }
-
-			// rd(dir)
-
-			// res.json({ items: files, route: route })
-
-
-
-
-
-
-
 			fs.readdir(dir, (err, items) => {
 				if (err) console.log(err);
 				let result = Array()
-				for (let item of items) {
-					// (async () => {
-					// 	let r1 = await fs.promises.stat(`${dir}/${item}`)
-					// 	res1.push(r1.ctime)
-					// })().catch(console.error)
-					var fileStats = fs.statSync(`${dir}/${item}`)
-					// res1.push()
-					// console.log(item)3
-					if (['.jpg', '.png', 'jpeg'].indexOf(path.parse(item).ext.toLowerCase()) > -1) {
-						result.push({
-							name: item,
-							ctime: fileStats.ctime
-						})
-					}
-				}
-				// console.log(1213123213,123, res1)
-				result.sort(function (a, b) {
-					return a.ctime - b.ctime
-				})
-				res.json({ items: result, route: route })
+                try {
+                    for (let item of items) {
+                        // (async () => {
+                        // 	let r1 = await fs.promises.stat(`${dir}/${item}`)
+                        // 	res1.push(r1.ctime)
+                        // })().catch(console.error)
+                        var fileStats = fs.statSync(`${dir}/${item}`)
+                        // res1.push()
+                        // console.log(item)3
+                        if (['.jpg', '.png', 'jpeg'].indexOf(path.parse(item).ext.toLowerCase()) > -1) {
+                            result.push({
+                                name: item,
+                                ctime: fileStats.ctime
+                            })
+                        }
+                    }
+                    // console.log(1213123213,123, res1)
+                    result.sort(function (a, b) {
+                        return a.ctime - b.ctime
+                    })
+                    res.json({ items: result, route: route })
+                } catch (e) {
+                    console.log(e)
+                    res.json({ items: [], route: route })
+                }
 			})
 		}
 		else if (req.body.type == 'video') {
-            try {
-                let dir = config.folders.videos
-                let route = config.routes.videos
+            let dir = config.folders.videos
+            let route = config.routes.videos
 
-                fs.readdir(dir, (err, items) => {
+            fs.readdir(dir, (err, items) => {
+                try {
                     if (err) console.log(err);
                     let result = Array()
                     items.forEach(item => {
@@ -404,11 +371,11 @@ router.post('/', async (req, res) => {
                         }
                     })
                     res.json({ "items": result, "route": route })
-                })
-            } catch (e) {
-                console.log(e)
-            }
-
+                } catch (e) {
+                    console.log(e)
+                    res.json({ "items": [], "route": route })
+                }
+            })
 
 
 		}
@@ -419,12 +386,18 @@ router.post('/', async (req, res) => {
 			fs.readdir(dir, (err, items) => {
 				if (err) console.log(err);
 				let result = Array()
-				items.forEach(item => {
-					if (['.WAV', '.MP3', '.FLAC', '.AAC', '.AIFF', '.OGG', '.MQA', '.MKV'].indexOf(path.parse(item).ext.toUpperCase()) > -1) {
-						result.push(item)
-					}
-				})
-				res.json({ "items": result, "route": route })
+                try {
+                    items.forEach(item => {
+                        if (['.WAV', '.MP3', '.FLAC', '.AAC', '.AIFF', '.OGG', '.MQA', '.MKV'].indexOf(path.parse(item).ext.toUpperCase()) > -1) {
+                            result.push(item)
+                        }
+                    })
+                    res.json({ "items": result, "route": route })
+                } catch (e) {
+                    console.log(e)
+                    res.json({ "items": [], "route": route })
+
+                }
 			})
 		}
 		else if (req.body.type == 'book') {
@@ -433,14 +406,20 @@ router.post('/', async (req, res) => {
 
 			fs.readdir(dir, (err, items) => {
 				if (err) console.log(err);
-				let result = Array()
-				items.forEach(item => {
-					if (['.pdf', '.pptx', '.odt', '.docx', '.doc', '.ppt'].indexOf(path.parse(item).ext.toLowerCase()) > -1) {
-						result.push(item)
-					}
-				})
-				console.log(result)
-				res.json({ "items": result, "route": route })
+                try {
+                    let result = Array()
+                    items.forEach(item => {
+                        if (['.pdf', '.pptx', '.odt', '.docx', '.doc', '.ppt'].indexOf(path.parse(item).ext.toLowerCase()) > -1) {
+                            result.push(item)
+                        }
+                    })
+                    console.log(result)
+                    res.json({ "items": result, "route": route })
+                } catch (e) {
+                    console.log(e);
+                    res.json({ "items": [], "route": route })
+
+                }
 			})
 		}
 	} catch (e) {
