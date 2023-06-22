@@ -391,21 +391,23 @@ router.post('/', async (req, res) => {
 			})
 		}
 		else if (req.body.type == 'video') {
+            try {
+                let dir = config.folders.videos
+                let route = config.routes.videos
 
-			let dir = config.folders.videos
-			let route = config.routes.videos
-
-			fs.readdir(dir, (err, items) => {
-				if (err) console.log(err);
-				let result = Array()
-				items.forEach(item => {
-					if (['.webm', '.avi', '.mp4'].indexOf(path.parse(item).ext.toLowerCase()) > -1) {
-						result.push(item)
-					}
-				})
-				res.json({ "items": result, "route": route })
-			})
-
+                fs.readdir(dir, (err, items) => {
+                    if (err) console.log(err);
+                    let result = Array()
+                    items.forEach(item => {
+                        if (['.webm', '.avi', '.mp4'].indexOf(path.parse(item).ext.toLowerCase()) > -1) {
+                            result.push(item)
+                        }
+                    })
+                    res.json({ "items": result, "route": route })
+                })
+            } catch (e) {
+                console.log(e)
+            }
 
 
 

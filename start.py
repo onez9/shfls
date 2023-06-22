@@ -33,7 +33,7 @@ if __name__=='__main__':
     logging.basicConfig(level=logging.INFO)
     # path_config='./Configs/config.mjs'
     print('Начинаю запуск')
-    os.chdir(os.path.dirname(__file__))
+    #os.chdir(os.path.dirname(__file__))
     try:
         #host=socket.gethostname()+'.org'
         host=socket.gethostname()
