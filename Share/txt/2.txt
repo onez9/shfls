@@ -230,3 +230,4 @@ must be co-prime to 10 - должны быть сокрытны 10
 The majority of answers - большинство ответов
 greedy algorithm - жадный алгоритм
 ask for confirmation - запросить подтверждение
+I'm not clued up enough - я недостаточно разбираюсь

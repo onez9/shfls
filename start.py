@@ -35,8 +35,11 @@ if __name__=='__main__':
     print('Начинаю запуск')
     os.chdir(os.path.dirname(__file__))
     try:
+        #host=socket.gethostname()+'.org'
         host=socket.gethostname()
+        print(host)
         ip=socket.gethostbyname(host)
+
         # ip='0.0.0.0'
 
         print(f'ip: {ip}')
