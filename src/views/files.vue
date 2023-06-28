@@ -6,7 +6,7 @@ import Swal from 'sweetalert2';
 	<div class="row">
 		<div class="col">
 			<label for="id_upload">Загрузить новый файл</label>
-			<input id="id_upload" name="file" type="file" class="form-control mb-1">
+			<input id="id_upload" name="file" type="file" class="form-control mb-1" multiple>
 			<!-- <p align="left">sdfsdf fsdfjo jfosdof j</p> -->
 			<!-- <p><img src="/images/europe.png" alt="Европа" width="422" height="387" usemap="#Map">
 				<map name="Map">
@@ -249,7 +249,13 @@ export default {
 
 			// file.originalname = Buffer.from(file.originalname, 'latin1').toString('utf8') 
 			// console.log('show_input: ', input.files[0].originname)
-			formData.append('file', input.files[0])
+			console.log(input.files);
+
+			for (const file of input.files) {
+				console.log(file)
+				formData.append('file', file)
+			}
+			
 
 			// formData.append('email', window.localStorage.getItem('user'))
 			// let file = input.files[0]

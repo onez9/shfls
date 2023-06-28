@@ -42,18 +42,43 @@ router.post('/', (req, res) => {
     // console.log(file.name)
 
     // console.log('upload hello')
-    // console.log(req.files)
+    // console.log('sdfsfsfsdfs111111111111111:', req.files.file)
+    
+    
+    
     try {
         console.log('this is ', req.files.file)
-        req.files.file.mv(`${config.folders.files}/${req.files.file.name}`)
+        let list_files = req.files.file
+        console.log(typeof list_files, 234234424324324)
+        if (Array.isArray(list_files)) {
+            for (const file of list_files) {
+                file.mv(`${config.folders.files}/${file.name}`)
+            }
+        } else {
+            console.log(req.files.file)
+            req.files.file.mv(`${config.folders.files}/${req.files.file.name}`)
+            
+        }
+
         let message = 'Файл успешно загружен'
         res.json({'message': message})
     }
-    catch {
+    catch (e) {
+        console.log(e)
+
+
         let error_message = 'Файл не найден'
         console.log(error_message)
         res.json({'message': error_message})
     }
+
+
+
+
+
+
+
+
 })
 
 
