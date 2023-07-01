@@ -49,7 +49,7 @@ router.post('/', (req, res) => {
     try {
         console.log('this is ', req.files.file)
         let list_files = req.files.file
-        console.log(typeof list_files, 234234424324324)
+        console.log(typeof list_files)
         if (Array.isArray(list_files)) {
             for (const file of list_files) {
                 file.mv(`${config.folders.files}/${file.name}`)

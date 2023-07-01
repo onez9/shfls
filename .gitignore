@@ -17,6 +17,11 @@ coverage
 *.mp3
 *.mkv
 *.avi
+Share/files/*
+Share/videos/*
+Share/txt/*
+Share/musics/*
+Share/
 
 /cypress/videos/
 /cypress/screenshots/
