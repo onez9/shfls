@@ -17,6 +17,7 @@ coverage
 *.mp3
 *.mkv
 *.avi
+*.part
 Share/files/*
 Share/videos/*
 Share/txt/*
