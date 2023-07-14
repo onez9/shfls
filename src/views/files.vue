@@ -95,7 +95,7 @@ export default {
 	},
 	created() {
 		console.log("Запускаю процедуру подключения к WebSocket Server")
-		this.ws = new WebSocket("ws://192.168.188.184:3000")
+		this.ws = new WebSocket("ws://localhost:3000")
 		// this.ws.binaryData = "blob";
 		this.ws.binaryType = "arraybuffer";
 

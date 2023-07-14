@@ -49,7 +49,7 @@ import Swal from 'sweetalert2';
             </div> -->
 
 
-            <div class="col-sm-6" v-if="false">
+            <div class="col-sm-6" v-if="true">
                 <div class="input-group my-1">
                     <input v-model="name" type="text" class="form-control">
                     <button @click="setNewName" class="btn btn-dark p-0 ps-1 pe-1">Изменить имя</button>

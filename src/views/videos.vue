@@ -17,7 +17,7 @@ import search from '../../Components/search.vue'
       <!-- <div class="col mb-1 mt-1">
         <button :class="{'btn btn-secondary form-control mt-1': true, 'btn-success': (aaa>0)}" @click="sorting"><i class="bi bi-filter"></i></button>
       </div> -->
-      <div class="col mb-1 mt-1">
+      <div v-if="false" class="col mb-1 mt-1">
         <button :class="{'btn btn-secondary form-control mt-1': true, 'btn-success': (show_names==true)}" @click="show_names_f">{{ name_button_spidoznoe_govno }}</button>
       </div>
       <div class="col mb-1 mt-1">
@@ -25,7 +25,15 @@ import search from '../../Components/search.vue'
       </div>
       <div class="col mb-1 mt-1">
         <!-- <input type="number" class="form-control mt-1" min="1" max="4"> -->
-        <select v-model="selected" class="form-select mt-1" name="" id="">
+        <select @change="change_page" v-model="selected_part" class="form-select mt-1" name="">
+          <option value="porno">Порно</option>
+          <option value="programming">Программирование</option>
+          <option value="math">Математика</option>
+        </select>
+      </div>
+      <div class="col mb-1 mt-1">
+        <!-- <input type="number" class="form-control mt-1" min="1" max="4"> -->
+        <select v-model="selected" class="form-select mt-1" name="">
           <option value="1">One</option>
           <option value="2">Two</option>
           <option value="3">Three</option>
@@ -38,9 +46,9 @@ import search from '../../Components/search.vue'
         <button :class="{'btn btn-secondary form-control mt-1': true, 'btn-success': (show_poster==true)}" @click="show_poster_func"><i class="bi bi-stickies-fill"></i> {{ button_text_poster }}</button>
       </div> -->
       
+      <div class="col-12"></div>
       
-      
-      <div class="col-12 mt-2 mb-2 input-group" v-if="show_download_panel == true">
+      <div class="col mt-2 mb-2 input-group" v-if="show_download_panel == true">
         <input type="text" class="form-control" :disabled="wait" v-model="url" placeholder="Вставьте ссылку на видео">
         <button class="btn btn-secondary" @click="run_download(url)">
           <i v-if="wait == false" class="bi bi-download"></i>
@@ -53,10 +61,12 @@ import search from '../../Components/search.vue'
 
 
       </div>
-      <div class="col-12 input-group mb-2 mt-2">
+      <div v-else class="col input-group mb-2 mt-2">
         <span class="input-group-text" id=""><i class="bi bi-search"></i></span>
         <input type="text" placeholder="Название видео" class="form-control" v-on:input="searching(name)" v-model="name">
       </div>
+
+      <div class="col-12"></div>
       <!-- <search :array="array_videos" placeholder="Название видео" type="video"></search> -->
       <!-- <div class="col-sm-12 mb-2 mt-2">
         <input type="text" class="form-control" placeholder="Поиск видео" v-model="nme" v-on:input="search">
@@ -65,24 +75,22 @@ import search from '../../Components/search.vue'
 
 
 
-            <!-- :poster="`/gifs/${encodeURIComponent(item.replace('.mp4', '.gif'))}`" -->
-      <div :class="{'col-sm-4 pb-1 pt-1': true, 
-      'col-sm-12': (selected==1),
-      'col-sm-6': (selected==2),
-      'col-sm-4': (selected==3),
-      'col-sm-3': (selected==4),
-      'col-sm-2': (selected==6),
-      'col-sm-1': (selected==12)
+      <!-- :poster="`/gifs/${encodeURIComponent(item.replace('.mp4', '.gif'))}`" -->
+      <div :class="{'pb-1 pt-1': true, 
+      'col-1': (selected==12),
+      'col-2': (selected==6),
+      'col-3': (selected==4),
+      'col-4': (selected==3),
+      'col-6': (selected==2),
+      'col-12': (selected==1)
       }" 
       v-for="(item, i) in rx_array" :key="i">
+      <!-- {{ item }} -->
         <figure class="">
           <video class="w-100" 
           controls loop>
           <!-- :poster="{'/gifs/space.jpg': (show_poster==true)}" > -->
-            <source :src="`/g?name=${encodeURIComponent(item)}`" type="video/mp4" />
-
-
-
+            <source :src="`/g?name=${encodeURIComponent(item)}&partname=${selected_part}`" type="video/mp4" />
           </video>
           <figcaption v-if="show_names" class="text-break">{{ item }}</figcaption>
         </figure>
@@ -119,7 +127,8 @@ export default {
       v1: '',
       show_poster: true,
       button_text_poster: 'скрыть',
-      selected: ''
+      selected: 1,
+      selected_part: 'porno'
 
     }
   },
@@ -187,6 +196,23 @@ export default {
     //   this.array_videos=[]
     //   await this.g()
     // },
+    async change_page() {
+      // const response = await fetch('/g/v', {
+      //   method: 'POST',
+      //   credentials: 'include',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify({'part': part})
+      // })
+      this.array_videos=[]
+      this.rx_array=[]
+      await this.g()
+      // let result = await response.json()
+      // this.array_videos = result['items']
+      // this.rx_array = this.array_videos
+      // this.folder = result['route']
+    },
     async show_poster_func() {
       this.show_poster=!this.show_poster
       if (this.show_poster) this.button_text_poster='показать'
@@ -235,8 +261,10 @@ export default {
 
     async g() {
       let properties = {
-        type: "video"
+        type: "video",
+        partname: this.selected_part
       }
+      console.info(this.selected_part)
       const response = await fetch('/g', {
         method: 'POST',
         credentials: 'include',
