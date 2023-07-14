@@ -9,6 +9,11 @@ on:
   pull_request:
     branches: [ "t2" ]
 
+env:
+  DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+
+
 jobs:
   build:
 
@@ -26,6 +31,17 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm ci
+    # - run: npm ci
     - run: npm run build --if-present
-    - run: docker build .
+    - name: Login to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ env.DOCKERHUB_USERNAME }}
+        password: ${{ env.DOCKERHUB_TOKEN }}
+    - name: Build Docker image
+      run: |
+        docker build -t myapp:latest .
+    - name: Push Docker image
+      run: |
+        docker tag myapp:latest ${{ env.DOCKER_USERNAME }}/myapp:latest
+        docker push ${{ env.DOCKER_USERNAME }}/myapp:latest
