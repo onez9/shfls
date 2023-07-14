@@ -11,13 +11,13 @@ import Swal from 'sweetalert2';
 			<!-- <p><img src="/images/europe.png" alt="Европа" width="422" height="387" usemap="#Map">
 				<map name="Map">
 					<area shape="poly"
-						coords="34,83,42,90,52,87,64,85,71,81,79,87,84,95, 75,110,61,120,42,116,37,110,25,94,32,82"
+						coords="192.168.1.9,192.168.1.9,192.168.1.9,84,95, 192.168.1.9,192.168.1.9,192.168.1.9"
 						href="is.html" alt="Исландия">
 					<area shape="poly"
-						coords="168,262,173,254,180,254,207,272,201,290,206,309, 197,318,182,316,182,323,165,320,152,317,154,292,138,276,168,263"
+						coords="192.168.1.9,192.168.1.9,192.168.1.9, 192.168.1.9,192.168.1.9,192.168.1.9,192.168.1.9"
 						href="fr.html" alt="Франция">
 					<area shape="poly"
-						coords="250,223,264,217,274,222,295,221,298,235,301,257, 290,269,274,268,247,254,243,241,243,241"
+						coords="192.168.1.9,192.168.1.9,192.168.1.9, 192.168.1.9,192.168.1.9,192.168.1.9"
 						href="pl.html" alt="Польша">
 				</map>
 			</p> -->
@@ -95,7 +95,7 @@ export default {
 	},
 	created() {
 		console.log("Запускаю процедуру подключения к WebSocket Server")
-		this.ws = new WebSocket("ws://localhost:3000")
+		this.ws = new WebSocket("ws://192.168.1.9:3000")
 		// this.ws.binaryData = "blob";
 		this.ws.binaryType = "arraybuffer";
 

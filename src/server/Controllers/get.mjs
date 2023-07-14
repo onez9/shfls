@@ -221,35 +221,27 @@ router.get('/s', async (req, res) => {
 	let url = req.query.url
 
 	console.log(url)
-	/*
-
-
-
-	*/
-
-
-
 	// await client.disconnect();
 
 	// if (url=="") res.json({'wait': false})
 	// const subprocess = youtubedl.exec(url, {
 	//   dumpSingleJson: true,
-
 	// })
 	// let point1 = __dirname, point2 = path.resolve(config.folders.videos)
 	// chdir(point2)
 	// subprocess.stdout.pipe(fs.createWriteStream('/videos/stdout.mp4'))
 	// subprocess.stderr.pipe(fs.createWriteStream('/videos/stderr.txt'))
-
 	// setTimeout(subprocess.cancel, 30000)
 
 	try {
+		console.log('123213123123213123213', req.query.partname)
 		const video = await youtubedl(url, {
 			//noWarnings: true,
 			// preferFreeFormats: true,
-			cacheDir: config.folders.videos,
+
+			cacheDir: config.folders.videos[req.query.partname],
 			progress: true,
-			paths: config.folders.videos
+			paths: config.folders.videos[req.query.partname]
 			// cwd: path.resolve('videos')
 		}).then((output) => {
 			// console.log(output)

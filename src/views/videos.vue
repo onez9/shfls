@@ -21,7 +21,7 @@ import search from '../../Components/search.vue'
         <button :class="{'btn btn-secondary form-control mt-1': true, 'btn-success': (show_names==true)}" @click="show_names_f">{{ name_button_spidoznoe_govno }}</button>
       </div>
       <div class="col mb-1 mt-1">
-        <button :class="{'btn btn-secondary form-control mt-1': true, 'btn-success': (show_download_panel==true)}" @click="show_download_panel_func"><i class="bi bi-download"></i></button>
+        <button :class="{'btn form-control mt-1': true, 'btn-dark': (!show_download_panel), 'btn-info': (show_download_panel)}" @click="show_download_panel=!show_download_panel"><i :class="{'bi bi-download': !show_download_panel, 'bi bi-search': show_download_panel}"></i></button>
       </div>
       <div class="col mb-1 mt-1">
         <!-- <input type="number" class="form-control mt-1" min="1" max="4"> -->
@@ -84,10 +84,10 @@ import search from '../../Components/search.vue'
       'col-6': (selected==2),
       'col-12': (selected==1)
       }" 
-      v-for="(item, i) in rx_array" :key="i">
+      v-for="(item, i) in rx_array" :key="item">
       <!-- {{ item }} -->
         <figure class="">
-          <video class="w-100" 
+          <video class="w-100 videos"
           controls loop>
           <!-- :poster="{'/gifs/space.jpg': (show_poster==true)}" > -->
             <source :src="`/g?name=${encodeURIComponent(item)}&partname=${selected_part}`" type="video/mp4" />
@@ -180,7 +180,12 @@ export default {
 
 
   },
+  watch: {
 
+  },
+  computed: {
+
+  },
   methods: {
     // async func() {
     //   // alert(this.v1)
@@ -219,13 +224,6 @@ export default {
       else this.button_text_poster='скрыть'
     },
 
-    async show_download_panel_func() {
-      if (this.show_download_panel) {
-        this.show_download_panel = false
-      } else {
-        this.show_download_panel = true
-      }
-    },
     async show_names_f() {
       if (this.show_names) {
         this.show_names = false
@@ -236,13 +234,19 @@ export default {
       }
     },
     async searching() {
+
       let rx = new RegExp(this.name)
       this.rx_array = []
-      this.array_videos.forEach(item => {
-        if (rx.test(item.toLowerCase())) {
-          this.rx_array.push(item)
+      for (let i=0; i<this.array_videos.length; i++) {
+        if (rx.test(this.array_videos[i].toLowerCase())) {
+          this.rx_array.push(this.array_videos[i])
+          console.log(this.array_videos[i])
         }
-      })
+      }
+
+      // console.log(this.rx_array)
+      // console.info(this.array_videos)
+      // this.array_videos=[]
 
     },
     async sorting() {
@@ -275,8 +279,10 @@ export default {
       })
 
       let result = await response.json()
-      this.array_videos = result['items']
-      this.rx_array = this.array_videos
+      this.array_videos = result['items'].slice(0)
+      this.rx_array = this.array_videos.slice(0)
+
+      this.backup=this.array_videos.slice(0)
       this.folder = result['route']
 
 
@@ -286,7 +292,7 @@ export default {
     async run_download(url) {
       this.wait = true
       // this.$emit('wait', true)
-      const response = await fetch(`/g/s?url=${url}`, {
+      const response = await fetch(`/g/s?url=${url}&partname=${this.selected_part}`, {
         method: "GET",
 
       })

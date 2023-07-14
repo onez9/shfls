@@ -53,6 +53,7 @@ if __name__=='__main__':
 
         changeIP('src/server/configs/config.mjs', ip)
         changeIP('index.html', ip)
+        changeIP('src/views/files.vue', ip)
 
         # changeIP('src/views/chat.vue', ip)
         changeIP('.env', ip)
