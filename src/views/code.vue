@@ -5,22 +5,8 @@ import aesjs from 'aes-js'
 </script>
 <template class="bg-dark">
   <div class="row">
-    <div class="col-sm-6 mt-2 position-fixed end-0">
-      <!-- <table class="table table-dark w-100" style="font-size: 12px;">
-        <tbody>
-          <tr v-for="(item, i) in code.split('\n')" :key="i">
-            <td class="m-0 p-0 pe-2">{{ i+1 }}</td>
-            <td style="color: rgb(135, 255, 135)" class="m-0 p-0"><pre style="display: block;" class="h-100 m-0 p-0 bg-dark border border-0">{{ item }}</pre></td>
-          </tr>
-        </tbody>
-      </table> -->
+    <!-- <div class="col-sm-6 mt-2 position-fixed end-0"> -->
 
-        <textarea id='txa1' class='form-control p-0 textbox ' name="test" cols="30" rows="10">{{ code }}</textarea>
-        <span class="tooltiptext">{{ tmp.split('/').slice(-1)[0] }}</span>
-
-    
-    
-    </div>
 
     <div class="col-sm-6">
 
@@ -31,17 +17,50 @@ import aesjs from 'aes-js'
       </div>
 
 
-
-      <table class="table table-hover table-bordered border-info mt-2">
+      <table class="table mt-2">
+      <!-- <table class="table table-hover table-bordered border-info mt-2"> -->
         <tbody>
-          <tr v-for="(item, i) in rx_files" :key="i" class="m-0 p-0 r1" @click="open_file(item); tmp=item">
-            <td class="m-0 ps-3 pt-0 pb-0 pe-0">{{ i }}</td>
-            <td class="m-0 ps-3 pt-0 pb-0 pe-0">{{ item.split('/').slice(-1)[0] }}</td>
+          <tr v-for="(item, i) in rx_files" :key="i" class="m-0 p-0 r1" >
+            <!-- <td class="m-0 ps-3 pt-0 pb-0 pe-0">{{ i }}</td> -->
+            <td class="m-0">{{ item.split('/').slice(-1)[0] }}</td>
+            <td class="d-flex"><button class="btn btn-dark btn-sm ms-auto" @click="open_file(item); tmp=item">Открыть</button></td>
 
           </tr>
         </tbody>
       </table>
 
+    </div>
+
+
+    <div class="col-sm-6 mt-2 end-0">
+      <!-- <table class="table table-dark w-100" style="font-size: 12px;">
+        <tbody>
+          <tr v-for="(item, i) in code.split('\n')" :key="i">
+            <td class="m-0 p-0 pe-2">{{ i+1 }}</td>
+            <td style="color: rgb(135, 255, 135)" class="m-0 p-0"><pre style="display: block;" class="h-100 m-0 p-0 bg-dark border border-0">{{ item }}</pre></td>
+          </tr>
+        </tbody>
+      </table> -->
+
+        <textarea id='txa1' class='form-control p-0 textbox border border-1 rounded-0' name="test" cols="30" rows="10">{{ code }}</textarea>
+        <span class="tooltiptext">{{ tmp.split('/').slice(-1)[0] }}</span>
+
+    
+    
+    </div>
+
+
+
+    <div class="mt-3 d-flex justify-content-center">
+      <nav aria-label="Page navigation mt-1 example">
+        <ul class="pagination">
+          <li v-if="currentPage>0" class="page-item"><a class="page-link" href="#" @click="changePage(currentPage-1)">&laquo;</a></li>
+          <li :class="{'page-item': true, 'active': (page-1==currentPage)}" v-for="page in totalpages" :key="page">
+            <a class="page-link" @click="changePage(page-1)" href="#">{{ page }}</a>
+          </li>
+          <li v-if="currentPage<totalpages-1" class="page-item"><a class="page-link" href="#" @click="changePage(currentPage+1)">&raquo;</a></li>
+        </ul>
+      </nav>
     </div>
 
   </div>
@@ -91,6 +110,9 @@ window.addEventListener('scroll', function() {
 export default {
   data() {
     return {
+      currentPage: 0,
+      totalpages: 10,
+
       books: [],
       type: 'file',
       count: '',
@@ -117,15 +139,30 @@ export default {
   },
   methods: {
     async searching() {
+      const response = await fetch('/g/all_files', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        // body: JSON.stringify(properties)
+      })
+      const res = (await response.json())
+      const files = res['items']
+
       console.log('ksfjsl ksfjsldfj ')
       let rx = new RegExp(this.name)
       this.rx_files = []
-      this.files.forEach(item => {
+      files.forEach(item => {
         if (rx.test(item.toLowerCase())) {
           this.rx_files.push(item)
         }
       })
 
+    },
+    async changePage(page) {
+      this.currentPage = page
+      await this.get_code()
     },
     async open_file(file) {
       const response = await fetch('/g/f_file', {
@@ -141,16 +178,23 @@ export default {
     },
     async get_code() {
       // alert(this.v1)
+      const properties = {
+        page: this.currentPage,
+        limit: 20,
+      }
       const response = await fetch('/g/code', {
         method: 'POST',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
-        // body: JSON.stringify({ 'partion': 'book' })
+        body: JSON.stringify(properties)
       })
-      this.files = (await response.json())['items']
-      this.rx_files=this.files
+      const res = (await response.json())
+      this.files = res['items']
+      this.totalpages = Math.ceil(res['count_files'] / properties.limit)
+      
+      this.rx_files=this.files.slice(0)
       // this.rx_array=[]
       // this.array_videos=[]
       // await this.g()

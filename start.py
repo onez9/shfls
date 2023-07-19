@@ -7,7 +7,7 @@ import os
 import io
 import logging
 import webbrowser
-
+import colorama
 
 
 clear = lambda: os.system('clear')

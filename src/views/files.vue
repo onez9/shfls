@@ -5,8 +5,10 @@ import Swal from 'sweetalert2';
 <template>
 	<div class="row">
 		<div class="col">
-			<label for="id_upload">Загрузить новый файл</label>
-			<input id="id_upload" name="file" type="file" class="form-control mb-1" multiple>
+			<!-- <div class="row"> -->
+			<!-- <label for="id_upload">Загрузить новый файл</label> -->
+			<input id="id_upload" name="file" type="file" class="form-control mb-1 mt-1" multiple>
+			<!-- </div> -->
 			<!-- <p align="left">sdfsdf fsdfjo jfosdof j</p> -->
 			<!-- <p><img src="/images/europe.png" alt="Европа" width="422" height="387" usemap="#Map">
 				<map name="Map">

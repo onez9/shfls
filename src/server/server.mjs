@@ -244,7 +244,8 @@ app.use(config.routes.musics, express.static(path.join(__dirname, config.folders
 
 app.get('*', (req, res) => {
     console.log('отправка стандартного файла')
-    res.setHeader('Content-Type', 'text/html');
+    // res.setHeader('Content-Type', 'text/html');
+    console.log(path.resolve('index.html'))
     res.sendFile(path.resolve('index.html'))
 })
 

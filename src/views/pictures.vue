@@ -10,32 +10,61 @@ import search from '../../Components/search.vue'
         <span class="input-group-text" id=""><i class="bi bi-search"></i></span>
         <input type="text" placeholder="Поиск картинок" class="form-control" v-on:input="searching(name)" v-model="name">
       </div>
-      <div class="col-12">
-        <!-- {{ computed_func }} -->
-        <!-- {{ theme }} -->
-        <div class="mt-2 mb-2">
-          <button class="btn btn-danger me-1" @click="sorting"><i class="bi bi-filter"></i></button>
-          <button class="btn btn-info me-1" @click="reversing">
-            <i :class="{'bi bi-sort-alpha-down': true, 'bi bi-sort-alpha-up': (reverse==false)}"></i>
-          </button>
-          <button v-if="show_image==true" class="btn btn-success" @click="show_image=false">
-            Скрыть изображения
-          </button>
-          <button v-if="show_image==false" class="btn btn-warning" @click="show_image=true">
-            Показать изображения
-          </button>
-          <!-- <input type="number" class="form-control" aria-describedby="passwordHelpInline"> -->
-          <!-- <span id="passwordHelpInline" class="form-text">
-            Пароль должен быть от 8 до 20 символов
-          </span> -->
-            <!-- <button class="btn btn-warning" @click="sort_on_time">Сортировать по дате</button> -->
-        </div>
+
+      <!-- {{ computed_func }} -->
+      <!-- {{ theme }} -->
+
+      <div class="col">
+        <button class="btn btn-danger me-1 form-control" @click="sorting">
+          <i class="bi bi-filter"></i>
+        </button>
+      </div>
+      <div class="col">
+        <button class="btn btn-info me-1 form-control" @click="reversing">
+          <i :class="{'bi bi-sort-alpha-down': true, 'bi bi-sort-alpha-up': (reverse==false)}"></i>
+        </button>
+      </div>
+      <div class="col" v-show="false">
+        <button class="btn btn-success form-control" @click="show_image=false">
+          Скрыть изображения
+        </button>
+      </div>
+      <div class="col" v-show="false">
+        <button class="btn btn-warning form-control" @click="show_image=true">
+          Показать изображения
+        </button>
       </div>
 
+      <div class="col">
+        <select v-model="selected" class="form-select" name="">
+          <option value="1">One</option>
+          <option value="2">Two</option>
+          <option value="3">Three</option>
+          <option value="4">Four</option>
+          <option value="6">Six</option>
+          <option value="12">Twelve</option>
+        </select>
+      </div>
+      <!-- <input type="number" class="form-control" aria-describedby="passwordHelpInline"> -->
+      <!-- <span id="passwordHelpInline" class="form-text">
+        Пароль должен быть от 8 до 20 символов
+      </span> -->
+        <!-- <button class="btn btn-warning" @click="sort_on_time">Сортировать по дате</button> -->
+
+      <div class="col-12"></div>
 
 
-
-      <div :class="{'col-12 p-1': true, 'col-sm-6': (show_image==true)}" v-for="(item, i) in find_arr" :key="i">
+      <div 
+        :class="{'pb-1 pt-1': true, 
+        'col-1': (selected==12),
+        'col-2': (selected==6),
+        'col-3': (selected==4),
+        'col-sm-4': (selected==3),
+        'col-6': (selected==2),
+        'col-12': (selected==1)
+        }" 
+      
+        v-for="(item, i) in find_arr" :key="i">
         <!-- {{ item }} -->
         <figure v-if="show_image==true">
           <!-- {{ folder }} -->
@@ -72,6 +101,7 @@ export default {
       name: '',
       reverse: true,
       show_image: true,
+      selected: 4,
     }
   },
   async mounted() {

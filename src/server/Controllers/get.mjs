@@ -97,13 +97,50 @@ router.post('/f_file', (req, res) => {
 		console.log(e);
 	}
 })
+router.post('/all_files', (req, res) => {
+	try {
+		let dir = config.folders.code
+		let route = config.routes.images
+		let files = [];
+		const rd = (dir) => {
+			let f1 = fs.readdirSync(dir);
+
+			for (let item of f1) {
+				console.log(fs.lstatSync(path.resolve(dir, item)).isDirectory())
+				if (fs.lstatSync(path.resolve(dir, item)).isDirectory() &&
+					item.toLowerCase() != 'node_modules' &&
+					item.toLowerCase() != '.git') {
+					rd(path.resolve(dir, item), files)
+				} else {
+					let file = path.resolve(dir, item)
+					// let file=item
+					console.log(file)
+					files.push(file)
+				}
+
+			}
+		}
+
+		rd(dir)
+
+
+		res.json({ items: files })
+
+
+	} catch(e) {
+		console.log(e)
+	}
+})
+
 
 router.post('/code', (req, res) => {
 	try {
 		let dir = config.folders.code
 		let route = config.routes.images
-
+		let page = req.body.page
+		let limit = req.body.limit
 		let files = [];
+		// let all = req.body.all | false
 
 		const rd = (dir) => {
 			let f1 = fs.readdirSync(dir);
@@ -129,6 +166,19 @@ router.post('/code', (req, res) => {
 		// rd(dir)
 		// console.log(`f1: ${f1}`)
 
+		let fromIndex = page * limit     // начальный индекс товара
+		let toIndex = page*limit + limit // конечный индекс товара
+		if (toIndex > files.length) {
+			toIndex = files.length
+		}
+		let productsPage = files.slice(fromIndex, toIndex)
+
+		console.log(page, limit)
+		// return c.JSON(http.StatusOK, productsPage)
+
+
+
+		res.json({ "items": productsPage, "count_files": files.length })
 
 
 		// fs.readdir(dir, (err, items) => {
@@ -160,7 +210,7 @@ router.post('/code', (req, res) => {
 		// 	// result.sort(function (a, b) {
 		// 	// 	return a.ctime - b.ctime
 		// 	// })
-		res.json({ items: files })
+		// res.json({ items: files })
 		// })
 	} catch (e) {
 		console.log(e)
@@ -276,7 +326,7 @@ router.get('/s', async (req, res) => {
 				console.info('error: src/server/Controllers/get.mjs')
 			}
 
-			res.json({ 'wait': false })
+			res.json({ 'done': url })
 
 			// chdir(point1)
 		});
@@ -359,6 +409,8 @@ router.post('/', async (req, res) => {
             
 			let dir = config.folders.videos[req.body.partname]
             let route = config.routes.videos[req.body.partname]
+			let page = req.body.page
+			let limit = req.body.limit
 
             fs.readdir(dir, (err, items) => {
                 try {
@@ -369,10 +421,24 @@ router.post('/', async (req, res) => {
                             result.push(item)
                         }
                     })
-                    res.json({ "items": result, "route": route })
+
+					let fromIndex = page * limit     // начальный индекс товара
+					let toIndex = page*limit + limit // конечный индекс товара
+					if (toIndex > result.length) {
+						toIndex = result.length
+					}
+					let productsPage = result.slice(fromIndex, toIndex)
+			
+					console.log(page, limit)
+					// return c.JSON(http.StatusOK, productsPage)
+		
+
+
+
+                    res.json({ "items": productsPage, "route": route, "count_videos": result.length })
                 } catch (e) {
                     console.log(e)
-                    res.json({ "items": [], "route": route })
+                    res.json({ "items": [], "route": route, "count_videos": 0 })
                 }
             })
 

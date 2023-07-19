@@ -47,26 +47,44 @@ import search from '../../Components/search.vue'
       </div> -->
       
       <div class="col-12"></div>
-      
+
+
+
       <div class="col mt-2 mb-2 input-group" v-if="show_download_panel == true">
-        <input type="text" class="form-control" :disabled="wait" v-model="url" placeholder="Вставьте ссылку на видео">
+        <input type="text" class="form-control" :disabled="false" v-model="url" placeholder="Вставьте ссылку на видео">
         <button class="btn btn-secondary" @click="run_download(url)">
-          <i v-if="wait == false" class="bi bi-download"></i>
-          <span v-if="wait == true" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-          <span v-if="wait == true"> Loading</span>
+          <i class="bi bi-download"></i>
         </button>
-        <button v-if="wait == true" class="btn btn-danger" @click="wait = false">
-          <i class="bi bi-x-diamond"></i>
-        </button>
-
-
       </div>
       <div v-else class="col input-group mb-2 mt-2">
         <span class="input-group-text" id=""><i class="bi bi-search"></i></span>
         <input type="text" placeholder="Название видео" class="form-control" v-on:input="searching(name)" v-model="name">
+        <button @click="name=''; rx_array=array_videos" class="input-group-text" id=""><i class="bi bi-backspace"></i></button>
       </div>
 
-      <div class="col-12"></div>
+      <div class="col-12">
+        <div v-for="(item, i) in batch_list" :key="item" class="alert alert-primary d-flex mb-1 d-flex" role="alert">
+          {{ item }}
+          <button class="btn btn-primary ms-auto">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+
+          </button>
+            <!-- <i class="bi bi-x-diamond"></i> -->
+        </div>
+      </div>
+
+
+      <div class="mt-3 d-flex justify-content-end">
+        <nav aria-label="Page navigation mt-1 example">
+          <ul class="pagination">
+            <li v-if="currentPage>0" class="page-item"><a class="page-link" href="#" @click="crumbs(currentPage-1)">&laquo;</a></li>
+            <li :class="{'page-item': true, 'active': (page-1==currentPage)}" v-for="page in totalpages" :key="page">
+              <a class="page-link" @click="crumbs(page-1)" href="#">{{ page }}</a>
+            </li>
+            <li v-if="currentPage<totalpages-1" class="page-item"><a class="page-link" href="#" @click="crumbs(currentPage+1)">&raquo;</a></li>
+          </ul>
+        </nav>
+      </div>
       <!-- <search :array="array_videos" placeholder="Название видео" type="video"></search> -->
       <!-- <div class="col-sm-12 mb-2 mt-2">
         <input type="text" class="form-control" placeholder="Поиск видео" v-model="nme" v-on:input="search">
@@ -80,7 +98,7 @@ import search from '../../Components/search.vue'
       'col-1': (selected==12),
       'col-2': (selected==6),
       'col-3': (selected==4),
-      'col-4': (selected==3),
+      'col-sm-4': (selected==3),
       'col-6': (selected==2),
       'col-12': (selected==1)
       }" 
@@ -92,7 +110,7 @@ import search from '../../Components/search.vue'
           <!-- :poster="{'/gifs/space.jpg': (show_poster==true)}" > -->
             <source :src="`/g?name=${encodeURIComponent(item)}&partname=${selected_part}`" type="video/mp4" />
           </video>
-          <figcaption v-if="show_names" class="text-break">{{ item }}</figcaption>
+          <figcaption style="font-size: small" v-if="show_names" class="text-break">{{ (item.length>15)? item.slice(0, 40)+'...' : item }}</figcaption>
         </figure>
       </div>
 
@@ -106,13 +124,45 @@ import search from '../../Components/search.vue'
 /* video{
   width: ;
 } */
+
+/* @mixin pagination-size($padding-y, $padding-x, $font-size, $border-radius) {
+  .page-link {
+    padding: $padding-y $padding-x;
+    @include font-size($font-size);
+  }
+
+  .page-item {
+    @if $pagination-margin-start == (-$pagination-border-width) {
+      &:first-child {
+        .page-link {
+          @include border-start-radius($border-radius);
+        }
+      }
+
+      &:last-child {
+        .page-link {
+          @include border-end-radius($border-radius);
+        }
+      }
+    } @else {
+      //Add border-radius to all pageLinks in case they have left margin
+      .page-link {
+        @include border-radius($border-radius);
+      }
+    }
+  }
+} */
 </style>
 <script>
 export default {
+  setup() {
+    alert('hello')
+  },
   data() {
     return {
       // img: '/files/192.168.160.184-kartinkin-com-p-anime-v-realnoi-zhizni-oboi-anime-krasivo-6.jpg',
       array_videos: [],
+      currentPage: 0,
       url: "",
       re1: '',
       aaa: 1,
@@ -127,13 +177,23 @@ export default {
       v1: '',
       show_poster: true,
       button_text_poster: 'скрыть',
-      selected: 1,
-      selected_part: 'porno'
+      selected: 3,
+      selected_part: 'programming',
+      batch_list: [] // загружаемые видео(список)
 
     }
   },
   async mounted() {
     console.log('Выполнился метод: mounted')
+    // alert('helllo')
+    if (window.localStorage.getItem('url_list')==null) {
+      window.localStorage.setItem('url_list', JSON.stringify([]));
+      
+    } 
+    this.batch_list=JSON.parse(window.localStorage.getItem('url_list'))
+
+    console.log(window.localStorage.getItem('url_list'))
+    console.log(this.batch_list)
     await this.g()
   },
   props: {
@@ -141,6 +201,7 @@ export default {
   },
   created() {
     console.log('Выполнился метод: created')
+    // alert('created hello')
     // console.log("Запускаю процедуру подключения к WebSocket Server")
     // this.connection = new WebSocket("ws://192.168.160.184:3000")
     // this.connection.binaryData = "blob";
@@ -187,20 +248,11 @@ export default {
 
   },
   methods: {
-    // async func() {
-    //   // alert(this.v1)
-    //   const response = await fetch('/g/ch1', {
-    //     method: 'POST',
-    //     credentials: 'include',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({'srak1': this.v1})
-    //   })
-    //   this.rx_array=[]
-    //   this.array_videos=[]
-    //   await this.g()
-    // },
+    async crumbs(page) {
+      this.currentPage = page
+      await this.g()
+    },
+
     async change_page() {
       // const response = await fetch('/g/v', {
       //   method: 'POST',
@@ -249,13 +301,6 @@ export default {
       // this.array_videos=[]
 
     },
-    async sorting() {
-      this.aaa*=-1
-      console.log(this.array_videos)
-      // this.array_videos = JSON.parse(JSON.stringify(this.array_videos)).sort()
-      // this.array_videos.sort()
-      console.log(this.array_videos)
-    },
     async sendMessage(message) {
       // alert(message)
       console.log(this.connection);
@@ -266,7 +311,9 @@ export default {
     async g() {
       let properties = {
         type: "video",
-        partname: this.selected_part
+        partname: this.selected_part,
+        page: this.currentPage,
+        limit: 5
       }
       console.info(this.selected_part)
       const response = await fetch('/g', {
@@ -281,23 +328,35 @@ export default {
       let result = await response.json()
       this.array_videos = result['items'].slice(0)
       this.rx_array = this.array_videos.slice(0)
-
       this.backup=this.array_videos.slice(0)
       this.folder = result['route']
+
+
+      // this.totalpages = Math.ceil(productscount / productsPerPage)
+      this.totalpages = Math.ceil(result['count_videos'] / properties.limit)
 
 
 
     },
 
     async run_download(url) {
-      this.wait = true
+
+      this.url = "" // очищаем поле ввода
+      this.batch_list.push(url)
+      window.localStorage.setItem('url_list', JSON.stringify(this.batch_list));
+      // console.log(123123, window.localStorage.getItem('url_list'))
       // this.$emit('wait', true)
       const response = await fetch(`/g/s?url=${url}&partname=${this.selected_part}`, {
         method: "GET",
 
       })
-      this.wait = (await response.json())['wait']
-      this.url = ""
+
+      this.done_string = (await response.json())['wait']
+      this.batch_list=JSON.parse(window.localStorage.getItem('url_list'))
+
+      this.batch_list.splice(this.batch_list.indexOf(this.done), 1)
+      window.localStorage.setItem('url_list', JSON.stringify(this.batch_list));
+      this.batch_list=JSON.parse(window.localStorage.getItem('url_list'))
       // console.log('аааааааааа')
       await this.g()
     },
