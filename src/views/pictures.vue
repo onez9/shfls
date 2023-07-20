@@ -54,17 +54,7 @@ import search from '../../Components/search.vue'
       <div class="col-12"></div>
 
 
-      <div 
-        :class="{'pb-1 pt-1': true, 
-        'col-1': (selected==12),
-        'col-2': (selected==6),
-        'col-3': (selected==4),
-        'col-sm-4': (selected==3),
-        'col-6': (selected==2),
-        'col-12': (selected==1)
-        }" 
-      
-        v-for="(item, i) in find_arr" :key="i">
+      <div :class="{'pb-1 pt-1': true, 'col-1': (selected==12), 'col-2': (selected==6), 'col-3': (selected==4), 'col-sm-4': (selected==3), 'col-6': (selected==2), 'col-12': (selected==1) }" v-for="(item, i) in find_arr" :key="i">
         <!-- {{ item }} -->
         <figure v-if="show_image==true">
           <!-- {{ folder }} -->
