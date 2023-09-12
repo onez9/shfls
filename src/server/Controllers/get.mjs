@@ -303,20 +303,23 @@ router.get('/s', async (req, res) => {
 			try {
 				req.wsServer.on('connection', ws => {
 					ws.on('message', m => {
-						console.log('Загрузка завершена')
-						console.log(m.toString())
-						console.log(typeof m)
-						// let message = new Blob(['привет я с сервера'], {
-						// 	type: 'text/plain'
-						// })
+						try {
+							console.log('Загрузка завершена')
+							console.log(m.toString())
+							console.log(typeof m)
+							// let message = new Blob(['привет я с сервера'], {
+							// 	type: 'text/plain'
+							// })
 
-						let message = 'Привет загрузка завершена'
+							let message = 'Привет загрузка завершена'
 
-						// setInterval(() => {
-						wsServer.clients.forEach(client => client.send(message))
-						// }, 1000)
+							// setInterval(() => {
+							wsServer.clients.forEach(client => client.send(message))
+							// }, 1000)
 
-
+						} catch (err) {
+							console.info('error: ошибка в колбаке вебсокета')
+						}
 
 					})
 

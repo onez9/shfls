@@ -82,21 +82,21 @@ import search from '../../Components/search.vue'
 
       <!-- панель загрузки -->
       <div class="col mt-2 mb-2 input-group" v-if="show_download_panel == true">
-        <input type="text" class="form-control bg-dark" :disabled="false" v-model="url" placeholder="Панель загрузки видео">
+        <input type="text" class="form-control bg-dark text-white" :disabled="false" v-model="url" placeholder="Панель загрузки видео">
         <button class="btn btn-secondary" @click="run_download(url)">
           <i class="bi bi-download"></i>
         </button>
       </div>
       <div v-else class="col input-group mb-2 mt-2">
         <span class="input-group-text" id=""><i class="bi bi-search"></i></span>
-        <input type="text" placeholder="Панель поиска" class="form-control bg-dark" v-on:input="searching(name)" v-model="name">
+        <input type="text" placeholder="Панель поиска" class="form-control bg-dark text-white" v-on:input="searching(name)" v-model="name">
         <button @click="name=''; rx_array=array_videos" class="input-group-text" id=""><i class="bi bi-backspace"></i></button>
       </div>
 
       <!-- стек загрузжаемых видео -->
       <div class="col-12">
-        <div v-for="(item, i) in batch_list" :key="item" class="alert alert-primary d-flex mb-1 d-flex" role="alert">
-          <!-- {{ item }} -->
+        <div v-for="(item, i) in batch_list" :key="item" class="alert alert-primary align-middle text-dark align-center d-flex mb-1 d-flex p-0 ps-2" role="alert">
+          {{ item }}
           <button class="btn btn-primary ms-auto">
             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
 
@@ -108,7 +108,7 @@ import search from '../../Components/search.vue'
 
       <div class="col-sm-12 mb-1 mt-1 input-group">
         <!-- <label for="folder">Select folder</label> -->
-        <input placeholder="Вставьте путь до папки" class="form-control bg-dark" style="" type="text" id="folder" directory multiple/>
+        <input placeholder="Вставьте путь до папки" class="form-control bg-dark text-white" style="" type="text" id="folder" directory multiple/>
         <button class="btn btn-warning" @click="">
           Добавить
         </button>
