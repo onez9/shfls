@@ -1,7 +1,7 @@
 export default {
     wlan0: {
         secret: 'secret',
-        host: '192.168.1.9',
+        host: '192.168.1.103',
         port: 3000
     },
     ws: {
@@ -11,15 +11,17 @@ export default {
         files: "Share/files",
         musics: "Share/musics",
         videos: {
-            programming: "Share/videos/programming",
+            programming: "Share/videos/stuff",
             porno: "Share/videos/porno",
-            math: "Share/videos/math"
+            math: "Share/videos/math",
+            _2r2r: "Share/videos/clips",
+            video1: "Share/video"
         },
         images: "Share/images",
         public: "public",
         code: "Share/code",
         books: "Share/books",
-        gifs: "Share/gifs"
+        gifs: "Share/videos/porno"
     },
 
     routes: {
@@ -28,7 +30,10 @@ export default {
         videos: {
             programming: "/videos",
             porno: "/videos",
-            math: "/videos"
+            math: "/videos",
+            _2r2r: "/videos",
+            video1: "/videos"
+
         },
         images: "/images",
         public: "/public",

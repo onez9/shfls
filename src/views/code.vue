@@ -7,6 +7,51 @@ import aesjs from 'aes-js'
   <div class="row">
     <!-- <div class="col-sm-6 mt-2 position-fixed end-0"> -->
 
+      <div class="mt-3 d-flex justify-content-center">
+      <nav aria-label="Page navigation mt-1 example">
+        <ul class="pagination">
+          <li v-if="currentPage>0" class="page-item">
+            <a class="page-link" href="#" @click="changePage(currentPage-1)">&laquo;</a>
+            <!-- <a class="page-link" href="#" @click="changePage(currentPage-1)">...</a> -->
+          </li>
+          <li v-if="currentPage-5>0">
+            <a class="page-link" href="#" @click="changePage(0)">1</a>
+          </li>
+          <li v-if="currentPage-5>0">
+            <a class="page-link" href="#" @click="changePage(currentPage-1)">...</a>
+          </li>
+      
+          <li :class="{'page-item': true, 'active': (page-1==currentPage)}" v-for="page in totalpages" :key="page">
+            <a v-if="page+3>currentPage && page < currentPage+5" class="page-link" @click="changePage(page-1)" href="#">{{ page }}</a>
+            
+            <!-- <a  v-if="page==totalpages-1" class="page-link" href="#"> {{ totalpages }} </a> -->
+          </li>
+
+
+
+
+          <li v-if="currentPage<totalpages-5">
+            <a class="page-link" href="#" @click="changePage(currentPage-1)">...</a>
+          </li>
+          <li v-if="currentPage<totalpages-5">
+            <a class="page-link" href="#" @click="changePage(totalpages-1)">{{ totalpages }}</a>
+          </li>
+
+      
+          <li v-if="currentPage<totalpages-1" class="page-item"><a class="page-link" href="#" @click="changePage(currentPage+1)">&raquo;</a></li>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        </ul>
+      </nav>
+    </div>
+
 
     <div class="col-sm-6">
 
@@ -51,17 +96,7 @@ import aesjs from 'aes-js'
 
 
 
-    <div class="mt-3 d-flex justify-content-center">
-      <nav aria-label="Page navigation mt-1 example">
-        <ul class="pagination">
-          <li v-if="currentPage>0" class="page-item"><a class="page-link" href="#" @click="changePage(currentPage-1)">&laquo;</a></li>
-          <li :class="{'page-item': true, 'active': (page-1==currentPage)}" v-for="page in totalpages" :key="page">
-            <a class="page-link" @click="changePage(page-1)" href="#">{{ page }}</a>
-          </li>
-          <li v-if="currentPage<totalpages-1" class="page-item"><a class="page-link" href="#" @click="changePage(currentPage+1)">&raquo;</a></li>
-        </ul>
-      </nav>
-    </div>
+
 
   </div>
 </template>
@@ -138,6 +173,10 @@ export default {
     // search
   },
   methods: {
+    async f1(page) {
+      alert(page)
+      return true;
+    },
     async searching() {
       const response = await fetch('/g/all_files', {
         method: 'POST',

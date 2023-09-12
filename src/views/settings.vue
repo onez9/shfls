@@ -14,7 +14,7 @@ import { ref } from 'vue';
                     <label class="form-check-label" for="flexSwitchCheckDefault"> Тёмная тема</label>
                 </div>
                 <span for="lang_id">Выберите язык</span>
-                <select type="select" v-model="lang_select" name="" id="lang_id" class="form-select mt-1">
+                <select type="select" v-model="lang_select" name="" id="lang_id" class="form-select mt-2">
                     <option value="1">Русский</option>
                     <option value="2">Английский</option>
                     <option value="3">Японский</option>
@@ -22,11 +22,16 @@ import { ref } from 'vue';
                     <option value="6">Корейский</option>
                     <option value="12">Немецкий</option>
                 </select>
-                <span for="nick_id">Придумайте ник</span>
-                <input type="text" placeholder="Your nikname" id="nick_id" class="form-control">
-                <span for="pass_id">Придумайте пароль</span>
-                <input type="password" placeholder="password" name="" id="pass_id" class="form-control">
-                <button class="btn btn-dark mt-1"><i class=""></i> Сохранить</button>
+
+                <button @click="user.settings.mode=!user.settings.mode" class="btn btn-dark form-control mt-2">Настройки пользователя</button>
+
+                <template v-if="user.settings.mode==true" class="mt-2">
+                    <span for="nick_id">Придумайте ник</span>
+                    <input type="text" placeholder="Your nikname" id="nick_id" class="form-control">
+                    <span for="pass_id">Придумайте пароль</span>
+                    <input type="password" placeholder="password" name="" id="pass_id" class="form-control">
+                </template>
+                <button class="btn btn-dark mt-2 form-control"><i class=""></i> Сохранить</button>
                 <!-- {{ value }}
                 {{ theme }} -->
             </div>
@@ -49,7 +54,8 @@ import { ref } from 'vue';
         data() {
             return {
                 lang_select: 1,
-                theme_current: true
+                theme_current: false,
+                user: {},
                 
             }
         },
@@ -57,9 +63,18 @@ import { ref } from 'vue';
         async mounted() {
             console.log('this func: mounted', this.theme)
             this.theme_current=this.theme
+            this.user = {
+                settings: {
+                    mode: false
+                }
+            }
         },
         created() {
-
+            this.user = {
+                settings: {
+                    mode: false
+                }
+            }
         },
 
         methods: {

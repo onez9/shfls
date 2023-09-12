@@ -13,6 +13,9 @@ import code from '../views/code.vue'
 import poligon from '../views/poligon.vue'
 import chat from '../views/chat.vue'
 import settings from '../views/settings.vue'
+import chemistry from '../views/chemistry.vue'
+
+
 
 const router = createRouter({
   //history: createWebHistory(import.meta.env.BASE_URL),
@@ -29,6 +32,12 @@ const router = createRouter({
       name: 'lang',
       component: lang
     },
+    {
+      path: '/g/chemistry',
+      name: 'chemistry',
+      component: chemistry
+    },
+    
     {
       path: '/g/chat',
       name: 'chat',

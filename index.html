@@ -1,19 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
   <head>
     <meta charset="UTF-8">
-    <!-- <link rel="icon" href="/favicon.ico"> -->
+    <link rel="icon" href="./favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>fileloader</title>
   </head>
   <!-- <body style="background-image: url('images/bgs.jpg');"> -->
   <body>
-    <div id="app" class="d-flex flex-column min-vh-100"></div>
+    <style>
+      .style1 {
+        background-color: #303030;
+        color:aliceblue;
+      }
+      p,text,b,td {
+        color: #ffffff;
+      }
+      .page-link {
+        background-color: #222222;
+        padding: 0;
+        text-align: center;
+      }
+      .page-item {
+        width: 30px;
+        /* padding: 0; */
+        /* margin: 0; */
+      }
+      .active {
+        color: aqua;
+      }
+    </style>
+    <div id="app" class="d-flex flex-column min-vh-100 style1"></div>
     <!-- <p>Hello</p> -->
 
     <script type="module" src="/src/main.js"></script>
-    <script type="module" src="http://192.168.1.9:5173/@vite/client"></script>
-    <script type="module" src="http://192.168.1.9:5173/src/main.js"></script>
+    <script type="module" src="http://192.168.1.103:5173/@vite/client"></script>
+    <script type="module" src="http://192.168.1.103:5173/src/main.js"></script>
   </body>
   <!-- <script src="scripts/paint_test1.js"></script> -->
 </html>

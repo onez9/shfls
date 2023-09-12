@@ -284,7 +284,10 @@ router.get('/s', async (req, res) => {
 	// setTimeout(subprocess.cancel, 30000)
 
 	try {
-		console.log('123213123123213123213', req.query.partname)
+		//console.log('123213123123213123213', req.query.partname)
+		
+		//const video = 
+		
 		const video = await youtubedl(url, {
 			//noWarnings: true,
 			// preferFreeFormats: true,
@@ -360,8 +363,14 @@ router.post('/', async (req, res) => {
 
 
 			fs.readdir(dir, (err, items) => {
+				function convert(item) {
+					return {
+						name: item
+					}
+				}
                 try {
                     if (err) console.log(err);
+					for (let i=0;i<items.length;i++) items[i]=convert(items[i])
                     console.log(items)
                     res.json({ "items": items, "route": route })
                 } catch (e) {
@@ -409,8 +418,8 @@ router.post('/', async (req, res) => {
             
 			let dir = config.folders.videos[req.body.partname]
             let route = config.routes.videos[req.body.partname]
-			let page = req.body.page
-			let limit = req.body.limit
+			let page = parseInt(req.body.page, 10)
+			let limit = parseInt(req.body.limit, 10)
 
             fs.readdir(dir, (err, items) => {
                 try {
@@ -422,21 +431,27 @@ router.post('/', async (req, res) => {
                         }
                     })
 
+
+
 					let fromIndex = page * limit     // начальный индекс товара
 					let toIndex = page*limit + limit // конечный индекс товара
+					console.log(page*limit + limit)
 					if (toIndex > result.length) {
 						toIndex = result.length
 					}
 					let productsPage = result.slice(fromIndex, toIndex)
 			
 					console.log(page, limit)
+					console.log(`fromindex: ${fromIndex}`)
+					console.log(`toIndex: ${toIndex}`)
 					// return c.JSON(http.StatusOK, productsPage)
 		
 
 
 
                     res.json({ "items": productsPage, "route": route, "count_videos": result.length })
-                } catch (e) {
+                
+				} catch (e) {
                     console.log(e)
                     res.json({ "items": [], "route": route, "count_videos": 0 })
                 }

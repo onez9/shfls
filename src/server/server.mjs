@@ -33,6 +33,7 @@ const __dirname = path.resolve();
 
 // создаем объект приложения
 const app = express()
+app.set('trust proxy', false)
 const http = createServer(app)
 
 
