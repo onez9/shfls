@@ -37,8 +37,8 @@ import Swal from 'sweetalert2';
                     <input v-on:keyup.enter="send" v-model="message" type="text" class="form-control ps-2">
                     <span class="input-group-text" id="">{{ messages.length }}</span>
                     <!-- <input type="file" class="form-control ps-2"> -->
-                    <button class="btn btn-dark"><i class="bi bi-card-text"></i></button>
-                    <button id="send1" class="btn btn-dark" @click="send"><i class="bi bi-send"></i></button>
+                    <button class="btn btn-outline-primary"><i class="bi bi-card-text"></i></button>
+                    <button id="send1" class="btn btn-outline-primary" @click="send"><i class="bi bi-send"></i></button>
                 </div>
             </div>
 
@@ -57,7 +57,7 @@ import Swal from 'sweetalert2';
             <div class="col-sm-6" v-if="true">
                 <div class="input-group my-1">
                     <input v-model="name" type="text" class="form-control">
-                    <button @click="setNewName" class="btn btn-dark p-0 ps-1 pe-1">Изменить имя</button>
+                    <button @click="setNewName" class="btn btn-outline-primary p-0 ps-1 pe-1">Изменить имя</button>
         
                 </div>
 

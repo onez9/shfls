@@ -36,21 +36,21 @@ import Swal from 'sweetalert2';
 			</ol> -->
       <div class="row">
         <div class="col-sm">
-          <button class="btn btn-danger mt-1 w-100" @click="upload_file">
+          <button class="btn btn-outline-danger mt-1 w-100" @click="upload_file">
             <i class="bi bi-upload"></i>
           </button>
         </div>
         <div class="col-sm">
-          <button class="btn btn-dark mt-1 w-100" @click="show_qr">
+          <button class="btn btn-outline-danger mt-1 w-100" @click="show_qr">
             <i class="bi bi-qr-code"></i>
           </button>
           <!-- <button @click="send_on_download" class="btn btn-info mb-3">Стандартная папка</button> -->
         </div>
         <div class="col-sm">
-          <button v-if="item1==true" class="btn btn-warning mt-1 w-100" @click="show_all_pic">
+          <button v-if="item1==true" class="btn btn-outline-warning mt-1 w-100" @click="show_all_pic">
             Развернуть
           </button>
-          <button v-else class="btn btn-warning mt-1 w-100" @click="show_all_pic">
+          <button v-else class="btn btn-outline-warning mt-1 w-100" @click="show_all_pic">
             Скрыть
           </button>
         </div>
@@ -70,7 +70,7 @@ import Swal from 'sweetalert2';
 
               <td class="p-0">
                 <div class="d-flex justify-content-end">
-                  <button @click="delete_file(item.name)" class="btn btn-dark mt-1 mb-1 me-1"><i
+                  <button @click="delete_file(item.name)" class="btn btn-outline-info mt-1 mb-1 me-1"><i
                       class="bi bi-recycle"></i></button>
                   <button @click="download_file(item.name)" class="btn btn-info mt-1 mb-1"><i
                       class="bi bi-download"></i></button>

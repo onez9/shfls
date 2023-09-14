@@ -14,23 +14,23 @@ import search from '../../Components/search.vue'
       <!-- {{ computed_func }} -->
       <!-- {{ theme }} -->
 
-      <div class="col">
-        <button class="btn btn-danger me-1 form-control" @click="sorting">
+      <!-- <div class="col">
+        <button class="btn btn-outline-danger me-1 form-control" @click="sorting">
           <i class="bi bi-filter"></i>
         </button>
-      </div>
+      </div> -->
       <div class="col">
-        <button class="btn btn-info me-1 form-control" @click="reversing">
+        <button class="btn btn-outline-info me-1 form-control" @click="reversing">
           <i :class="{'bi bi-sort-alpha-down': true, 'bi bi-sort-alpha-up': (reverse==false)}"></i>
         </button>
       </div>
       <div class="col" v-show="false">
-        <button class="btn btn-success form-control" @click="show_image=false">
+        <button class="btn btn-outline-success form-control" @click="show_image=false">
           Скрыть изображения
         </button>
       </div>
       <div class="col" v-show="false">
-        <button class="btn btn-warning form-control" @click="show_image=true">
+        <button class="btn btn-outline-warning form-control" @click="show_image=true">
           Показать изображения
         </button>
       </div>
@@ -91,7 +91,7 @@ export default {
       name: '',
       reverse: true,
       show_image: true,
-      selected: 4,
+      selected: 1,
     }
   },
   async mounted() {

@@ -59,8 +59,6 @@ import { RouterLink, RouterView } from 'vue-router'
                     <!-- <i class="bi bi-play-circle"></i> -->
                       Видео</router-link>
                   </li>
-                  <!-- <li><router-link class="dropdown-item" to="/g/videos"><i class="bi bi-file-play"></i> Видео</router-link>
-            </li> -->
                   <li><router-link class="dropdown-item" to="/g/musics">
                     <!-- <i class="bi bi-music-player"></i> -->
                       Музыка</router-link></li>
@@ -118,6 +116,7 @@ import { RouterLink, RouterView } from 'vue-router'
 
                 </ul>
               </li>
+
               <!-- <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                 aria-expanded="false"><i class="bi bi-gear-wide-connected"></i> Настройки </a>
@@ -134,6 +133,10 @@ import { RouterLink, RouterView } from 'vue-router'
 
 
             </ul>
+            <div class="d-flex ">
+              <a class="" href="#"><i class="bi bi-box-arrow-in-right"></i> Войти</a>
+            </div>
+
           </div>
         </div>
       </nav>
