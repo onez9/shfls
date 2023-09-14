@@ -10,31 +10,19 @@ export default {
     folders: {
         files: "Share/files",
         musics: "Share/musics",
-        videos: {
-            programming: "Share/videos/stuff",
-            porno: "Share/videos/porno",
-            math: "Share/videos/math",
-            _2r2r: "Share/videos/clips",
-            video1: "Share/video"
-        },
+        videos: "Share/video/",
         images: "Share/images",
         public: "public",
         code: "Share/code",
         books: "Share/books",
-        gifs: "Share/videos/porno"
+        gifs: "Share/video/"
     },
 
     routes: {
         files: "/downloads",
         musics: "/musics",
-        videos: {
-            programming: "/videos",
-            porno: "/videos",
-            math: "/videos",
-            _2r2r: "/videos",
-            video1: "/videos"
+        videos: "/videos",
 
-        },
         images: "/images",
         public: "/public",
         libraries: "/libraries",

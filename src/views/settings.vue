@@ -9,7 +9,7 @@ import { ref } from 'vue';
     <div class="container">
         <div class="row">
             <div class="col-sm-6">
-                <div class="form-check form-switch">
+                <div class="form-check form-switch mt-2">
                     <input @click="change_theme" v-model="theme_current" class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
                     <label class="form-check-label" for="flexSwitchCheckDefault"> Тёмная тема</label>
                 </div>
@@ -23,15 +23,15 @@ import { ref } from 'vue';
                     <option value="12">Немецкий</option>
                 </select>
 
-                <button @click="user.settings.mode=!user.settings.mode" class="btn btn-dark form-control mt-2">Настройки пользователя</button>
+                <button @click="user.settings.mode=!user.settings.mode" class="btn btn-outline-primary form-control mt-2">Настройки пользователя</button>
 
                 <template v-if="user.settings.mode==true" class="mt-2">
-                    <span for="nick_id">Придумайте ник</span>
+                    <span for="nick_id">Ник</span>
                     <input type="text" placeholder="Your nikname" id="nick_id" class="form-control">
-                    <span for="pass_id">Придумайте пароль</span>
+                    <span for="pass_id">Пароль</span>
                     <input type="password" placeholder="password" name="" id="pass_id" class="form-control">
                 </template>
-                <button class="btn btn-dark mt-2 form-control"><i class=""></i> Сохранить</button>
+                <button class="btn btn-outline-primary mt-2 form-control"><i class=""></i> Сохранить</button>
                 <!-- {{ value }}
                 {{ theme }} -->
             </div>

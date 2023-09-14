@@ -11,9 +11,12 @@ import search from '../../Components/search.vue'
         <label class="form-check-label" for="flexSwitchCheckDefault">Нормальное видео</label>
       </div>
       {{ v1 }} -->
-      <!-- <div class="col mb-1 mt-1">
-        <button :class="{'btn btn-warning form-control mt-1': true}" @click="sendMessage('здравствуйте я с клиента')">WebSocket</button>
-      </div> -->
+      <div class="col mb-1 mt-1">
+        <button :class="{'btn btn-outline-danger form-control mt-1': true}" @click="sendMessage()">WebSocket</button>
+      </div>
+      <div class="col mb-1 mt-1">
+        <button class="btn btn-outline-danger form-control mt-1" @click="show_poster_func" title="Показывает\Скрывает постеры на видео"><i class="bi bi-emoji-heart-eyes"></i></button>
+      </div>
       <!-- <div class="col mb-1 mt-1">
         <button :class="{'btn btn-secondary form-control mt-1': true, 'btn-success': (aaa>0)}" @click="sorting"><i class="bi bi-filter"></i></button>
       </div> -->
@@ -21,30 +24,27 @@ import search from '../../Components/search.vue'
         <button :class="{'btn btn-secondary form-control mt-1': true, 'btn-success': (show_names==true)}" @click="show_names_f">{{ name_button_spidoznoe_govno }}</button>
       </div>
       <div class="col-sm mb-1 mt-1">
-        <button :class="{
-          'btn form-control mt-1': true, 
-          'btn-dark': (!show_download_panel), 
-          'btn-info': (show_download_panel)
-          }" @click="show_download_panel=!show_download_panel"><i :class="{'bi bi-download': !show_download_panel, 'bi bi-search': show_download_panel}"></i></button>
+        <button @click="show_download_panel=!show_download_panel"  :class="{ 'btn form-control mt-1': true, 'btn-outline-danger': (!show_download_panel), 'btn-danger': (show_download_panel)}" title="youtube-dl/search">
+          <i :class="{'bi bi-download': !show_download_panel, 'bi bi-search': show_download_panel}"></i>
+        </button>
       </div>
 
       <!-- раздел просмотра -->
-      <div class="col-sm mb-1 mt-1">
-        <!-- <input type="number" class="form-control mt-1" min="1" max="4"> -->
+      <!-- <div class="col-sm mb-1 mt-1">
         <select @change="change_page" v-model="selected_part" class="form-select mt-1 bg-dark text-white" name="">
           <option value="add_folder">Добавить папку</option>
           <option value="porno">Порно</option>
           <option value="programming">Программирование</option>
           <option value="_2r2r">2rbina2rista</option>
         </select>
-      </div>
+      </div> -->
 
 
 
       <!-- количество столбцов -->
       <div class="col-sm mb-1 mt-1">
         <!-- <input type="number" class="form-control mt-1" min="1" max="4"> -->
-        <select v-model="selected" class="form-select mt-1 bg-dark text-white" name="">
+        <select v-model="selected" class="form-select mt-1 bg-dark text-white" name="" title="Количество столбцов">
           <option value="1">One</option>
           <option value="2">Two</option>
           <option value="3">Three</option>
@@ -56,7 +56,7 @@ import search from '../../Components/search.vue'
 
       <!-- очистить стек загружаемых видео -->
       <div class="col-sm mb-1 mt-1">
-        <button class="btn btn-danger form-control mt-1" @click="clean">clean</button>
+        <button class="btn btn-outline-danger form-control mt-1" @click="clean" title="Очистить буффер от загружаемых видео">clean</button>
       </div>
       <!-- <div class="col mb-1 mt-1">
         <button :class="{'btn btn-secondary form-control mt-1': true, 'btn-success': (show_poster==true)}" @click="show_poster_func"><i class="bi bi-stickies-fill"></i> {{ button_text_poster }}</button>
@@ -64,7 +64,7 @@ import search from '../../Components/search.vue'
 
       <!-- количество видео на одной странице -->
       <div class="col-sm mb-1 mt-1">
-        <select @change="change_count" v-model="video_values" class="form-select mt-1 bg-dark text-white" name="">
+        <select @change="change_count" v-model="video_values" class="form-select mt-1 bg-dark text-white" name="" title="Количество видео на одной странице">
           <option value="5">5</option>
           <option value="10">10</option>
           <option value="15">15</option>
@@ -95,10 +95,11 @@ import search from '../../Components/search.vue'
 
       <!-- стек загрузжаемых видео -->
       <div class="col-12">
-        <div v-for="(item, i) in batch_list" :key="item" class="alert alert-primary align-middle text-dark align-center d-flex mb-1 d-flex p-0 ps-2" role="alert">
-          {{ item }}
-          <button class="btn btn-primary ms-auto">
-            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        <div v-for="(item, i) in batch_list" :key="item" class="alert alert-info text-primary d-flex align-items-center mb-1 ps-2" role="alert">
+          <div>{{ item }}</div>
+          <button class="btn btn-outline-info ms-auto me-1">Отменить</button>
+          <button class="btn btn-outline-danger">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>%
 
           </button>
             <!-- <i class="bi bi-x-diamond"></i> -->
@@ -109,7 +110,7 @@ import search from '../../Components/search.vue'
       <div class="col-sm-12 mb-1 mt-1 input-group">
         <!-- <label for="folder">Select folder</label> -->
         <input placeholder="Вставьте путь до папки" class="form-control bg-dark text-white" style="" type="text" id="folder" directory multiple/>
-        <button class="btn btn-warning" @click="">
+        <button class="btn btn-outline-warning" @click="">
           Добавить
         </button>
         <!-- <input class="form-control" type="file" webkitdirectory directory multiple/> -->
@@ -122,14 +123,20 @@ import search from '../../Components/search.vue'
             <li v-if="currentPage>0" class="page-item"><a class="page-link" href="#" @click="crumbs(currentPage-1)">&laquo;</a></li>
 
             <template v-for="(page, i) in totalpages">  
-              <li :class="{'page-item': true, 'active': (page-1==currentPage)}">
+              <li v-if="(currentPage-3 < page) && (currentPage+5 > page)" :class="{'page-item': true, 'active': (page-1 == currentPage)}">
                 <a class="page-link" @click="crumbs(page-1)" href="#">{{ page }}</a>
                 <!-- <a v-else class="page-link" @click="crumbs(page-1)" href="#"></a> -->
               </li>
+              <!-- {{ func(page) }} -->
+              <!-- {{ (4+totalpages-3)/2 }} -->
+              <!-- <li v-if="page==Number((4+totalpages-3)/2)" class="page-item">
+                <a class="page-link">...</a>
+              </li> -->
               <!-- <li class="page-item" v-if="check">
                 <a class="page-link" href="#">...</a>
               </li> -->
             </template>
+
 
             <!-- <li v-if="currentPage==totalpages-2" class="page-item"><a class="page-link" href="#" @click="crumbs(currentPage+1)">{{ currentPage }}</a></li> -->
             <li v-if="currentPage<totalpages-1" class="page-item"><a class="page-link" href="#" @click="crumbs(currentPage+1)">&raquo;</a></li>
@@ -146,52 +153,45 @@ import search from '../../Components/search.vue'
 
       <!-- :poster="`/gifs/${encodeURIComponent(item.replace('.mp4', '.gif'))}`" -->
       <!-- отображаемые видео -->
-      <div :class="{'pb-1 pt-1': true, 
-      'col-1': (selected==12),
-      'col-2': (selected==6),
-      'col-3': (selected==4),
-      'col-sm-4': (selected==3),
-      'col-6': (selected==2),
-      'col-12': (selected==1)
-      }" 
-      v-for="(item, i) in rx_array" :key="item">
-      <!-- {{ encodeURIComponent(item.replace(/.mp4/gi, '.gif')) }} -->
+      <div v-for="(item, i) in rx_array" :key="item" :class="{'pb-1 pt-1': true, 'col-1': (selected==12), 'col-2': (selected==6), 'col-3': (selected==4), 'col-sm-4': (selected==3), 'col-6': (selected==2), 'col-12': (selected==1) }">
         <figure class="">
-          <video class="w-100 videos"
-            controls loop
-            :poster="`/gifs/${encodeURIComponent(item.replace(/.mp4/gi, '.gif'))}`" >
-            
-            <source :src="`/g?name=${encodeURIComponent(item)}&partname=${selected_part}`" type="video/mp4" />
+          <video class="w-100 videos" v-bind:poster=" (show_poster==true)? '/images/periodic_table.jpg' : `/gifs/${encodeURIComponent(item.replace(/(.webm|.mp4|.mkv|.avi)/gi, '.gif'))}` " controls loop>
+            <source :src="`/g?name=${encodeURIComponent(item)}`" type="video/mp4" />
           </video>
           <figcaption style="font-size: small" v-if="show_names" class="text-break">{{ (item.length>15)? item.slice(0, 40)+'...' : item }}</figcaption>
         </figure>
-        <button class="btn btn-sm btn-warning">В избранное</button>
-        <button class="btn btn-sm btn-dark">Убрать</button>
+        <button class="btn btn-sm btn-outline-warning">В избранное</button>
+        <button class="btn btn-sm btn-outline-secondary">Убрать</button>
 
       </div>
 
             <!-- переключатель страниц -->
-      <div v-if="totalpages!=1" class="mt-1 d-flex justify-content-center">
+            <div v-if="totalpages!=1" class="mt-1 d-flex justify-content-center">
         <nav aria-label="Page navigation mt-1 example">
           <ul class="pagination">
             <li v-if="currentPage>0" class="page-item"><a class="page-link" href="#" @click="crumbs(currentPage-1)">&laquo;</a></li>
 
             <template v-for="(page, i) in totalpages">  
-              <li :class="{'page-item': true, 'active': (page-1==currentPage)}">
+              <li v-if="(currentPage-3 < page) && (currentPage+5 > page)" :class="{'page-item': true, 'active': (page-1 == currentPage)}">
                 <a class="page-link" @click="crumbs(page-1)" href="#">{{ page }}</a>
                 <!-- <a v-else class="page-link" @click="crumbs(page-1)" href="#"></a> -->
               </li>
+              <!-- {{ func(page) }} -->
+              <!-- {{ (4+totalpages-3)/2 }} -->
+              <!-- <li v-if="page==Number((4+totalpages-3)/2)" class="page-item">
+                <a class="page-link">...</a>
+              </li> -->
               <!-- <li class="page-item" v-if="check">
                 <a class="page-link" href="#">...</a>
               </li> -->
             </template>
+
 
             <!-- <li v-if="currentPage==totalpages-2" class="page-item"><a class="page-link" href="#" @click="crumbs(currentPage+1)">{{ currentPage }}</a></li> -->
             <li v-if="currentPage<totalpages-1" class="page-item"><a class="page-link" href="#" @click="crumbs(currentPage+1)">&raquo;</a></li>
           </ul>
         </nav>
       </div>
-
     </div>
   </div>
 </template>
@@ -215,7 +215,7 @@ export default {
       url: "",
       re1: '',
       aaa: 1,
-      connection: null,
+      ws: null,
       route: '',
       wait: false,
       show_download_panel: false,
@@ -227,11 +227,13 @@ export default {
       show_poster: true,
       button_text_poster: 'скрыть',
       selected: 3,
-      selected_part: 'programming',
+      selected_part: '',
       batch_list: [], // загружаемые видео(список)
       dayes: 1,
       video_values: 5,
-      totalvideos: 0
+      totalvideos: 0,
+      totalpages: 0,
+      tmp: true
 
     }
   },
@@ -262,6 +264,32 @@ export default {
   created() {
     console.log('Выполнился метод: created')
     // alert('created hello')
+    console.log("Запускаю процедуру подключения к WebSocket Server")
+    this.ws = new WebSocket("ws://192.168.1.103:3000")
+    // this.ws.binaryData = "blob";
+    this.ws.binaryType = "arraybuffer";
+
+    this.ws.onmessage = function (event) {
+      // console.log(event.data.text());
+      console.log('Новое сообщение!')
+      console.log(event.data);
+
+    }
+
+    this.ws.onopen = function (event) {
+      console.log('onopen ws', event)
+      // alert("Соединение установлено.");
+      console.log("Подключение успешно завершено к websocket server...")
+    }
+
+    this.ws.onclose = function (event) {
+      if (event.wasClean) {
+        console.log('Соединение закрыто чисто');
+      } else {
+        console.log('Обрыв соединения'); // например, "убит" процесс сервера
+      }
+      console.log('Код: ' + event.code + ' причина: ' + event.reason);
+    };
 
   },
   watch: {
@@ -271,6 +299,29 @@ export default {
 
   },
   methods: {
+    func(page) {
+      let n=Number(page)
+      if (page < 4 || page > this.totalpages-3) {
+        return true;
+
+      } else {
+        if (this.tmp==true) {
+          this.tmp=false;
+          console.log('sfsdfsdfs n n n n:', n, this.totalpages)
+          return true
+
+          // 1 2 3 4 5 6 7 8 9 10 12 13 14 15 16
+        } 
+        return false
+      }
+
+
+      
+
+    },
+
+
+
     async clean() {
       this.batch_list=[];
       localStorage.clear();
@@ -312,9 +363,12 @@ export default {
       // this.folder = result['route']
     },
     async show_poster_func() {
-      this.show_poster=!this.show_poster
-      if (this.show_poster) this.button_text_poster='показать'
-      else this.button_text_poster='скрыть'
+      this.show_poster = !this.show_poster
+      let array_of_players = document.getElementsByClassName('videos')
+      for (let i=0; i<array_of_players.length; i++) {
+        // array_of_players[i].currentTime=0;
+        array_of_players[i].load();
+      }
     },
 
     async show_names_f() {
@@ -342,17 +396,16 @@ export default {
       // this.array_videos=[]
 
     },
-    async sendMessage(message) {
+    async sendMessage() {
       // alert(message)
-      console.log(this.connection);
-      this.connection.send(message);
+      console.log(this.ws);
+      this.ws.send("Привет уёбок");
       
     },
 
     async g() {
       let properties = {
         type: "video",
-        partname: this.selected_part,
         page: this.currentPage,
         limit:  this.video_values
       }
@@ -372,7 +425,7 @@ export default {
       this.backup=this.array_videos.slice(0)
       this.folder = result['route']
 
-      console.log('fofoweoorwerrew49584859458', properties.limit)
+      console.log('Ограничение видео на страницу: ', properties.limit)
       // this.totalpages = Math.ceil(productscount / productsPerPage)
       this.totalpages = Math.ceil(result['count_videos'] / properties.limit)
 
@@ -388,7 +441,7 @@ export default {
       window.localStorage.setItem('url_list', JSON.stringify(this.batch_list));
       // console.log(123123, window.localStorage.getItem('url_list'))
       // this.$emit('wait', true)
-      const response = await fetch(`/g/s?url=${url}&partname=${this.selected_part}`, {
+      const response = await fetch(`/g/s?url=${url}`, {
         method: "GET",
 
       })
@@ -401,6 +454,7 @@ export default {
       window.localStorage.setItem('url_list', JSON.stringify(this.batch_list));
       this.batch_list=JSON.parse(window.localStorage.getItem('url_list'))
       // console.log('аааааааааа')
+      // await this.sendMessage()
       await this.g()
     },
 

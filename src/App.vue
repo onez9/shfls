@@ -18,7 +18,7 @@ import { RouterLink, RouterView } from 'vue-router'
   <header>
     <div class="content-header">
 
-      <nav :class="{ 'navbar navbar-expand-lg': true, 'bg-dark navbar-dark': (dark) }">
+      <nav :class="{ 'navbar navbar-expand-lg navbar-light border-bottom': true, 'bg-body-tertiary': (dark) }">
         <div class="container-fluid">
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -176,7 +176,7 @@ export default {
   data() {
     return {
       wait: false,
-      dark: true,
+      dark: false,
     }
   },
   watch: {

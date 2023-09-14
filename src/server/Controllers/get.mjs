@@ -1,5 +1,5 @@
 import express from 'express'; // web-сервер
-import path from 'path'; // Разрешение путей
+import path, { resolve } from 'path'; // Разрешение путей
 import fs from 'fs' // доступ к файлам
 const router = express.Router();
 import { v4 } from 'uuid'
@@ -7,11 +7,13 @@ import Iconv from 'iconv'
 import youtubedl from 'youtube-dl-exec' // Загрузка видео
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import logger from 'progress-estimator'
-import { chdir } from 'process';
+import progress_estimator from 'progress-estimator'
+const logger = progress_estimator()
+
+//import { chdir } from 'process';
 import config from '../configs/config.mjs'; // Настройки проекта
 import { WebSocketServer } from 'ws' // websocket
-import { execa } from 'execa';
+//import { execa } from 'execa';
 import redis from 'redis' // драйвер для подключения к NoSql
 import user_agent from '../configs/user_agent.mjs'; // файковый юзерагент
 import { load } from 'cheerio'; // парсинг 
@@ -51,7 +53,7 @@ router.get('/', async (req, res) => {
 		// let name = location.assign(encodeURIComponent(req.query.name))
 		let name = req.query.name
 		// console.log(`this name: ${name}`)
-		let videoPath = path.resolve(config.folders.videos[req.query.partname], name);
+		let videoPath = path.resolve(config.folders.videos, name);
 		// console.log(`this name: ${videoPath}`)
 		let videoSize = fs.statSync(videoPath).size;
 		let CHUNK_SIZE = 10 ** 6;
@@ -266,28 +268,139 @@ router.post('/lang', (req, res) => {
 // })
 
 // тут загрузка видео через ytb-dl и тут ещё redis тестирую
-router.get('/s', async (req, res) => {
-
+router.get('/s', (req, res) => {
 	let url = req.query.url
-
 	console.log(url)
-	// await client.disconnect();
-
-	// if (url=="") res.json({'wait': false})
-	// const subprocess = youtubedl.exec(url, {
-	//   dumpSingleJson: true,
-	// })
-	// let point1 = __dirname, point2 = path.resolve(config.folders.videos)
-	// chdir(point2)
-	// subprocess.stdout.pipe(fs.createWriteStream('/videos/stdout.mp4'))
-	// subprocess.stderr.pipe(fs.createWriteStream('/videos/stderr.txt'))
-	// setTimeout(subprocess.cancel, 30000)
 
 	try {
-		//console.log('123213123123213123213', req.query.partname)
+		//const url = 'https://www.youtube.com/watch?v=6xKWiCMKKJg'
 		
-		//const video = 
+		// method #3
+		/*
+		const subprocess = youtubedl.exec(url, {
+			// dumpSingleJson: true
+			cacheDir: config.folders.videos,
+			//progress: false,
+			paths: config.folders.videos,
+			writeAutoSub: true,
+			writeSub: true,
+			convertSubs: "srt",
+			//output: process.cwd() + "/resources/subtitle",
+			format: "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best"
+		})
+		  
+		console.log(`Running subprocess as ${subprocess.pid}`)
+		*/
+		// console.log()
 		
+		//subprocess.stdout.pipe(fs.createWriteStream('stdout.txt'))
+		// subprocess.stderr.pipe(fs.createWriteStream('stderr.txt'))
+		
+		// setTimeout(subprocess.cancel, 300)
+
+
+		/*
+
+		subprocess.stdout?.on("data", data => {
+			try {
+				const buffer = Buffer.from(data, "utf-8");
+				//console.log(buffer)
+				
+				let output = buffer
+					.toString()
+					.trim()
+					.split(" ")
+					.filter(n => n);
+
+				//console.log(output)
+
+				let mess = {
+					progress: parseFloat(output[1]),
+					size: output[4],
+					speed: output[6],
+					estimated: output[8]
+				};
+
+				if (output[0] === "[download]" && parseFloat(output[1])) {
+					req.wsServer.on('connection', ws => {
+						
+						ws.on('message', m => {
+							try {
+								//console.log('Загрузка завершена')
+								console.log(m.toString())
+								//console.log(typeof m)
+								// let message = new Blob(['привет я с сервера'], {
+								// 	type: 'text/plain'
+								// })
+	
+		
+	
+								// setInterval(() => {
+								wsServer.clients.forEach(client => client.send(mess))
+								// }, 1000)
+	
+							} catch (err) {
+								console.info('error: ошибка в колбаке вебсокета')
+							}
+	
+						})
+	
+						ws.on("error", e => ws.send(e));
+	
+						ws.send(JSON.stringify(mess).toString());
+	
+					})
+
+
+
+
+
+
+
+
+
+				}
+			} catch (err) {
+				console.log("parse error", err);
+			}
+		});
+
+
+		*/
+
+		// subprocess.addListener('message', (event) => {
+		// 	console.log(event)
+		// })
+
+		// subprocess.addListener('spawn', (event) => {
+		// 	console.log(event)
+		// })
+
+
+		// subprocess.on('message', (message) => {
+		// 	console.log(message)
+		// })
+
+
+
+
+
+
+		// method #2
+		try {
+			const promise = youtubedl(url, { 
+				cacheDir: config.folders.videos,
+				progress: true,
+				paths: config.folders.videos
+			})
+
+			logger(promise, `Obtaining ${url}`)
+		} catch (err) {
+			console.log(err, 'ошибка в методе 2')
+		}
+
+		// method #1
+		/*
 		const video = await youtubedl(url, {
 			//noWarnings: true,
 			// preferFreeFormats: true,
@@ -297,7 +410,7 @@ router.get('/s', async (req, res) => {
 			paths: config.folders.videos[req.query.partname]
 			// cwd: path.resolve('videos')
 		}).then((output) => {
-			// console.log(output)
+			console.log(output)
 			console.log('тут ws: ', req.wsServer)
 
 			try {
@@ -336,6 +449,8 @@ router.get('/s', async (req, res) => {
 
 			// chdir(point1)
 		});
+
+		*/
 	}
 	catch (err) {
 		// console.log(err)
@@ -343,6 +458,8 @@ router.get('/s', async (req, res) => {
 		res.json({ 'wait': false })
 	}
 
+
+	
 
 
 	// const promise = youtubedl(url, { dumpSingleJson: true })
@@ -419,8 +536,8 @@ router.post('/', async (req, res) => {
 		}
 		else if (req.body.type == 'video') {
             
-			let dir = config.folders.videos[req.body.partname]
-            let route = config.routes.videos[req.body.partname]
+			let dir = config.folders.videos
+            let route = config.routes.videos
 			let page = parseInt(req.body.page, 10)
 			let limit = parseInt(req.body.limit, 10)
 
@@ -429,7 +546,7 @@ router.post('/', async (req, res) => {
                     if (err) console.log(err);
                     let result = Array()
                     items.forEach(item => {
-                        if (['.webm', '.avi', '.mp4'].indexOf(path.parse(item).ext.toLowerCase()) > -1) {
+                        if (['.webm', '.avi', '.mp4', '.mkv'].indexOf(path.parse(item).ext.toLowerCase()) > -1) {
                             result.push(item)
                         }
                     })
@@ -449,7 +566,7 @@ router.post('/', async (req, res) => {
 					console.log(`toIndex: ${toIndex}`)
 					// return c.JSON(http.StatusOK, productsPage)
 		
-
+					console.log(productsPage)
 
 
                     res.json({ "items": productsPage, "route": route, "count_videos": result.length })

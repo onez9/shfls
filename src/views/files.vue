@@ -7,7 +7,7 @@ import Swal from 'sweetalert2';
     <div class="col">
       <!-- <div class="row"> -->
       <!-- <label for="id_upload">Загрузить новый файл</label> -->
-      <input id="id_upload" name="file" type="file" class="form-control mb-1 mt-1" multiple>
+      <input id="id_upload" title="это подсказка для тебя" name="file" type="file" class="form-control mb-1 mt-1 bg-dark text-white" multiple>
       <!-- </div> -->
       <!-- <p align="left">sdfsdf fsdfjo jfosdof j</p> -->
       <!-- <p><img src="/images/europe.png" alt="Европа" width="422" height="387" usemap="#Map">
@@ -95,23 +95,16 @@ import Swal from 'sweetalert2';
 </template>
 
 
-<style>
+<style scoped>
 .d-flex,
 .justify-content-end {
   padding: 0;
   margin: 0;
 }
 
-tr {
-  display: block
-}
-
-td.break {
-  float: left;
-  /* line-height: 22px; */
-}
-:hover {
-  color: orange;
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+  /* ackground-color:rgb(255, 0, 0); */
+  color: #3b31c2;
 }
 </style>
 

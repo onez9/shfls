@@ -5,13 +5,18 @@ import Swal from 'sweetalert2';
 <template>
     <div class="container">
         <div class="row">
-            <div class="col-sm-12 parent" id="cont1">
+            <div class="col-sm-12 parent bg-dark" id="cont1">
 
 
                 <!-- <table id="tabl1" class="table table-hover table-bordered border-info">
                     <tbody> -->
-                <div v-for="(item, i) in messages" :key="i" 
-                :class="{'alert alert-success myclass my-1 py-1': (true), 'alert alert-info': (item['name']!=name)}">
+
+                <!-- <div id="liveAlertPlaceholder"></div>
+                <button type="button" class="btn btn-primary" id="liveAlertBtn">Show live alert</button>
+                <div class="alert alert-primary" role="alert">
+                    A simple secondary alert—check it out!
+                </div> -->
+                <div v-for="(item, i) in messages" :key="i" :class="{'alert alert-info myclass my-1 py-1': (true), 'alert alert-primary': (item['name']!=name)}" role="alert">
                     <span>{{ item['name'] }}</span><br />
 
                     <div class="alert alert-secondary m-0 py-0">{{ item['message'] }}</div>

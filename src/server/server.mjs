@@ -131,8 +131,14 @@ wsServer.on('connection', ws => {
             }
         }
         
+        try {
+            ws.name=JSON.parse(buffer)['name']
 
-        ws.name=JSON.parse(buffer)['name']
+        } catch (err) {
+            console.log(err)
+            console.log('произошла какая-то хуйня! На главном файле сервера')
+            console.log('неправильная форма данных!')
+        }
         // console.log(wsServer.clients)
         wsServer.clients.forEach(client => {
             if (ws.id!==client.id) { // отправка только не мне
