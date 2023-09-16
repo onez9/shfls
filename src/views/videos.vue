@@ -1,6 +1,7 @@
 <script setup>
 import { registerRuntimeCompiler } from 'vue';
 import search from '../../Components/search.vue'
+import Swal from 'sweetalert2';
 </script>
 
 <template>
@@ -14,23 +15,29 @@ import search from '../../Components/search.vue'
       <!-- <div class="col mb-1 mt-1">
         <button :class="{ 'btn btn-outline-danger form-control mt-1': true }" @click="sendMessage()">WebSocket</button>
       </div> -->
-      
+
       <div class="col mb-1 mt-1">
         <button class="btn btn-outline-danger form-control mt-1" @click="show_poster_func"
           title="Показывает\Скрывает постеры на видео"><i class="bi bi-emoji-heart-eyes"></i></button>
       </div>
 
-      {{ name_of_play_list }}
+      <!-- {{ name_of_play_list }} -->
       <div class="col mb-1 mt-2">
         <div class="btn-group form-control p-0">
-          <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="bi bi-list-stars"></i> {{ current_play_list.name }}
+          <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"
+            aria-expanded="false">
+            <i class="bi bi-list-stars"></i> {{ current_play_list }}
             <!-- <span class="visually-hidden">Toggle Dropdown</span> -->
           </button>
-          <ul class="dropdown-menu" >
+          <!-- {{play_list_array}} -->
+          <ul class="dropdown-menu">
+            <li @click="rx_array = array_videos; current_play_list = 'All'"><a class="dropdown-item">All</a></li>
+
+            
             <li @click="select_play(item)" v-for="(item, index) in play_list_array" :key="item">
+              <!-- {{ item }} -->
               <a class="dropdown-item" href="#">
-                {{ item.name }}
+                {{ item[0] }}
               </a>
             </li>
           </ul>
@@ -99,30 +106,32 @@ import search from '../../Components/search.vue'
     <div class="row">
 
       <div v-if="show_extra">
-        <div class="col-sm-12 mb-1 mt-2">
-          <button @click="show_playlist = !show_playlist" class="btn btn-outline-danger form-control"
+        <div class="col-sm mb-1 mt-2">
+          <button @click="show_playlist = !show_playlist"
+            :class="{ 'btn btn-outline-danger form-control': true, 'btn btn-outline-success': (show_playlist == true) }"
             title="Создать новый плейлист">
             <i class="bi bi-folder-plus"></i>
           </button>
         </div>
-        <div v-if="show_playlist == true" >
-          <div class="col-sm mt-2 mb-2 input-group">
-            <input class="form-control" id="name_list" placeholder="Название плейлиста" v-model="name_of_play_list">
-            <button @click="name_of_play_list=''" class="input-group-text" id=""><i class="bi bi-backspace"></i></button>
+        <div v-if="show_playlist == true" class="col-sm mt-2 mb-2 ">
+          <div class="input-group ">
+            <input class="form-control border border-outline-primary" id="name_list" placeholder="Название плейлиста" v-model="name_of_play_list">
+            <button @click="name_of_play_list = ''" class="input-group-text" id=""><i class="bi bi-backspace"></i></button>
           </div>
-          <button class="btn btn-outline-primary" @click="create_new_play_playlist(name_of_play_list)">Создать</button>
+          <button class="btn btn-outline-primary mt-2 form-control"
+            @click="create_new_play_playlist(name_of_play_list)">Создать</button>
         </div>
 
 
         <!-- панель загрузки -->
-        <div class="col-sm-12 mb-1 mt-1">
+        <div class="col-sm mb-1 mt-1">
           <button @click="show_download_panel = !show_download_panel" class="btn form-control mt-1 btn-outline-danger"
             title="youtube-dl/search">
             <i class="bi bi-download"></i>
           </button>
         </div>
-        <div v-if="show_download_panel == true">
-          <div class="col-sm-12 mt-2 mb-2 input-group">
+        <div v-if="show_download_panel == true" class="col-sm-12 mt-2 mb-2 ">
+          <div class="input-group mb-2">
             <input type="text" class="form-control bg-dark text-white" :disabled="false" v-model="url"
               placeholder="Панель загрузки видео">
             <button class="btn btn-secondary" @click="run_download(url)">
@@ -147,6 +156,32 @@ import search from '../../Components/search.vue'
               title="Очистить буффер от загружаемых видео">clean</button>
           </div>
         </div>
+
+        <div class="col-sm mb-1 mt-1">
+          <button @click="show_pen =! show_pen" class="btn form-control mt-1 btn-outline-danger"
+            title="Редактировать play list">
+            <i class="bi bi-pen"></i>
+          </button>
+        </div>
+        
+        <div v-if="show_pen" class="col-sm mt-2 mb-2 ">
+          <table class="table table-hover">
+            <tbody>
+              <tr v-for="(item, index) in play_list_array" :key="item">
+                <td>{{ item[0] }}</td>
+                <td class="">
+                  <div class="d-flex justify-content-end">
+                    <button @click="delete_albom(item[0])" v-if="item[1].edit_mode_video" class="btn btn-outline-info"><i class="bi bi-x"></i></button>
+                    <button @click="show_like_button_func(item[0])" v-if="item[1].edit_mode_video" class="btn btn-outline-info ms-1"><i class="bi bi-plus-circle-dotted"></i></button>
+                    <button @click="edit_item(item[1])" class="btn btn-outline-info ms-1"><i class="bi bi-pencil"></i></button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+
       </div>
 
 
@@ -166,36 +201,44 @@ import search from '../../Components/search.vue'
 
 
 
+      <div>
+        <!-- переключатель страниц -->
+        <div v-if="totalpages != 1 && current_play_list == 'All'" class="mt-1 d-flex justify-content-center">
+          <nav aria-label="Page navigation mt-1 example">
+            <ul class="pagination">
+              <li v-if="currentPage > 0" class="page-item"><a class="page-link" href="#"
+                  @click="crumbs(currentPage - 1)">&laquo;</a></li>
+              <li v-if="currentPage > 2" class="page-item"><a class="page-link" href="#" @click="crumbs(0)">1</a></li>
 
-      <!-- переключатель страниц -->
-      <div v-if="totalpages != 1" class="mt-1 d-flex justify-content-center">
-        <nav aria-label="Page navigation mt-1 example">
-          <ul class="pagination">
-            <li v-if="currentPage > 0" class="page-item"><a class="page-link" href="#"
-                @click="crumbs(currentPage - 1)">&laquo;</a></li>
-
-            <template v-for="(page, i) in totalpages">
-              <li v-if="(currentPage - 3 < page) && (currentPage + 5 > page)"
-                :class="{ 'page-item': true, 'active': (page - 1 == currentPage) }">
-                <a class="page-link" @click="crumbs(page - 1)" href="#">{{ page }}</a>
-                <!-- <a v-else class="page-link" @click="crumbs(page-1)" href="#"></a> -->
-              </li>
-              <!-- {{ func(page) }} -->
-              <!-- {{ (4+totalpages-3)/2 }} -->
-              <!-- <li v-if="page==Number((4+totalpages-3)/2)" class="page-item">
+              <template v-for="(page, i) in totalpages">
+                <li v-if="(currentPage - 2 < page) && (currentPage + 4 > page)"
+                  :class="{ 'page-item': true, 'active': (page - 1 == currentPage) }">
+                  <a class="page-link" @click="crumbs(page - 1)" href="#">{{ page }}</a>
+                  <!-- <a v-else class="page-link" @click="crumbs(page-1)" href="#"></a> -->
+                </li>
+                <!-- {{ func(page) }} -->
+                <!-- {{ (4+totalpages-3)/2 }} -->
+                <!-- <li v-if="page==Number((4+totalpages-3)/2)" class="page-item">
                 <a class="page-link">...</a>
               </li> -->
-              <!-- <li class="page-item" v-if="check">
+                <!-- <li class="page-item" v-if="check">
                 <a class="page-link" href="#">...</a>
               </li> -->
-            </template>
+              </template>
 
 
-            <!-- <li v-if="currentPage==totalpages-2" class="page-item"><a class="page-link" href="#" @click="crumbs(currentPage+1)">{{ currentPage }}</a></li> -->
-            <li v-if="currentPage < totalpages - 1" class="page-item"><a class="page-link" href="#"
-                @click="crumbs(currentPage + 1)">&raquo;</a></li>
-          </ul>
-        </nav>
+
+              <li v-if="currentPage < totalpages - 3" class="page-item">
+                <a class="page-link" href="#" @click="crumbs(totalpages - 1)">
+                  {{ totalpages }}
+                </a>
+              </li>
+              <!-- <li v-if="currentPage==totalpages-2" class="page-item"><a class="page-link" href="#" @click="crumbs(currentPage+1)">{{ currentPage }}</a></li> -->
+              <li v-if="currentPage < totalpages - 1" class="page-item"><a class="page-link" href="#"
+                  @click="crumbs(currentPage + 1)">&raquo;</a></li>
+            </ul>
+          </nav>
+        </div>
       </div>
       <!-- <search :array="array_videos" placeholder="Название видео" type="video"></search> -->
       <!-- <div class="col-sm-12 mb-2 mt-2">
@@ -204,11 +247,21 @@ import search from '../../Components/search.vue'
 
 
       <!-- {{ rx_array.length }} -->
-
       <!-- :poster="`/gifs/${encodeURIComponent(item.replace('.mp4', '.gif'))}`" -->
       <!-- отображаемые видео -->
+      
       <div v-for="(item, i) in rx_array" :key="item"
-        :class="{ 'pb-1 pt-1': true, 'col-1': (selected == 12), 'col-2': (selected == 6), 'col-3': (selected == 4), 'col-sm-4': (selected == 3), 'col-6': (selected == 2), 'col-12': (selected == 1) }">
+        :class="{ 'pt-1': true, 'col-1': (selected == 12), 'col-2': (selected == 6), 'col-3': (selected == 4), 'col-sm-4': (selected == 3), 'col-6': (selected == 2), 'col-12': (selected == 1) }">
+        
+        
+        <div class="row p-0 mb-2">
+          <div v-if="show_like_button && current_play_list == 'All'" class="col"><button class="m-0 p-0 btn btn-sm btn-outline-danger form-control" @click="add_to_like(item)"><i
+                class="bi bi-heart"></i> {{ like_button_label }}</button>
+          </div>
+          <div class="col"><button @click="delete_from_albom(i)" class="m-0 p-0 btn btn-sm btn-outline-secondary form-control">Убрать</button></div>
+          <div class="col"><button class="m-0 p-0 btn btn-sm btn-outline-danger form-control"
+              @click="reset_video(i)"><i class="bi bi-stop-btn"></i></button></div>
+        </div>
         <figure class="">
           <video class="w-100 videos"
             v-bind:poster="(show_poster == true) ? '/images/periodic_table.jpg' : `/gifs/${encodeURIComponent(item.replace(/(.webm|.mp4|.mkv|.avi)/gi, '.gif'))}`"
@@ -218,24 +271,23 @@ import search from '../../Components/search.vue'
           <figcaption style="font-size: small" v-if="show_names" class="text-break">{{ (item.length > 15) ? item.slice(0,
             40) + '...' : item }}</figcaption>
         </figure>
-        <div class="row">
-          <div class="col"><button class="btn btn-sm btn-outline-danger form-control" @click="add_to_like(item)"><i class="bi bi-heart"></i></button>
-          </div>
-          <div class="col"><button class="btn btn-sm btn-outline-secondary form-control">Убрать</button></div>
-          <div class="col"><button class="btn btn-sm btn-outline-success form-control"
-              @click="reset_video(i)">Спрятать</button></div>
-        </div>
+
+      </div>
+      <!-- {{ rx_array.length==0 }} -->
+      <div class="mt-1 d-flex justify-content-center">
+        <p v-if="rx_array.length==0">Тут пока ничего нет...</p>
       </div>
 
       <!-- переключатель страниц -->
-      <div v-if="totalpages != 1" class="mt-1 d-flex justify-content-center">
+      <div v-if="totalpages != 1 && current_play_list == 'All'" class="mt-1 d-flex justify-content-center">
         <nav aria-label="Page navigation mt-1 example">
           <ul class="pagination">
             <li v-if="currentPage > 0" class="page-item"><a class="page-link" href="#"
                 @click="crumbs(currentPage - 1)">&laquo;</a></li>
+            <li v-if="currentPage > 3" class="page-item"><a class="page-link" href="#" @click="crumbs(0)">1</a></li>
 
             <template v-for="(page, i) in totalpages">
-              <li v-if="(currentPage - 3 < page) && (currentPage + 5 > page)"
+              <li v-if="(currentPage - 2 < page) && (currentPage + 4 > page)"
                 :class="{ 'page-item': true, 'active': (page - 1 == currentPage) }">
                 <a class="page-link" @click="crumbs(page - 1)" href="#">{{ page }}</a>
                 <!-- <a v-else class="page-link" @click="crumbs(page-1)" href="#"></a> -->
@@ -251,6 +303,12 @@ import search from '../../Components/search.vue'
             </template>
 
 
+
+            <li v-if="currentPage < totalpages - 4" class="page-item">
+              <a class="page-link" href="#" @click="crumbs(totalpages - 1)">
+                {{ totalpages }}
+              </a>
+            </li>
             <!-- <li v-if="currentPage==totalpages-2" class="page-item"><a class="page-link" href="#" @click="crumbs(currentPage+1)">{{ currentPage }}</a></li> -->
             <li v-if="currentPage < totalpages - 1" class="page-item"><a class="page-link" href="#"
                 @click="crumbs(currentPage + 1)">&raquo;</a></li>
@@ -299,10 +357,14 @@ export default {
       tmp: true,
       show_playlist: false,
       show_extra: false,
-      play_list_array: [],
+      play_list_array: new Map(),
       name_of_play_list: "",
-      current_play_list: {},
-
+      current_play_list: "All",
+      hide_default_point_tmp: true,
+      show_like_button: false,
+      show_pen: false,
+      edit_mode_video: false,
+      like_button_label: ''
     }
   },
 
@@ -319,16 +381,26 @@ export default {
       window.localStorage.setItem('url_list', JSON.stringify([]));
 
     }
-    if (window.localStorage.getItem('lst_ply_lst') == null) {
-      window.localStorage.setItem('lst_ply_lst', JSON.stringify([]));
 
-    }
     this.batch_list = JSON.parse(window.localStorage.getItem('url_list'))
-    this.play_list_array = JSON.parse(localStorage.getItem('lst_ply_lst'))
+
 
     console.log(window.localStorage.getItem('url_list'))
     console.log(this.batch_list)
     await this.g()
+
+    if (window.localStorage.getItem('lst_ply_lst') == null) {
+      // const obj = {
+      //   name: 'default',
+      //   videos: this.rx_array
+      // }
+      window.localStorage.setItem('lst_ply_lst', JSON.stringify(Array.from((new Map()).entries()))); // записываем словарь в локальное хранилище
+
+    }
+
+
+    this.play_list_array = new Map(JSON.parse(localStorage.getItem('lst_ply_lst')))
+
 
   },
   props: {
@@ -380,7 +452,7 @@ export default {
       } else {
         if (this.tmp == true) {
           this.tmp = false;
-          console.log('sfsdfsdfs n n n n:', n, this.totalpages)
+          console.log('Всего страниц:', n, this.totalpages)
           return true
 
           // 1 2 3 4 5 6 7 8 9 10 12 13 14 15 16
@@ -393,6 +465,43 @@ export default {
 
     },
 
+    async delete_from_albom(i) {
+      console.log('current play-list: ', this.current_play_list)
+      console.log('like_button_label:', this.like_button_label)
+
+      //console.log(name_of_video)
+      let tmp = new Map(JSON.parse(window.localStorage.getItem('lst_ply_lst')));
+      tmp.get(this.current_play_list).videos.splice(i, 1)
+
+      // // console.log(this.play_list_array.get())
+      window.localStorage.setItem('lst_ply_lst', JSON.stringify(Array.from(tmp.entries()))); 
+      this.play_list_array = tmp
+      console.log('vides into self album: ', this.play_list_array.get(this.current_play_list).videos);
+      this.rx_array = this.play_list_array.get(this.current_play_list).videos;
+
+    },
+
+
+    async show_like_button_func(key) {
+      this.show_like_button =! this.show_like_button;
+      this.like_button_label = key;
+      this.current_play_list = 'All'
+      this.rx_array = this.array_videos;
+
+    },
+
+    async delete_albom(key) {
+      //this.play_list_array = new Map(JSON.parse(window.localStorage.getItem('lst_ply_lst')));
+
+
+      this.play_list_array.delete(key)
+      window.localStorage.setItem('lst_ply_lst', JSON.stringify(Array.from(this.play_list_array.entries()))); 
+      //console.log(tmp)
+      //console.log(item)
+
+
+    },
+
     async reset_video(index) {
       let pls = document.getElementsByClassName('videos');
       pls[index].load();
@@ -401,14 +510,24 @@ export default {
     async create_new_play_playlist(name_of_play_list) {
       console.log(name_of_play_list)
       const obj = {
-        name: this.name_of_play_list,
         videos: []
       }
-      this.play_list_array.push(obj)
+
+
+
+      this.play_list_array.set(this.name_of_play_list, obj)
+
+      window.localStorage.setItem('lst_ply_lst', JSON.stringify(Array.from(this.play_list_array.entries()))); 
+      //this.play_list_array = new Map(JSON.parse(localStorage.getItem('lst_ply_lst')))
+
+
+
+
+      //this.play_list_array.push(obj)
       this.name_of_play_list = '';
 
 
-      window.localStorage.setItem('lst_ply_lst', JSON.stringify(this.play_list_array));
+      //window.localStorage.setItem('lst_ply_lst', JSON.stringify(this.play_list_array));
 
       //this.play_list_array = JSON.parse(window.localStorage.getItem('lst_ply_lst'))
 
@@ -419,27 +538,63 @@ export default {
 
 
     },
+    async edit_item(item) {
+      item.edit_mode_video =! item.edit_mode_video
+    },
 
     async add_to_like(name_of_video) {
+      // Swal.fire({
+      //   title: '<strong>HTML <u>example</u></strong>',
+      //   icon: 'info',
+      //   html:
+      //     '<button class=""' +
+      //     '<a href="//sweetalert2.github.io">links</a> ' +
+      //     '',
+      //   showCloseButton: true,
+      //   showCancelButton: true,
+      //   focusConfirm: false,
+      //   confirmButtonText:
+      //     '<i class="fa fa-thumbs-up"></i> Great!',
+      //   confirmButtonAriaLabel: 'Thumbs up, great!',
+      //   cancelButtonText:
+      //     '<i class="fa fa-thumbs-down"></i>',
+      //   cancelButtonAriaLabel: 'Thumbs down'
+      // })
+
+
       console.log(name_of_video)
-      this.current_play_list.videos.push(name_of_video);
+      let tmp = new Map(JSON.parse(window.localStorage.getItem('lst_ply_lst')));
+      tmp.get(this.like_button_label).videos.push(name_of_video)
+
+      // console.log(this.play_list_array.get())
+      window.localStorage.setItem('lst_ply_lst', JSON.stringify(Array.from(tmp.entries()))); 
+      this.play_list_array = tmp
+      //this.play_list_array = new Map(JSON.parse(localStorage.getItem('lst_ply_lst')))
+      //this.current_play_list.videos.push(name_of_video);
 
       //this.play_list_array
 
-      window.localStorage.setItem('lst_ply_lst', JSON.stringify(this.play_list_array));
+      //window.localStorage.setItem('lst_ply_lst', JSON.stringify(this.play_list_array));
 
     },
 
     async select_play(item) {
-      console.log(item)
-      this.current_play_list = item
-      let tmp = JSON.parse(window.localStorage.getItem('lst_ply_lst'))
+      console.log('selected_play: ', item)
+      this.hide_default_point_tmp = true; // логика с выбором дэфолтного плей листа
+      this.current_play_list = item[0]
+      let tmp = new Map(JSON.parse(window.localStorage.getItem('lst_ply_lst')))
 
-      tmp.forEach(obj => {
-        if (obj.name == item.name) {
-          this.rx_array = obj.videos
-        }
-      })
+
+      console.log('wtf', tmp.get(item[0]))
+      this.rx_array = tmp.get(item[0]).videos
+      //.name_of_play_list = item[0]
+      // for (let [key, value] of tmp) {
+      //   console.log(key, value, item[0])
+
+      //   // this.rx_array = value;
+      // }
+
+      //this.totalpages = Math.ceil(this.rx_array / this.video_values)
 
 
     },
