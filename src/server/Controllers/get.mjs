@@ -271,6 +271,8 @@ router.post('/lang', (req, res) => {
 router.get('/s', (req, res) => {
 	let url = req.query.url
 	console.log(url)
+	let fine = false;
+
 
 	try {
 		//const url = 'https://www.youtube.com/watch?v=6xKWiCMKKJg'
@@ -382,22 +384,77 @@ router.get('/s', (req, res) => {
 		// })
 
 
+		/*
+		req.wsServer.on('connection', ws => {
+			ws.on('message', m => {
+				try {
+					console.log('Загрузка завершена')
+					console.log(m.toString())
+					console.log(typeof m)
 
 
+				} catch (err) {
+					console.info('error: ошибка в колбаке вебсокета')
+				}
 
+			})
+			setInterval(() => {
+				req.wsServer.clients.forEach(client => client.send("я тут 2"))
+			}, 1000)
+		})
+		*/
 
 		// method #2
+
+		
+
 		try {
 			const promise = youtubedl(url, { 
 				cacheDir: config.folders.videos,
 				progress: true,
 				paths: config.folders.videos
+			}).then(info => {
+				console.log('This output about it')
+				console.log(info)
+			}).catch(err => {
+				console.log('Fucked error!')
+				console.log(err)
 			})
 
-			logger(promise, `Obtaining ${url}`)
+
+			const result = logger(promise, `Obtaining ${url}`, {
+				estimate: 10000 // приблизительное время завершения
+			}).then(info => {
+				console.log('this is result logger: ', info)
+				console.log('this is webSocket: ', req.wsServer)
+				res.json({ 'done': url })
+				// req.wsServer.on('connection', ws => {
+					// setInterval(() => {
+						// req.wsServer.clients.forEach(client => client.send("я тут 2"))
+					// }, 1000)
+					// setInterval(() => {
+						// ws.send({'done': url})
+					// }, 1000)
+					
+				// })
+			}).catch(err=> {
+				console.log(err)
+			}).finally(()=>{
+				console.log('I\'m running anyway!')
+			})
+			
+			console.log(result)
+
+
+
+
 		} catch (err) {
 			console.log(err, 'ошибка в методе 2')
 		}
+
+		
+
+
 
 		// method #1
 		/*
@@ -541,20 +598,40 @@ router.post('/', async (req, res) => {
 			let page = parseInt(req.body.page, 10)
 			let limit = parseInt(req.body.limit, 10)
 
+			console.log('route: ', route)
+			console.log('dir: ', dir)
+
+
             fs.readdir(dir, (err, items) => {
                 try {
                     if (err) console.log(err);
                     let result = Array()
                     items.forEach(item => {
-                        if (['.webm', '.avi', '.mp4', '.mkv'].indexOf(path.parse(item).ext.toLowerCase()) > -1) {
-                            result.push(item)
-                        }
+						try {
+							if (['.webm', '.avi', '.mp4', '.mkv'].indexOf(path.parse(item).ext.toLowerCase()) > -1) {
+								result.push(item)
+							}
+
+
+						} catch (e) {
+							console.log('Вот из-за этой ошибки крашится!')
+							console.log(e)
+
+
+
+						}
+
+
+
+
+
                     })
 
 
 
 					let fromIndex = page * limit     // начальный индекс товара
 					let toIndex = page*limit + limit // конечный индекс товара
+					
 					console.log(page*limit + limit)
 					if (toIndex > result.length) {
 						toIndex = result.length
@@ -572,7 +649,7 @@ router.post('/', async (req, res) => {
                     res.json({ "items": productsPage, "route": route, "count_videos": result.length })
                 
 				} catch (e) {
-                    console.log(e)
+                    console.log('Ошибка тут ошибка: ', e)
                     res.json({ "items": [], "route": route, "count_videos": 0 })
                 }
             })
@@ -625,6 +702,8 @@ router.post('/', async (req, res) => {
 	} catch (e) {
 		console.log('Ошибка в маркеровке директорий')
 		console.log(e)
+
+		
 	}
 
 })

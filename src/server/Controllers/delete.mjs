@@ -25,10 +25,10 @@ router.delete('/', (req, res) => {
         //     root: path.resolve(config.folders.files),
         //     headers: {'Content-Type': 'image/jpeg'}
         // }
-        console.log(filename)
+        console.log(`filename: ${filename}`)
         let del_path = path.resolve(config.folders.files, filename)
 
-        console.log('dle;,', del_path)
+        console.log('Патч удаленного файла: ', del_path)
         fs.unlink(del_path, err => {
             if (err) console.log(err)
             else console.log('nice')

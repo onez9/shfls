@@ -712,7 +712,6 @@ export default {
     },
 
     async run_download(url) {
-
       this.url = "" // очищаем поле ввода
       this.batch_list.push(url)
       window.localStorage.setItem('url_list', JSON.stringify(this.batch_list));
@@ -732,7 +731,13 @@ export default {
       this.batch_list = JSON.parse(window.localStorage.getItem('url_list'))
       // console.log('аааааааааа')
       // await this.sendMessage()
+      
+      
       await this.g()
+
+
+
+
     },
 
     async somefunc(image) {

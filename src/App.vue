@@ -152,6 +152,31 @@ import { RouterLink, RouterView } from 'vue-router'
 
   </main>
 
+
+
+
+      
+  <footer class="mt-auto border-top">
+      
+      
+      <div class="container-fluid">
+        <div class="row">
+          
+          <div class="col">
+
+            <!-- <ul class="nav justify-content-center border-bottom">
+              <li class="nav-item mb-2"><a href="#" class="nav-link px-2 text-muted">Home</a></li>
+              <li class="nav-item mb-2"><a href="#" class="nav-link px-2 text-muted">About</a></li>
+            </ul> -->
+            <p class="text-center text-body-secondary p-0 m-0">Version: 1.8</p> 
+          </div>
+  
+  
+        </div>
+    
+      </div>
+    </footer>
+
   <!-- <footer>
 
   </footer> -->

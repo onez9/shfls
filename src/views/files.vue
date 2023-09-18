@@ -7,7 +7,34 @@ import Swal from 'sweetalert2';
     <div class="col">
       <!-- <div class="row"> -->
       <!-- <label for="id_upload">Загрузить новый файл</label> -->
-      <input id="id_upload" title="это подсказка для тебя" name="file" type="file" class="form-control mb-1 mt-1 bg-dark text-white" multiple>
+      <input id="id_upload" title="это подсказка для тебя" name="file" type="file"
+        class="form-control mb-1 mt-1 bg-dark text-white" multiple>
+      <!-- <progress id="progressBar" value="0" max="100" class="form-control mt-2"></progress> -->
+
+      <div class="progress mb-1" v-if="this.proccess_value!==0">
+        <div 
+          class="progress-bar progress-bar-striped progress-bar-animated" 
+          role="progressbar" 
+          aria-label="Example with label" 
+          :aria-valuenow="proccess_value"
+          aria-valuemin="0" 
+          aria-valuemax="100" 
+          id="progressBar" :style="'width: ' + proccess_value +'%;'"> {{ proccess_value }}%
+
+        </div>
+      </div>
+      <!-- 
+      <div>
+        <b-progress :value="value" :max="max" show-progress animated></b-progress>
+        <b-progress class="mt-2" :max="max" show-value>
+          <b-progress-bar :value="value * (6 / 10)" variant="success"></b-progress-bar>
+          <b-progress-bar :value="value * (2.5 / 10)" variant="warning"></b-progress-bar>
+          <b-progress-bar :value="value * (1.5 / 10)" variant="danger"></b-progress-bar>
+        </b-progress>
+
+        <b-button class="mt-3" @click="randomValue">Click me</b-button>
+      </div> -->
+
       <!-- </div> -->
       <!-- <p align="left">sdfsdf fsdfjo jfosdof j</p> -->
       <!-- <p><img src="/images/europe.png" alt="Европа" width="422" height="387" usemap="#Map">
@@ -36,21 +63,21 @@ import Swal from 'sweetalert2';
 			</ol> -->
       <div class="row">
         <div class="col-sm">
-          <button class="btn btn-outline-danger mt-1 w-100" @click="upload_file">
+          <button class="btn btn-outline-danger mb-1 w-100" @click="upload_file">
             <i class="bi bi-upload"></i>
           </button>
         </div>
         <div class="col-sm">
-          <button class="btn btn-outline-danger mt-1 w-100" @click="show_qr">
+          <button class="btn btn-outline-danger mb-1 w-100" @click="show_qr">
             <i class="bi bi-qr-code"></i>
           </button>
           <!-- <button @click="send_on_download" class="btn btn-info mb-3">Стандартная папка</button> -->
         </div>
         <div class="col-sm">
-          <button v-if="item1==true" class="btn btn-outline-warning mt-1 w-100" @click="show_all_pic">
+          <button v-if="item1 == true" class="btn btn-outline-danger mb-1 w-100" @click="show_all_pic">
             Развернуть
           </button>
-          <button v-else class="btn btn-outline-warning mt-1 w-100" @click="show_all_pic">
+          <button v-else class="btn btn-outline-danger mb-1 w-100" @click="show_all_pic">
             Скрыть
           </button>
         </div>
@@ -65,14 +92,14 @@ import Swal from 'sweetalert2';
             <tr>
               <!-- {{ item }} -->
               <!-- <td><button class="btn btn-danger"><i class="bi bi-file-binary-fill"></i></button></td> -->
-              <td @click="item.showmode=!item.showmode" class="w-100 align-middle text-break p-0">{{ item.name }}</td>
+              <td @click="item.showmode = !item.showmode" class="w-100 align-middle text-break p-0">{{ item.name }}</td>
               <!-- <td><img v-if="item.showmode" class="w-100" :src="`/downloads/${item.name}`" alt=""></td> -->
 
               <td class="p-0">
                 <div class="d-flex justify-content-end">
-                  <button @click="delete_file(item.name)" class="btn btn-outline-info mt-1 mb-1 me-1"><i
+                  <button @click="delete_file(item)" class="btn btn-outline-info mt-1 mb-1 me-1"><i
                       class="bi bi-recycle"></i></button>
-                  <button @click="download_file(item.name)" class="btn btn-info mt-1 mb-1"><i
+                  <button @click="download_file(item)" class="btn btn-info mt-1 mb-1"><i
                       class="bi bi-download"></i></button>
                 </div>
 
@@ -82,12 +109,13 @@ import Swal from 'sweetalert2';
             </tr>
             <tr v-if="item.showmode" class="bg-dark">
               <td>
-                  <img class="w-100" :src="`/downloads/${item.name}`" alt="">
+                  <img style="width: 100px;" class="rounded" :src="`/downloads/${item.name}`" alt="">
               </td>
             </tr>
           </template>
         </tbody>
       </table>
+      <div class="d-flex justify-content-center"><p v-if="array.length==0">Файлов не обнаружено</p></div>
 
 
     </div>
@@ -102,7 +130,8 @@ import Swal from 'sweetalert2';
   margin: 0;
 }
 
-.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+.table-hover tbody tr:hover td,
+.table-hover tbody tr:hover th {
   /* ackground-color:rgb(255, 0, 0); */
   color: #3b31c2;
 }
@@ -121,6 +150,8 @@ export default {
       route: '',
       ws: null,
       item1: true,
+      proccess_value: 0,
+      value: 1
     }
   },
   created() {
@@ -163,10 +194,10 @@ export default {
   methods: {
     async show_all_pic() {
       // console.log(item)
-      for (let i=0;i<this.array.length;i++) {
-        this.array[i].showmode=this.item1;
+      for (let i = 0; i < this.array.length; i++) {
+        this.array[i].showmode = this.item1;
       }
-      this.item1=!this.item1
+      this.item1 = !this.item1
       console.log(this.item1)
       // item.show = !item.show
     },
@@ -219,7 +250,7 @@ export default {
       })
       this.result = await response.json()
       this.array = this.result['items']
-      
+
       this.route = this.result['route']
     },
 
@@ -239,13 +270,15 @@ export default {
       window.open(response.url)
     },
 
-    async delete_file(name) {
-      console.log(this.array.indexOf(name))
-      let index = this.array.indexOf(name)
+    async delete_file(item) {
+      console.log('this name is name: ', item)
+      console.log('this with a indexOf: ', this.array.indexOf(item))
+      let index = this.array.map(item => item.name).indexOf(item.name)
+      console.log('1: ', this.array)
       if (index > -1) {
         this.array.splice(index, 1)
       }
-      const response = await fetch(`/del?name=${name}`, {
+      const response = await fetch(`/del?name=${item.name}`, {
         // const response = await fetch('/download', {
         method: 'DELETE',
         // credentials: 'include',
@@ -254,9 +287,11 @@ export default {
         // },
         // body: JSON.stringify({name: name})
       })
+      console.log('2: ', this.array)
       // console.log('123,', this.array.indexOf(name))
-
+      // await this.g();
     },
+
     async SendFile(fileMeta, fileData) {
       const fileMetaJson = JSON.stringify({
         lastModified: fileMeta.lastModified,
@@ -282,32 +317,106 @@ export default {
       this.conn.send(sendData);
       this.conn.binaryType = "blob";
     },
+
     async upload_file() {
       // await this.sendMessage("hello")
-      let formData = new FormData()
-      let input = document.querySelector('input[type="file"]')
+      // let formData = new FormData()
+      // let input = document.querySelector('input[type="file"]')
+      // // file.originalname = Buffer.from(file.originalname, 'latin1').toString('utf8') 
+      // // console.log('show_input: ', input.files[0].originname)
+      // console.log(input.files);
+
+      // for (const file of input.files) {
+      //   console.log(file)
+      //   formData.append('file', file)
+      // }
+
+      // const response = await fetch('/upload', {
+      //   method: 'POST',
+      //   credentials: 'include',
+      //   headers: {
+      //     // 'Content-Type': 'text/html; charset=utf-8',
+      //     // 'Content-Type': 'application/x-www-form-urlencoded'
+      //     // 'Content-Type': 'text/plain;'
+      //     // 'Content-Type': 'multipart/form-data'
+      //     // 'authorization': window.localStorage.getItem('jwt')
+      //   },
+      //   body: formData
+
+      // })
+
+      // let result = await response.json()
+      // console.log('Тут ответ который возвращает запрос: ', result)
+      // document.querySelector('input[type=file]').value = "";
+      // await this.g()
 
 
-      // file.originalname = Buffer.from(file.originalname, 'latin1').toString('utf8') 
-      // console.log('show_input: ', input.files[0].originname)
-      console.log(input.files);
+      //document.getElementById("file-form").addEventListener("submit", function(event) {
+      //  event.preventDefault();
 
-      for (const file of input.files) {
-        console.log(file)
-        formData.append('file', file)
-      }
+      // var files = document.getElementById("file-input").files;
+      // var formData = new FormData();
+
+
+
+
+
+      await ((method, url) => {
+        return new Promise( (resolve, reject) => {
+          let formData = new FormData()
+          let files = document.querySelector('input[type="file"]').files
+          for (var i = 0; i < files.length; i++) {
+            formData.append("file", files[i]);
+          }
+
+          var xhr = new XMLHttpRequest();
+          xhr.open(method, url, true);
+          xhr.onload = () => {
+            if (xhr.status === 200) {
+              // alert("Upload successful!");
+              this.proccess_value = 0;
+              resolve(xhr.response)
+
+            } else {
+              alert("Error uploading files. Please try again.");
+            }
+          };
+
+          xhr.upload.onprogress = (event) => {
+            let progress = (event.loaded / event.total) * 100;
+            // document.getElementById("progressBar").value = progress;
+            this.proccess_value = progress;
+          };
+
+
+          xhr.onerror = function () {
+            reject({
+              status: this.status,
+              statusText: xhr.statusText
+            });
+          };
+
+          xhr.send(formData);
+          document.querySelector('input[type=file]').value = "";
+        })
+      })('POST', '/upload')
+
+
+      await this.g()
+      console.log('После всего что произошло: ', this.array)
+
+      // let result = await response.json()
+      // console.log('Тут ответ который возвращает запрос: ', result)
+      // document.querySelector('input[type=file]').value = "";
+      // await this.g()
 
 
       // formData.append('email', window.localStorage.getItem('user'))
       // let file = input.files[0]
-
-
       // let file = input.files[0];
       // console.log(file.name)
       // console.log(file.lastModified)
-
       // let reader = new FileReader();
-
       // reader.readAsText(file);
       // reader.readAsArrayBuffer(file)
       // console.log('hello')
@@ -315,31 +424,18 @@ export default {
       // 	console.log('done')
       // 	console.log(reader.result);
       // };
-
       // reader.onerror = function() {
       // 	console.log(reader.error);
       // };
-
       // reader.onprogress = function() {
       // 	console.log(reader.LOADING)
       // }
-
-
-
-
-
-
       // this.ws.
-
-
-
       // await this.sendMessage(new Blob([input.files[0]], {type: "image/png"}))
       // const fileReader = new FileReader();
       // fileReader.onload = () => {
       // 	const int8Array = new Int8Array(fileReader.result);
-
       // 	const data = [];
-
       // 	each(int8Array, (item) => {
       // 		data.push(item);
       // 	});
@@ -351,16 +447,11 @@ export default {
       // 		data,
       // 	});
       // };
-
       // fileReader.readAsArrayBuffer(slice);
-
-
-
       // console.log(input.files.length)
       // for (let i = 0; i < input.files.length; i++) {
       // 	const file = input.files[i]
       // 	const reader = new FileReader()
-
       // 	reader.onabort = function (e) { /* @TODO */ }
       // 	reader.onerror = function (e) { /* @TODO */ }
       // 	reader.onloadstart = function (e) { /* @TODO */ }
@@ -370,39 +461,9 @@ export default {
       // 		let rawData = new ArrayBuffer();
       // 		rawData = e.target.result;
       // 		this.ws.SendFile(file, rawData);
-
       // 	}
-
       // 	reader.readAsArrayBuffer(file)
-
-
       // }
-
-
-
-
-
-
-
-      const response = await fetch('/upload', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          // 'Content-Type': 'text/html; charset=utf-8',
-          // 'Content-Type': 'application/x-www-form-urlencoded'
-          // 'Content-Type': 'text/plain;'
-          // 'Content-Type': 'multipart/form-data'
-          // 'authorization': window.localStorage.getItem('jwt')
-        },
-        body: formData
-
-      })
-      let result = await response.json()
-      console.log('Тут ответ который возвращает запрос: ', result)
-      document.querySelector('input[type=file]').value = "";
-      await this.g()
-
-
     },
     async show_qr() {
 

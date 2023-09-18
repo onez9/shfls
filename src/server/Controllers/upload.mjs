@@ -60,7 +60,7 @@ router.post('/', (req, res) => {
             
         }
 
-        let message = 'Файл успешно загружен'
+        let message = 'Файлы успешно загружен'
         res.json({'message': message})
     }
     catch (e) {
