@@ -9,47 +9,43 @@ import aesjs from 'aes-js'
 
       <div class="mt-3 d-flex justify-content-center">
       <nav aria-label="Page navigation mt-1 example">
-        <ul class="pagination">
-          <li v-if="currentPage>0" class="page-item">
-            <a class="page-link" href="#" @click="changePage(currentPage-1)">&laquo;</a>
-            <!-- <a class="page-link" href="#" @click="changePage(currentPage-1)">...</a> -->
-          </li>
-          <li v-if="currentPage-5>0">
-            <a class="page-link" href="#" @click="changePage(0)">1</a>
-          </li>
-          <li v-if="currentPage-5>0">
-            <a class="page-link" href="#" @click="changePage(currentPage-1)">...</a>
-          </li>
-      
-          <li :class="{'page-item': true, 'active': (page-1==currentPage)}" v-for="page in totalpages" :key="page">
-            <a v-if="page+3>currentPage && page < currentPage+5" class="page-link" @click="changePage(page-1)" href="#">{{ page }}</a>
-            
-            <!-- <a  v-if="page==totalpages-1" class="page-link" href="#"> {{ totalpages }} </a> -->
-          </li>
+          <ul class="pagination">
+            <li v-if="currentPage > 0" class="page-item"><a class="page-link" href="#"
+                @click="changePage(currentPage - 1)">&laquo;</a></li>
+            <li v-if="currentPage > 3" class="page-item"><a class="page-link" href="#" @click="crumbs(0)">1</a></li>
+
+            <template v-for="(page, i) in totalpages">
+              <li v-if="(currentPage - 2 < page) && (currentPage + 4 > page)"
+                :class="{ 'page-item': true, 'active': (page - 1 == currentPage) }">
+                <a class="page-link" @click="changePage(page - 1)" href="#">{{ page }}</a>
+                <!-- <a v-else class="page-link" @click="crumbs(page-1)" href="#"></a> -->
+              </li>
+              <!-- {{ func(page) }} -->
+              <!-- {{ (4+totalpages-3)/2 }} -->
+              <!-- <li v-if="page==Number((4+totalpages-3)/2)" class="page-item">
+                <a class="page-link">...</a>
+              </li> -->
+              <!-- <li class="page-item" v-if="check">
+                <a class="page-link" href="#">...</a>
+              </li> -->
+            </template>
+
+
+
+            <li v-if="currentPage < totalpages - 4" class="page-item">
+              <a class="page-link" href="#" @click="changePage(totalpages - 1)">
+                {{ totalpages }}
+              </a>
+            </li>
+            <!-- <li v-if="currentPage==totalpages-2" class="page-item"><a class="page-link" href="#" @click="crumbs(currentPage+1)">{{ currentPage }}</a></li> -->
+            <li v-if="currentPage < totalpages - 1" class="page-item"><a class="page-link" href="#"
+                @click="changePage(currentPage + 1)">&raquo;</a></li>
+          </ul>
+        </nav>
 
 
 
 
-          <li v-if="currentPage<totalpages-5">
-            <a class="page-link" href="#" @click="changePage(currentPage-1)">...</a>
-          </li>
-          <li v-if="currentPage<totalpages-5">
-            <a class="page-link" href="#" @click="changePage(totalpages-1)">{{ totalpages }}</a>
-          </li>
-
-      
-          <li v-if="currentPage<totalpages-1" class="page-item"><a class="page-link" href="#" @click="changePage(currentPage+1)">&raquo;</a></li>
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        </ul>
-      </nav>
     </div>
 
 
@@ -67,8 +63,8 @@ import aesjs from 'aes-js'
         <tbody>
           <tr v-for="(item, i) in rx_files" :key="i" class="m-0 p-0 r1" >
             <!-- <td class="m-0 ps-3 pt-0 pb-0 pe-0">{{ i }}</td> -->
-            <td class="m-0">{{ item.split('/').slice(-1)[0] }}</td>
-            <td class="d-flex"><button class="btn btn-dark btn-sm ms-auto" @click="open_file(item); tmp=item">Открыть</button></td>
+            <td>{{ item.split('/').slice(-1)[0] }}</td>
+            <td><button class="btn btn-warning btn-sm ms-auto" @click="open_file(item); tmp=item">Открыть</button></td>
 
           </tr>
         </tbody>

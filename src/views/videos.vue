@@ -21,6 +21,9 @@ import Swal from 'sweetalert2';
           title="Показывает\Скрывает постеры на видео"><i class="bi bi-emoji-heart-eyes"></i></button>
       </div>
 
+
+
+
       <!-- {{ name_of_play_list }} -->
       <div class="col mb-1 mt-2">
         <div class="btn-group form-control p-0">
@@ -97,7 +100,7 @@ import Swal from 'sweetalert2';
       <!-- {{ video_values }} -->
 
       <div class="col-sm mb-1 mt-2">
-        <button @click="show_extra = !show_extra" class="btn btn-outline-danger form-control" title="Дополнительно">
+        <button @click="open_addvance" class="btn btn-outline-danger form-control" title="Дополнительно">
           <i class="bi bi-list"></i>
         </button>
       </div>
@@ -125,7 +128,7 @@ import Swal from 'sweetalert2';
 
         <!-- панель загрузки -->
         <div class="col-sm mb-1 mt-1">
-          <button @click="show_download_panel = !show_download_panel" class="btn form-control mt-1 btn-outline-danger"
+          <button @click="sdp" class="btn form-control mt-1 btn-outline-danger"
             title="youtube-dl/search">
             <i class="bi bi-download"></i>
           </button>
@@ -164,8 +167,8 @@ import Swal from 'sweetalert2';
           </button>
         </div>
         
-        <div v-if="show_pen" class="col-sm mt-2 mb-2 ">
-          <table class="table table-hover">
+        <div v-if="show_pen" class="col-sm mt-2 ">
+          <table class="table table-hover mb-0">
             <tbody>
               <tr v-for="(item, index) in play_list_array" :key="item">
                 <td>{{ item[0] }}</td>
@@ -179,6 +182,14 @@ import Swal from 'sweetalert2';
               </tr>
             </tbody>
           </table>
+          <p v-if="play_list_array.size==0" class="text-center mb-2 p-0">Тут пока ничего нет {{ play_list_array.size }}</p>
+        </div>
+
+
+
+
+        <div class="col mb-1 mt-1">
+          <button @click="lock =! lock" class="btn btn-outline-danger form-control mt-1" title="Зашифровать/Расшифровать"><i :class="{ 'bi bi-lock': true, 'bi bi-unlock': (lock) }"></i></button>
         </div>
 
 
@@ -251,26 +262,36 @@ import Swal from 'sweetalert2';
       <!-- отображаемые видео -->
       
       <div v-for="(item, i) in rx_array" :key="item"
-        :class="{ 'pt-1': true, 'col-1': (selected == 12), 'col-2': (selected == 6), 'col-3': (selected == 4), 'col-sm-4': (selected == 3), 'col-6': (selected == 2), 'col-12': (selected == 1) }">
+        :class="{ 'p-1 pt-2': true, 'col-1': (selected == 12), 'col-2': (selected == 6), 'col-3': (selected == 4), 'col-sm-4': (selected == 3), 'col-6': (selected == 2), 'col-12': (selected == 1) }">
         
-        
-        <div class="row p-0 mb-2">
-          <div v-if="show_like_button && current_play_list == 'All'" class="col"><button class="m-0 p-0 btn btn-sm btn-outline-danger form-control" @click="add_to_like(item)"><i
-                class="bi bi-heart"></i> {{ like_button_label }}</button>
+        <!-- {{ item }} -->
+        <div class="frame-video p-1 rounded">
+          <div class="row p-0 mb-2">
+            <div v-if="current_play_list == 'All'" class="col"><button class="m-0 p-0 btn btn-sm btn-outline-danger form-control" @click="add_to_like(item.name)"><i
+                  class="bi bi-heart"></i> {{ like_button_label }}</button>
+            </div>
+            <div class="col"><button @click="delete_from_albom(i)" class="m-0 p-0 btn btn-sm btn-outline-secondary form-control">Убрать</button></div>
+            <div class="col"><button class="m-0 p-0 btn btn-sm btn-outline-danger form-control"
+                @click="reset_video(i)"><i class="bi bi-stop-btn"></i></button></div>
           </div>
-          <div class="col"><button @click="delete_from_albom(i)" class="m-0 p-0 btn btn-sm btn-outline-secondary form-control">Убрать</button></div>
-          <div class="col"><button class="m-0 p-0 btn btn-sm btn-outline-danger form-control"
-              @click="reset_video(i)"><i class="bi bi-stop-btn"></i></button></div>
+          <figure class="m-0">
+            <video class="w-100 videos m-0 p-0"
+              v-bind:poster="(show_poster == true && item.upHere !== true ) ? '/images/periodic_table.jpg' : `/gifs/${encodeURIComponent(item.name.replace(/(.webm|.mp4|.mkv|.avi)/gi, '.gif'))}`"
+              @mouseover="item.upHere = true"
+              @mouseleave="item.upHere = false"
+              controls loop preload="none" >
+              <source :src="`/g?name=${encodeURIComponent(item.name)}`" type="video/mp4" />
+            </video>
+            <figcaption
+              style="font-size: small" v-if="true"
+              @mouseover="shw_nm_vd=true"
+              @mouseleave="shw_nm_vd=false"
+              class="text-break">
+              <marquee behavior="scroll" direction="left">{{ item.name }}</marquee>
+              <!-- {{ (shw_nm_vd==false) ? item.slice(0, 40) + '...' : item }} -->
+            </figcaption>
+          </figure>
         </div>
-        <figure class="">
-          <video class="w-100 videos"
-            v-bind:poster="(show_poster == true) ? '/images/periodic_table.jpg' : `/gifs/${encodeURIComponent(item.replace(/(.webm|.mp4|.mkv|.avi)/gi, '.gif'))}`"
-            controls loop preload="none">
-            <source :src="`/g?name=${encodeURIComponent(item)}`" type="video/mp4" />
-          </video>
-          <figcaption style="font-size: small" v-if="show_names" class="text-break">{{ (item.length > 15) ? item.slice(0,
-            40) + '...' : item }}</figcaption>
-        </figure>
 
       </div>
       <!-- {{ rx_array.length==0 }} -->
@@ -280,7 +301,7 @@ import Swal from 'sweetalert2';
 
       <!-- переключатель страниц -->
       <div v-if="totalpages != 1 && current_play_list == 'All'" class="mt-1 d-flex justify-content-center">
-        <nav aria-label="Page navigation mt-1 example">
+        <nav aria-label="Page navigation mt-1">
           <ul class="pagination">
             <li v-if="currentPage > 0" class="page-item"><a class="page-link" href="#"
                 @click="crumbs(currentPage - 1)">&laquo;</a></li>
@@ -320,8 +341,28 @@ import Swal from 'sweetalert2';
 </template>
 
 
-<style scoped></style>
+<style scoped>
+.page-link {
+  background-color: black;  
+  border-color: #dc3545;
+  color: #dc3545;
+}
+.page-item {
+  /* border: 2px solid red; */
+  /* border-color: red; */
+}
+.pagination {
+  /* border-color: red; */
+}
 
+.active {
+  /* background-color: aqua; */
+}
+.frame-video {
+  background-color: rgb(0, 0, 0);
+  /* padding: 10px; */
+}
+</style>
 
 
 <script>
@@ -333,7 +374,9 @@ export default {
     return {
       array_videos: [],
       currentPage: 0,
+      shw_nm_vd: true,
       url: "",
+      lock: true,
       re1: '',
       aaa: 1,
       ws: null,
@@ -364,7 +407,8 @@ export default {
       show_like_button: false,
       show_pen: false,
       edit_mode_video: false,
-      like_button_label: ''
+      like_button_label: '',
+      prev_edit_play_list: ''
     }
   },
 
@@ -481,6 +525,15 @@ export default {
 
     },
 
+    async open_addvance() {
+      this.show_extra = !this.show_extra
+      this.show_pen = false
+    },
+
+    async sdp() {
+      this.show_download_panel =! this.show_download_panel
+      this.like_button_label = ""
+    },
 
     async show_like_button_func(key) {
       this.show_like_button =! this.show_like_button;
@@ -662,7 +715,7 @@ export default {
       let rx = new RegExp(this.name)
       this.rx_array = []
       for (let i = 0; i < this.array_videos.length; i++) {
-        if (rx.test(this.array_videos[i].toLowerCase())) {
+        if (rx.test(this.array_videos[i].name.toLowerCase())) {
           this.rx_array.push(this.array_videos[i])
           console.log(this.array_videos[i])
         }

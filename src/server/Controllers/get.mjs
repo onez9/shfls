@@ -1,6 +1,6 @@
 import express from 'express'; // web-сервер
 import path, { resolve } from 'path'; // Разрешение путей
-import fs from 'fs' // доступ к файлам
+import fs, { existsSync } from 'fs' // доступ к файлам
 const router = express.Router();
 import { v4 } from 'uuid'
 import Iconv from 'iconv'
@@ -53,7 +53,13 @@ router.get('/', async (req, res) => {
 		// let name = location.assign(encodeURIComponent(req.query.name))
 		let name = req.query.name
 		// console.log(`this name: ${name}`)
-		let videoPath = path.resolve(config.folders.videos, name);
+		let dir = config.folders.videos
+		// dir = 'Share/video2'
+		// if (!existsSync(dir)) {
+		// 	dir = 'Share/video2'
+		// }
+
+		let videoPath = path.resolve(dir, name);
 		// console.log(`this name: ${videoPath}`)
 		let videoSize = fs.statSync(videoPath).size;
 		let CHUNK_SIZE = 10 ** 6;
@@ -409,10 +415,22 @@ router.get('/s', (req, res) => {
 		
 
 		try {
+
+			//console.log('check directory: ', fs.access(config.folders.videos))
+			let path = config.folders.videos
+
+			if (existsSync(path)) {
+				console.log('Всё хорошо. продолжаю загрузку!')
+			} else {
+				console.log('Директория не найдена! Изменяю директорию!')
+				path = 'Share/video2'
+
+			}
+
 			const promise = youtubedl(url, { 
-				cacheDir: config.folders.videos,
+				cacheDir: path,
 				progress: true,
-				paths: config.folders.videos
+				paths: path
 			}).then(info => {
 				console.log('This output about it')
 				console.log(info)
@@ -426,7 +444,7 @@ router.get('/s', (req, res) => {
 				estimate: 10000 // приблизительное время завершения
 			}).then(info => {
 				console.log('this is result logger: ', info)
-				console.log('this is webSocket: ', req.wsServer)
+				//console.log('this is webSocket: ', req.wsServer)
 				res.json({ 'done': url })
 				// req.wsServer.on('connection', ws => {
 					// setInterval(() => {
@@ -537,14 +555,15 @@ router.post('/', async (req, res) => {
 			let dir = config.folders.files
 			let route = config.routes.files
 
-
+			function convert(item) {
+				return {
+					name: item,
+					info: fs.statSync(path.resolve(dir, item))
+				}
+			}
 
 			fs.readdir(dir, (err, items) => {
-				function convert(item) {
-					return {
-						name: item
-					}
-				}
+
                 try {
                     if (err) console.log(err);
 					for (let i=0;i<items.length;i++) items[i]=convert(items[i])
@@ -592,7 +611,6 @@ router.post('/', async (req, res) => {
 			})
 		}
 		else if (req.body.type == 'video') {
-            
 			let dir = config.folders.videos
             let route = config.routes.videos
 			let page = parseInt(req.body.page, 10)
@@ -600,57 +618,68 @@ router.post('/', async (req, res) => {
 
 			console.log('route: ', route)
 			console.log('dir: ', dir)
+			
+			if (fs.existsSync(dir)) {
+				console.log('Всё хорошо!')
+				
+			} else {
+				console.log('Директория не найдена')
+				dir = 'Share/video2'
+			}
+			/*
+			fs.access(config.folders.videos, (error) => {
+				if (error) {
+					console.log('Директория не найдена')
+					dir = 'Share/video2'
+				} else {
+					console.log('Всё хорошо!')
+				}
+			})
+			*/
 
+			console.log(dir)
 
             fs.readdir(dir, (err, items) => {
                 try {
-                    if (err) console.log(err);
+                    if (err) { 
+						console.log(err);
+						
+					}
                     let result = Array()
                     items.forEach(item => {
 						try {
 							if (['.webm', '.avi', '.mp4', '.mkv'].indexOf(path.parse(item).ext.toLowerCase()) > -1) {
-								result.push(item)
+								result.push({
+									name: item
+								})
 							}
-
 
 						} catch (e) {
 							console.log('Вот из-за этой ошибки крашится!')
 							console.log(e)
 
-
-
 						}
-
-
-
-
 
                     })
 
-
-
 					let fromIndex = page * limit     // начальный индекс товара
 					let toIndex = page*limit + limit // конечный индекс товара
-					
 					console.log(page*limit + limit)
 					if (toIndex > result.length) {
 						toIndex = result.length
 					}
 					let productsPage = result.slice(fromIndex, toIndex)
-			
 					console.log(page, limit)
 					console.log(`fromindex: ${fromIndex}`)
 					console.log(`toIndex: ${toIndex}`)
 					// return c.JSON(http.StatusOK, productsPage)
-		
 					console.log(productsPage)
-
-
                     res.json({ "items": productsPage, "route": route, "count_videos": result.length })
                 
 				} catch (e) {
                     console.log('Ошибка тут ошибка: ', e)
                     res.json({ "items": [], "route": route, "count_videos": 0 })
+
                 }
             })
 

@@ -3,7 +3,7 @@ import Swal from 'sweetalert2';
 </script>
 
 <template>
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
             <div class="col-sm-12 parent bg-dark" id="cont1">
 

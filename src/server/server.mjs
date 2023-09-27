@@ -219,6 +219,7 @@ import downloadFile from './Controllers/download.mjs'
 import qrCode from './Controllers/qrcode.mjs'
 // import { create } from 'domain'
 import deleteFile from './Controllers/delete.mjs'
+import control from './Controllers/control.mjs'
 import { fstat } from 'fs'
 
 
@@ -234,6 +235,7 @@ app.use('/upload', uploadFile);
 app.use('/download', downloadFile);
 app.use('/del', deleteFile);
 app.use('/qr', qrCode);
+app.use('/control', control);
 
 
 console.log(__dirname)

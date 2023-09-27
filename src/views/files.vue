@@ -85,22 +85,33 @@ import Swal from 'sweetalert2';
       </div>
 
       <!-- <table id="id_table" class="table text-nowrap table-borderless table-hover"> -->
-      <table id="id_table" class="table table-borderless table-hover">
-
+      <table id="id_table" class="table table-bordered border-secondary table-hover">
+        <thead>
+          <tr>
+            <td>name</td>
+            <td>size</td>
+            <td>mdate</td>
+            <td>mtime</td>
+            <td>options</td>
+          </tr>
+        </thead>
         <tbody>
           <template @click="activeElem = element" v-for="(item, index) in array" :key="index">
             <tr>
               <!-- {{ item }} -->
               <!-- <td><button class="btn btn-danger"><i class="bi bi-file-binary-fill"></i></button></td> -->
-              <td @click="item.showmode = !item.showmode" class="w-100 align-middle text-break p-0">{{ item.name }}</td>
+              <td @click="item.showmode =! item.showmode" class="align-middle text-break p-0">{{ item.name }}</td>
+              <td class="align-middle text-break p-0">{{ parseInt(item.info.size / 1024) }} Kb</td>
+              <td class="align-middle text-break p-0">{{ item.info.mtime.split('T')[0].toString() }}</td>
+              <td class="align-middle text-break p-0">{{ item.info.mtime.split('T')[1].toString() }}</td>
               <!-- <td><img v-if="item.showmode" class="w-100" :src="`/downloads/${item.name}`" alt=""></td> -->
+              <!-- {{ item }} -->
+
 
               <td class="p-0">
                 <div class="d-flex justify-content-end">
-                  <button @click="delete_file(item)" class="btn btn-outline-info mt-1 mb-1 me-1"><i
-                      class="bi bi-recycle"></i></button>
-                  <button @click="download_file(item)" class="btn btn-info mt-1 mb-1"><i
-                      class="bi bi-download"></i></button>
+                  <button @click="delete_file(item)" class="btn btn-sm btn-outline-info mt-1 mb-1 me-1"><i class="bi bi-recycle"></i></button>
+                  <button @click="download_file(item)" class="btn btn-sm btn-info mt-1 mb-1"><i class="bi bi-download"></i></button>
                 </div>
 
               </td>
@@ -109,7 +120,7 @@ import Swal from 'sweetalert2';
             </tr>
             <tr v-if="item.showmode" class="bg-dark">
               <td>
-                  <img style="width: 100px;" class="rounded" :src="`/downloads/${item.name}`" alt="">
+                  <img style="width: 100%;" class="rounded" :src="`/downloads/${item.name}`" alt="">
               </td>
             </tr>
           </template>

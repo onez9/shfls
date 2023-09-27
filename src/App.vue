@@ -15,7 +15,7 @@ import { RouterLink, RouterView } from 'vue-router'
     <nv :theme="theme" />
 
   </header> -->
-  <header>
+  <header class=" ">
     <div class="content-header">
 
       <nav :class="{ 'navbar navbar-expand-lg navbar-light border-bottom': true, 'bg-body-tertiary': (dark) }">
@@ -156,7 +156,7 @@ import { RouterLink, RouterView } from 'vue-router'
 
 
       
-  <footer class="mt-auto border-top">
+  <footer class="mt-auto border-top ">
       
       
       <div class="container-fluid">
@@ -168,7 +168,7 @@ import { RouterLink, RouterView } from 'vue-router'
               <li class="nav-item mb-2"><a href="#" class="nav-link px-2 text-muted">Home</a></li>
               <li class="nav-item mb-2"><a href="#" class="nav-link px-2 text-muted">About</a></li>
             </ul> -->
-            <p class="text-center text-body-secondary p-0 m-0">Version: 1.8</p> 
+            <p class="text-center p-0 m-0">Version: {{ current_version }}</p> 
           </div>
   
   
@@ -205,6 +205,7 @@ export default {
     return {
       wait: false,
       dark: false,
+      current_version: '2.4.1'
     }
   },
   watch: {
