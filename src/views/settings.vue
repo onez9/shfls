@@ -4,6 +4,12 @@
 // @/compositions/composition.js;
 import { ref } from 'vue';
 import axios from 'axios';
+
+
+
+import hljs from 'highlight.js'
+import HighLight from "vue3-highlight-component";
+// import {  } from 'highlight.js/lib/languages/javascript';
 </script>
 
 <template>
@@ -77,7 +83,8 @@ import axios from 'axios';
         <button @click="run('off_db')" class="btn btn-outline-primary form-control mt-2 style_button">Выключить базу данных</button>
         <button class="btn btn-outline-danger mt-2 form-control style_button"><i class=""></i> Сохранить</button>
 
-                
+
+        <HighLight  :with-header="true" language="js" header-language="JavaScript"  :code="code"/>
       </div>
     </div>
   </div>
@@ -95,24 +102,43 @@ import axios from 'axios';
 
 
 <script>
+// hljs.registerLanguage('js', require('highlight.js/lib/languages/javascript'))
+
 export default {
   props: {
     theme: Boolean,
     wait: Boolean
   },
-  // setup(props) {
-  //     console.log('12312312342424245345345', props)
-  //     let v = ref(true)
 
-  //     return { v }
+  setup() {
+      // console.log('12312312342424245345345', props)
+      // let v = ref(true)
+
+      // return { v }
+  },
+
+  // directives: {
+  //   focus: {
+  //     // определение директивы
+  //     inserted: function (el) {
+  //       el.focus()
+  //     }
+  //   }
   // },
+  components: {
+    // highlightjs: hljsVuePlugin.component
+    HighLight
+  },
+
   data() {
     return {
       lang_select: 1,
       theme_current: false,
       user: {},
       show_path: false,
-      answer: ''
+      answer: '',
+      sourcecode: 'const str = "This sourcecode will update dynamically"',
+      code: `const hello = 'world'`
 
     }
   },
@@ -125,6 +151,9 @@ export default {
         mode: false
       }
     }
+    // Then register the languages you need
+    // hljs.registerLanguage('javascript', javascript);
+    // hljs.highlightAll()
   },
   created() {
     this.user = {

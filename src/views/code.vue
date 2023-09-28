@@ -2,69 +2,58 @@
 import { RouterLink, RouterView } from 'vue-router'
 import search from '../../Components/search.vue'
 import aesjs from 'aes-js'
+import hljs from 'highlight.js'
+import HighLight from "vue3-highlight-component";
+
+
 </script>
 <template class="bg-dark">
   <div class="row">
-    <!-- <div class="col-sm-6 mt-2 position-fixed end-0"> -->
 
-      <div class="mt-3 d-flex justify-content-center">
+
+
+    <div class="mt-3 d-flex justify-content-center">
       <nav aria-label="Page navigation mt-1 example">
-          <ul class="pagination">
-            <li v-if="currentPage > 0" class="page-item"><a class="page-link" href="#"
-                @click="changePage(currentPage - 1)">&laquo;</a></li>
-            <li v-if="currentPage > 3" class="page-item"><a class="page-link" href="#" @click="crumbs(0)">1</a></li>
-
-            <template v-for="(page, i) in totalpages">
-              <li v-if="(currentPage - 2 < page) && (currentPage + 4 > page)"
-                :class="{ 'page-item': true, 'active': (page - 1 == currentPage) }">
-                <a class="page-link" @click="changePage(page - 1)" href="#">{{ page }}</a>
-                <!-- <a v-else class="page-link" @click="crumbs(page-1)" href="#"></a> -->
-              </li>
-              <!-- {{ func(page) }} -->
-              <!-- {{ (4+totalpages-3)/2 }} -->
-              <!-- <li v-if="page==Number((4+totalpages-3)/2)" class="page-item">
-                <a class="page-link">...</a>
-              </li> -->
-              <!-- <li class="page-item" v-if="check">
-                <a class="page-link" href="#">...</a>
-              </li> -->
-            </template>
-
-
-
-            <li v-if="currentPage < totalpages - 4" class="page-item">
-              <a class="page-link" href="#" @click="changePage(totalpages - 1)">
-                {{ totalpages }}
-              </a>
+        <ul class="pagination">
+          <li v-if="currentPage > 0" class="page-item"><a class="page-link" href="#"
+              @click="changePage(currentPage - 1)">&laquo;</a></li>
+          <li v-if="currentPage > 3" class="page-item"><a class="page-link" href="#" @click="crumbs(0)">1</a></li>
+          <template v-for="(page, i) in totalpages">
+            <li v-if="(currentPage - 2 < page) && (currentPage + 4 > page)"
+              :class="{ 'page-item': true, 'active': (page - 1 == currentPage) }">
+              <a class="page-link" @click="changePage(page - 1)" href="#">{{ page }}</a>
             </li>
-            <!-- <li v-if="currentPage==totalpages-2" class="page-item"><a class="page-link" href="#" @click="crumbs(currentPage+1)">{{ currentPage }}</a></li> -->
-            <li v-if="currentPage < totalpages - 1" class="page-item"><a class="page-link" href="#"
-                @click="changePage(currentPage + 1)">&raquo;</a></li>
-          </ul>
-        </nav>
+          </template>
+          <li v-if="currentPage < totalpages - 4" class="page-item">
+            <a class="page-link" href="#" @click="changePage(totalpages - 1)">
+              {{ totalpages }}
+            </a>
+          </li>
+          <li v-if="currentPage < totalpages - 1" class="page-item"><a class="page-link" href="#"
+              @click="changePage(currentPage + 1)">&raquo;</a></li>
+        </ul>
+      </nav>
 
 
 
 
     </div>
+    <div class="col-sm-6" style="background-color: #151313;">
+      <span class="tooltiptext">{{ tmp.split('/').slice(-1)[0] }}</span>
+      <HighLight class="m-0 p-0" style="font-size: small;" :with-header="false" language="cpp" :code="code" />
 
+    </div>
 
     <div class="col-sm-6">
 
-      <div class="col-12 input-group mb-2 mt-2">
-        <span class="input-group-text" id=""><i class="bi bi-search"></i></span>
-        <input type="text" placeholder="Поиск файлов" class="form-control p-2" v-on:input="searching" v-model="name">
-        <button @click="name=''; rx_files=files" class="input-group-text" id=""><i class="bi bi-backspace"></i></button>
-      </div>
 
 
-      <table class="table mt-2">
-      <!-- <table class="table table-hover table-bordered border-info mt-2"> -->
+      <table class="table m-0 p-0">
+        <!-- <table class="table table-hover table-bordered border-info mt-2"> -->
         <tbody>
-          <tr v-for="(item, i) in rx_files" :key="i" class="m-0 p-0 r1" >
-            <!-- <td class="m-0 ps-3 pt-0 pb-0 pe-0">{{ i }}</td> -->
-            <td>{{ item.split('/').slice(-1)[0] }}</td>
-            <td><button class="btn btn-warning btn-sm ms-auto" @click="open_file(item); tmp=item">Открыть</button></td>
+          <tr v-for="(item, i) in rx_files" :key="i">
+            <td class="m-0 p-0 pb-1 mx-0 bg-secondary"><button class="btn btn-outline-warning btn-sm" @click="open_file(item); tmp = item">Открыть</button></td>
+            <td class="m-0 p-0 pb-1">{{ item.split('/').slice(-1)[0] }}</td>
 
           </tr>
         </tbody>
@@ -73,22 +62,6 @@ import aesjs from 'aes-js'
     </div>
 
 
-    <div class="col-sm-6 mt-2 end-0">
-      <!-- <table class="table table-dark w-100" style="font-size: 12px;">
-        <tbody>
-          <tr v-for="(item, i) in code.split('\n')" :key="i">
-            <td class="m-0 p-0 pe-2">{{ i+1 }}</td>
-            <td style="color: rgb(135, 255, 135)" class="m-0 p-0"><pre style="display: block;" class="h-100 m-0 p-0 bg-dark border border-0">{{ item }}</pre></td>
-          </tr>
-        </tbody>
-      </table> -->
-
-        <textarea id='txa1' class='form-control p-0 textbox border border-1 rounded-0' name="test" cols="30" rows="10">{{ code }}</textarea>
-        <span class="tooltiptext">{{ tmp.split('/').slice(-1)[0] }}</span>
-
-    
-    
-    </div>
 
 
 
@@ -99,18 +72,20 @@ import aesjs from 'aes-js'
 
 
 <style scoped>
-body{
+body {
   background-color: black;
 }
 
-table:hover{
+table:hover {
   background-origin: red;
 }
+
 .textbox {
   /* height: 100vh; */
   /* height: 80vh; */
   height: 80vh;
 }
+
 .parent1 {
   /* position: fixed; */
   /* overflow: auto; */
@@ -121,7 +96,7 @@ textarea {
 
   font-size: 10px;
   border-radius: 10px;
-  
+
   /* overflow:auto; */
   /* direction:rtl; */
   /* transform: scaleX(-1);  */
@@ -131,14 +106,25 @@ textarea {
 </style>
 <script>
 
-window.addEventListener('scroll', function() {
-  // document.getElementById('showScroll').innerHTML = pageYOffset + 'px';
-  // alert('hello')
-  // document.getElementById('txa1').outerHTML = pageYOffset + 'px';
-});
+// window.addEventListener('scroll', function() {
+//   // document.getElementById('showScroll').innerHTML = pageYOffset + 'px';
+//   // alert('hello')
+//   // document.getElementById('txa1').outerHTML = pageYOffset + 'px';
+// });
 
 
 export default {
+  setup() {
+    // console.log('12312312342424245345345', props)
+    // let v = ref(true)
+
+    // return { v }
+  },
+  components: {
+    HighLight
+
+  },
+
   data() {
     return {
       currentPage: 0,
@@ -165,9 +151,7 @@ export default {
   async mounted() {
     await this.get_code()
   },
-  components: {
-    // search
-  },
+
   methods: {
     async f1(page) {
       alert(page)
@@ -208,7 +192,7 @@ export default {
         },
         body: JSON.stringify({ 'p': file })
       })
-      
+
       this.code = (await response.json())['p']
     },
     async get_code() {
@@ -228,8 +212,8 @@ export default {
       const res = (await response.json())
       this.files = res['items']
       this.totalpages = Math.ceil(res['count_files'] / properties.limit)
-      
-      this.rx_files=this.files.slice(0)
+
+      this.rx_files = this.files.slice(0)
       // this.rx_array=[]
       // this.array_videos=[]
       // await this.g()

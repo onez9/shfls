@@ -85,7 +85,7 @@ import Swal from 'sweetalert2';
       </div>
 
       <!-- <table id="id_table" class="table text-nowrap table-borderless table-hover"> -->
-      <table id="id_table" class="table table-bordered border-secondary table-hover">
+      <table id="id_table" class="table table-hover">
         <thead>
           <tr>
             <td>name</td>

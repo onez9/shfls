@@ -270,23 +270,30 @@ import Swal from 'sweetalert2';
             <div v-if="current_play_list == 'All'" class="col"><button class="m-0 p-0 btn btn-sm btn-outline-danger form-control" @click="add_to_like(item.name)"><i
                   class="bi bi-heart"></i> {{ like_button_label }}</button>
             </div>
-            <div class="col"><button @click="delete_from_albom(i)" class="m-0 p-0 btn btn-sm btn-outline-secondary form-control">Убрать</button></div>
+            <div class="col"><button @click="delete_from_albom(i)" class="m-0 p-0 btn btn-sm btn-outline-secondary form-control"><i class="bi bi-x"></i></button></div>
             <div class="col"><button class="m-0 p-0 btn btn-sm btn-outline-danger form-control"
                 @click="reset_video(i)"><i class="bi bi-stop-btn"></i></button></div>
+            <div class="col"><button class="m-0 p-0 btn btn-sm btn-outline-danger form-control"
+                @click="play_video(i)"><i class="bi bi-play-btn"></i></button></div>
           </div>
           <figure class="m-0">
             <video class="w-100 videos m-0 p-0"
               v-bind:poster="(show_poster == true && item.upHere !== true ) ? '/images/periodic_table.jpg' : `/gifs/${encodeURIComponent(item.name.replace(/(.webm|.mp4|.mkv|.avi)/gi, '.gif'))}`"
               @mouseover="item.upHere = true"
               @mouseleave="item.upHere = false"
-              controls loop preload="none" >
+              loop preload="none" 
+              controls="controls">
               <source :src="`/g?name=${encodeURIComponent(item.name)}`" type="video/mp4" />
             </video>
+            <!-- <figcaption>
+              <label id="timer" for="progress" role="timer"></label>
+              <progress id="progress" max="100" value="0">Progress</progress>
+            </figcaption> -->
             <figcaption
               style="font-size: small" v-if="true"
               @mouseover="shw_nm_vd=true"
               @mouseleave="shw_nm_vd=false"
-              class="text-break">
+              class="text-break ms-auto">
               <marquee behavior="scroll" direction="left">{{ item.name }}</marquee>
               <!-- {{ (shw_nm_vd==false) ? item.slice(0, 40) + '...' : item }} -->
             </figcaption>
@@ -362,10 +369,44 @@ import Swal from 'sweetalert2';
   background-color: rgb(0, 0, 0);
   /* padding: 10px; */
 }
+
+/* audio::-webkit-media-controls-timeline,
+video::-webkit-media-controls-timeline {
+    display: none;
+}
+audio::-webkit-media-controls,
+video::-webkit-media-controls {
+    display: none;
+}
+
+
+progress[value]::-webkit-progress-value {
+  background-image: linear-gradient(
+    to right,
+    #ff8a00, #e52e71
+  );
+  transition: width 1s linear;
+} */
+
+
 </style>
 
 
 <script>
+
+// const progress = document.getElementById("progress");
+// const timer = document.getElementById( "timer" );
+
+// function progressLoop() {
+//   setInterval(function () {
+//     progress.value = Math.round((video.currentTime / video.duration) * 100);
+//     timer.innerHTML = Math.round(video.currentTime) + " seconds";
+//   });
+// }
+
+// progressLoop();
+
+
 export default {
   setup() {
     alert('hello')
@@ -417,10 +458,9 @@ export default {
 
 
   },
-  async mounted() {
 
+  async mounted() {
     console.log('Выполнился метод: mounted')
-    // alert('helllo')
     if (window.localStorage.getItem('url_list') == null) {
       window.localStorage.setItem('url_list', JSON.stringify([]));
 
@@ -434,10 +474,6 @@ export default {
     await this.g()
 
     if (window.localStorage.getItem('lst_ply_lst') == null) {
-      // const obj = {
-      //   name: 'default',
-      //   videos: this.rx_array
-      // }
       window.localStorage.setItem('lst_ply_lst', JSON.stringify(Array.from((new Map()).entries()))); // записываем словарь в локальное хранилище
 
     }
@@ -554,6 +590,10 @@ export default {
 
 
     },
+    async play_video(index) {
+      let pls = document.getElementsByClassName('videos');
+      pls[index].play();
+    },
 
     async reset_video(index) {
       let pls = document.getElementsByClassName('videos');
@@ -617,7 +657,7 @@ export default {
 
       console.log(name_of_video)
       let tmp = new Map(JSON.parse(window.localStorage.getItem('lst_ply_lst')));
-      tmp.get(this.like_button_label).videos.push(name_of_video)
+      tmp.get(this.like_button_label).videos.push({name: name_of_video})
 
       // console.log(this.play_list_array.get())
       window.localStorage.setItem('lst_ply_lst', JSON.stringify(Array.from(tmp.entries()))); 

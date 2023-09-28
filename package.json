@@ -31,6 +31,7 @@
     "execa": "^7.1.1",
     "express": "^4.18.2",
     "express-fileupload": "^1.4.0",
+    "highlight.js": "^11.8.0",
     "http": "^0.0.1-security",
     "iconv": "^3.0.1",
     "jsdom": "^22.0.0",
@@ -46,6 +47,7 @@
     "uuid": "^9.0.0",
     "vue": "^3.2.47",
     "vue-router": "^4.1.6",
+    "vue3-highlight-component": "^0.3.4",
     "webpack": "^5.88.1",
     "ws": "^8.13.0",
     "youtube-dl-exec": "^2.4.1"

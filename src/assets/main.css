@@ -1,7 +1,7 @@
 @import '../../public/assets/bootstrap/dist/css/bootstrap.css';
 @import '../../public/assets/bootstrap-icons/font/bootstrap-icons.css';
 
-
+@import '../../node_modules/highlight.js/styles/panda-syntax-dark.css';
 
 
 /* 

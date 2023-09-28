@@ -27,16 +27,6 @@ import { RouterLink, RouterView } from 'vue-router'
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <!-- {{ dark }} -->
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-
-
-
-
-              
-              <!-- <li class="nav-item"> -->
-              <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
-              <!-- <router-link class="nav-link" to="/"><i class="bi-house"></i> Главная</router-link> -->
-              <!-- <router-link class="nav-link" to="/"><i class="bi bi-globe"></i></router-link> -->
-              <!-- </li> -->
               <li class="nav-item">
                 <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
                 <router-link class="nav-link" to="/g/files"><i class="bi bi-card-list"></i> Файлы</router-link>
@@ -56,24 +46,22 @@ import { RouterLink, RouterView } from 'vue-router'
                       Картинки</router-link>
                   </li>
                   <li><router-link class="dropdown-item" to="/g/videos">
-                    <!-- <i class="bi bi-play-circle"></i> -->
+                      <!-- <i class="bi bi-play-circle"></i> -->
                       Видео</router-link>
                   </li>
                   <li><router-link class="dropdown-item" to="/g/musics">
-                    <!-- <i class="bi bi-music-player"></i> -->
+                      <!-- <i class="bi bi-music-player"></i> -->
                       Музыка</router-link></li>
                   <li><router-link class="dropdown-item" to="/g/books">
-                    <!-- <i class="bi bi-book"></i>  -->
-                    Книги</router-link></li>
+                      <!-- <i class="bi bi-book"></i>  -->
+                      Книги</router-link></li>
                   <li><router-link class="dropdown-item" to="/g/works">
-                    <!-- <i class="bi bi-person-workspace"></i> -->
+                      <!-- <i class="bi bi-person-workspace"></i> -->
                       Работа</router-link></li>
-                  <li>
-                    <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
+                  <!-- <li>
                     <router-link class="dropdown-item" to="/g/lang">
-                      <!-- <i class="bi bi-translate"></i>  -->
                       Язык</router-link>
-                  </li>
+                  </li> -->
 
                   <li>
                     <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
@@ -85,7 +73,7 @@ import { RouterLink, RouterView } from 'vue-router'
                     <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
                     <router-link class="dropdown-item" to="/g/code">
                       <!-- <i class="bi bi-terminal-fill"></i>  -->
-                      Code</router-link>
+                      Программирование</router-link>
                   </li>
                   <li>
                     <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
@@ -101,7 +89,7 @@ import { RouterLink, RouterView } from 'vue-router'
                   </li>
                   <li>
                     <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
-                    <router-link class="dropdown-item" to="/g/chemistry"> 
+                    <router-link class="dropdown-item" to="/g/chemistry">
                       Химия</router-link>
                   </li>
 
@@ -117,22 +105,18 @@ import { RouterLink, RouterView } from 'vue-router'
                 </ul>
               </li>
 
-              <!-- <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                aria-expanded="false"><i class="bi bi-gear-wide-connected"></i> Настройки </a>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#" @click="theme = 'dark'"><i
-                      class="bi bi-brightness-alt-low"></i>Тёмная</a></li>
-                <li><a class="dropdown-item" href="#" @click="theme = 'white'"><i
-                      class="bi bi-brightness-alt-low-fill"></i>Светлая</a></li>
-              </ul>
-            </li> -->
-              <!-- <li class="nav-item">
-              <router-link class="nav-link" to="/g/search"><i class="bi bi-search-heart"></i> поиск</router-link>
-            </li> -->
-
+              <li class="nav-item my-auto">
+                <div class="input-group">
+                  <span class="input-group-text" id=""><i class="bi bi-search"></i></span>
+                  <input type="text" placeholder="Поиск файлов" class="form-control" v-on:input="searching"
+                    v-model="name">
+                  <button @click="name = ''; rx_files = files" class="input-group-text" id=""><i class="bi bi-backspace"></i></button>
+                </div>
+              </li>
 
             </ul>
+
+
             <div class="d-flex ">
               <a class="" href="#"><i class="bi bi-box-arrow-in-right"></i> Войти</a>
             </div>
@@ -155,27 +139,27 @@ import { RouterLink, RouterView } from 'vue-router'
 
 
 
-      
-  <footer class="mt-auto border-top ">
-      
-      
-      <div class="container-fluid">
-        <div class="row">
-          
-          <div class="col">
 
-            <!-- <ul class="nav justify-content-center border-bottom">
+  <footer class="mt-auto border-top ">
+
+
+    <div class="container-fluid">
+      <div class="row">
+
+        <div class="col">
+
+          <!-- <ul class="nav justify-content-center border-bottom">
               <li class="nav-item mb-2"><a href="#" class="nav-link px-2 text-muted">Home</a></li>
               <li class="nav-item mb-2"><a href="#" class="nav-link px-2 text-muted">About</a></li>
             </ul> -->
-            <p class="text-center p-0 m-0">Version: {{ current_version }}</p> 
-          </div>
-  
-  
+          <p class="text-center p-0 m-0">Version: {{ current_version }}</p>
         </div>
-    
+
+
       </div>
-    </footer>
+
+    </div>
+  </footer>
 
   <!-- <footer>
 
@@ -231,7 +215,7 @@ export default {
 
   methods: {
     async someFunc(isDark) {
-      this.dark=isDark
+      this.dark = isDark
       console.log(isDark)
     }
   }
