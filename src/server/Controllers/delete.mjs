@@ -30,8 +30,13 @@ router.delete('/', (req, res) => {
 
         console.log('Патч удаленного файла: ', del_path)
         fs.unlink(del_path, err => {
-            if (err) console.log(err)
-            else console.log('nice')
+            if (err) {
+                console.log(err)
+                res.json({result: 'fail'})
+            } else { 
+                console.log('файл удалён')
+                res.json({result: 'success'})
+            }
         })
         // res.sendFile(filename, options, function(err){
         //     if (err) console.log(err)

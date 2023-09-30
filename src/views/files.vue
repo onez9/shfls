@@ -8,18 +8,13 @@ import Swal from 'sweetalert2';
       <!-- <div class="row"> -->
       <!-- <label for="id_upload">Загрузить новый файл</label> -->
       <input id="id_upload" title="это подсказка для тебя" name="file" type="file"
-        class="form-control mb-1 mt-1 bg-dark text-white" multiple>
+        class="form-control my-2 bg-dark text-white" multiple>
       <!-- <progress id="progressBar" value="0" max="100" class="form-control mt-2"></progress> -->
 
-      <div class="progress mb-1" v-if="this.proccess_value!==0">
-        <div 
-          class="progress-bar progress-bar-striped progress-bar-animated" 
-          role="progressbar" 
-          aria-label="Example with label" 
-          :aria-valuenow="proccess_value"
-          aria-valuemin="0" 
-          aria-valuemax="100" 
-          id="progressBar" :style="'width: ' + proccess_value +'%;'"> {{ proccess_value }}%
+      <div class="progress my-2" v-if="this.proccess_value !== 0">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+          aria-label="Example with label" :aria-valuenow="proccess_value" aria-valuemin="0" aria-valuemax="100"
+          id="progressBar" :style="'width: ' + proccess_value + '%;'"> {{ proccess_value }}%
 
         </div>
       </div>
@@ -81,12 +76,18 @@ import Swal from 'sweetalert2';
             Скрыть
           </button>
         </div>
+        <div class="col-sm">
+          <button class="btn btn-outline-danger mb-1 w-100" @click="show_info = !show_info">
+            <i class="bi bi-list"></i>
+          </button>
+          <!-- <button @click="send_on_download" class="btn btn-info mb-3">Стандартная папка</button> -->
+        </div>
 
       </div>
 
       <!-- <table id="id_table" class="table text-nowrap table-borderless table-hover"> -->
       <table id="id_table" class="table table-hover">
-        <thead>
+        <thead v-if="show_info">
           <tr>
             <td>name</td>
             <td>size</td>
@@ -96,37 +97,41 @@ import Swal from 'sweetalert2';
           </tr>
         </thead>
         <tbody>
-          <template @click="activeElem = element" v-for="(item, index) in array" :key="index">
+          <template @click="activeElem = element" v-for="(item, index) in  array " :key="index">
             <tr>
               <!-- {{ item }} -->
               <!-- <td><button class="btn btn-danger"><i class="bi bi-file-binary-fill"></i></button></td> -->
-              <td @click="item.showmode =! item.showmode" class="align-middle text-break p-0">{{ item.name }}</td>
-              <td class="align-middle text-break p-0">{{ parseInt(item.info.size / 1024) }} Kb</td>
-              <td class="align-middle text-break p-0">{{ item.info.mtime.split('T')[0].toString() }}</td>
-              <td class="align-middle text-break p-0">{{ item.info.mtime.split('T')[1].toString() }}</td>
+              <td @click="item.showmode = !item.showmode" class="align-middle text-break p-0">{{ item.name }}</td>
+              <td v-if="show_info" class="align-middle text-break p-0">{{ parseInt(item.info.size / 1024) }} Kb</td>
+              <td v-if="show_info" class="align-middle text-break p-0">{{ item.info.mtime.split('T')[0].toString() }}</td>
+              <td v-if="show_info" class="align-middle text-break p-0">{{ item.info.mtime.split('T')[1].toString() }}</td>
               <!-- <td><img v-if="item.showmode" class="w-100" :src="`/downloads/${item.name}`" alt=""></td> -->
               <!-- {{ item }} -->
 
 
               <td class="p-0">
                 <div class="d-flex justify-content-end">
-                  <button @click="delete_file(item)" class="btn btn-sm btn-outline-info mt-1 mb-1 me-1"><i class="bi bi-recycle"></i></button>
-                  <button @click="download_file(item)" class="btn btn-sm btn-info mt-1 mb-1"><i class="bi bi-download"></i></button>
+                  <button @click="delete_file(item)" class="btn btn-sm btn-outline-info mt-1 mb-1 me-1"><i
+                      class="bi bi-recycle"></i></button>
+                  <button @click="download_file(item.name)" class="btn btn-sm btn-outline-danger mt-1 mb-1"><i
+                      class="bi bi-download"></i></button>
                 </div>
 
               </td>
 
 
             </tr>
-            <tr v-if="item.showmode" class="bg-dark">
-              <td>
-                  <img style="width: 100%;" class="rounded" :src="`/downloads/${item.name}`" alt="">
-              </td>
+            <tr v-if="item.showmode && ['png', 'jpg', 'jpeg', 'gif'].indexOf(item.name.split('.').reverse()[0]) > -1" class="bg-dark">
+              
+              <img loading="lazy" style="width: 100%;" class="rounded" :src="`/downloads/${item.name}`" alt="">
+              
             </tr>
           </template>
         </tbody>
       </table>
-      <div class="d-flex justify-content-center"><p v-if="array.length==0">Файлов не обнаружено</p></div>
+      <div class="d-flex justify-content-center">
+        <p v-if=" array.length == 0 ">Файлов не обнаружено</p>
+      </div>
 
 
     </div>
@@ -162,7 +167,8 @@ export default {
       ws: null,
       item1: true,
       proccess_value: 0,
-      value: 1
+      value: 1,
+      show_info: false
     }
   },
   created() {
@@ -206,7 +212,9 @@ export default {
     async show_all_pic() {
       // console.log(item)
       for (let i = 0; i < this.array.length; i++) {
-        this.array[i].showmode = this.item1;
+        if (['png', 'jpg', 'jpeg', 'gif'].indexOf(this.array[i].name.split('.').reverse()[0]) > -1) {
+          this.array[i].showmode = this.item1;
+        }
       }
       this.item1 = !this.item1
       console.log(this.item1)
@@ -282,23 +290,34 @@ export default {
     },
 
     async delete_file(item) {
-      console.log('this name is name: ', item)
-      console.log('this with a indexOf: ', this.array.indexOf(item))
+      // console.log('this name is name: ', item)
+      // console.log('this with a indexOf: ', this.array.indexOf(item))
+      
       let index = this.array.map(item => item.name).indexOf(item.name)
-      console.log('1: ', this.array)
+      
+      
+      // console.log('this.array: ', this.array)
+      // console.log('this.array.map(item => item.name): ', this.array.map(item => item.name))
+      // console.log('this.array.map(item => item.name).indexOf(item.name): ', this.array.map(item => item.name).indexOf(item.name))
+
+
+      // console.log('1: ', this.array)
       if (index > -1) {
         this.array.splice(index, 1)
+      
+        const response = await fetch(`/del?name=${item.name}`, {
+          // const response = await fetch('/download', {
+          method: 'DELETE',
+          // credentials: 'include',
+          // headers: {
+          //     'Content-Type': 'application/json',
+          // },
+          // body: JSON.stringify({name: name})
+        })
+
+        console.log(await response.json())
       }
-      const response = await fetch(`/del?name=${item.name}`, {
-        // const response = await fetch('/download', {
-        method: 'DELETE',
-        // credentials: 'include',
-        // headers: {
-        //     'Content-Type': 'application/json',
-        // },
-        // body: JSON.stringify({name: name})
-      })
-      console.log('2: ', this.array)
+      // console.log('2: ', this.array)
       // console.log('123,', this.array.indexOf(name))
       // await this.g();
     },
@@ -373,7 +392,7 @@ export default {
 
 
       await ((method, url) => {
-        return new Promise( (resolve, reject) => {
+        return new Promise((resolve, reject) => {
           let formData = new FormData()
           let files = document.querySelector('input[type="file"]').files
           for (var i = 0; i < files.length; i++) {

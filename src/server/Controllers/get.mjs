@@ -668,7 +668,8 @@ router.post('/', async (req, res) => {
 					if (toIndex > result.length) {
 						toIndex = result.length
 					}
-					let productsPage = result.slice(fromIndex, toIndex)
+					
+					let productsPage = (req.body.flag)? result : result.slice(fromIndex, toIndex)
 					console.log(page, limit)
 					console.log(`fromindex: ${fromIndex}`)
 					console.log(`toIndex: ${toIndex}`)

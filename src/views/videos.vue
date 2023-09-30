@@ -16,8 +16,8 @@ import Swal from 'sweetalert2';
         <button :class="{ 'btn btn-outline-danger form-control mt-1': true }" @click="sendMessage()">WebSocket</button>
       </div> -->
 
-      <div class="col mb-1 mt-1">
-        <button class="btn btn-outline-danger form-control mt-1" @click="show_poster_func"
+      <div class="col mb-1 mt-1 m-0 p-0 me-sm-2">
+        <button class="btn btn-sm btn-outline-danger form-control mt-1" @click="show_poster_func"
           title="Показывает\Скрывает постеры на видео"><i class="bi bi-emoji-heart-eyes"></i></button>
       </div>
 
@@ -25,27 +25,7 @@ import Swal from 'sweetalert2';
 
 
       <!-- {{ name_of_play_list }} -->
-      <div class="col mb-1 mt-2">
-        <div class="btn-group form-control p-0">
-          <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"
-            aria-expanded="false">
-            <i class="bi bi-list-stars"></i> {{ current_play_list }}
-            <!-- <span class="visually-hidden">Toggle Dropdown</span> -->
-          </button>
-          <!-- {{play_list_array}} -->
-          <ul class="dropdown-menu">
-            <li @click="rx_array = array_videos; current_play_list = 'All'"><a class="dropdown-item">All</a></li>
 
-            
-            <li @click="select_play(item)" v-for="(item, index) in play_list_array" :key="item">
-              <!-- {{ item }} -->
-              <a class="dropdown-item" href="#">
-                {{ item[0] }}
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
       <!-- {{  play_list_array }} -->
       <!-- <div class="col mb-1 mt-1">
         <button :class="{'btn btn-secondary form-control mt-1': true, 'btn-success': (aaa>0)}" @click="sorting"><i class="bi bi-filter"></i></button>
@@ -67,18 +47,7 @@ import Swal from 'sweetalert2';
 
 
 
-      <!-- количество столбцов -->
-      <div class="col-sm mb-1 mt-1">
-        <!-- <input type="number" class="form-control mt-1" min="1" max="4"> -->
-        <select v-model="selected" class="form-select mt-1 bg-dark text-white" name="" title="Количество столбцов">
-          <option value="1">One</option>
-          <option value="2">Two</option>
-          <option value="3">Three</option>
-          <option value="4">Four</option>
-          <option value="6">Six</option>
-          <option value="12">Twelve</option>
-        </select>
-      </div>
+
 
 
 
@@ -86,21 +55,11 @@ import Swal from 'sweetalert2';
         <button :class="{'btn btn-secondary form-control mt-1': true, 'btn-success': (show_poster==true)}" @click="show_poster_func"><i class="bi bi-stickies-fill"></i> {{ button_text_poster }}</button>
       </div> -->
 
-      <!-- количество видео на одной странице -->
-      <div class="col-sm mb-1 mt-1">
-        <select @change="change_count" v-model="video_values" class="form-select mt-1 bg-dark text-white" name=""
-          title="Количество видео на одной странице">
-          <option value="5">5</option>
-          <option value="10">10</option>
-          <option value="15">15</option>
-          <option :value="totalvideos">{{ totalvideos }}</option>
 
-        </select>
-      </div>
       <!-- {{ video_values }} -->
 
-      <div class="col-sm mb-1 mt-2">
-        <button @click="open_addvance" class="btn btn-outline-danger form-control" title="Дополнительно">
+      <div class="col-sm mb-1 mt-2 m-0 p-0">
+        <button @click="open_addvance" class="btn btn-sm btn-outline-danger form-control" title="Дополнительно">
           <i class="bi bi-list"></i>
         </button>
       </div>
@@ -108,18 +67,20 @@ import Swal from 'sweetalert2';
     </div>
     <div class="row">
 
-      <div v-if="show_extra">
+      <div v-if="show_extra" class="col-sm p-0 m-0">
         <div class="col-sm mb-1 mt-2">
           <button @click="show_playlist = !show_playlist"
-            :class="{ 'btn btn-outline-danger form-control': true, 'btn btn-outline-success': (show_playlist == true) }"
+            :class="{ 'btn btn-sm btn-outline-danger form-control': true, 'btn btn-outline-success': (show_playlist == true) }"
             title="Создать новый плейлист">
             <i class="bi bi-folder-plus"></i>
           </button>
         </div>
         <div v-if="show_playlist == true" class="col-sm mt-2 mb-2 ">
           <div class="input-group ">
-            <input class="form-control border border-outline-primary" id="name_list" placeholder="Название плейлиста" v-model="name_of_play_list">
-            <button @click="name_of_play_list = ''" class="input-group-text" id=""><i class="bi bi-backspace"></i></button>
+            <input class="form-control border border-outline-primary" id="name_list" placeholder="Название плейлиста"
+              v-model="name_of_play_list">
+            <button @click="name_of_play_list = ''" class="input-group-text" id=""><i
+                class="bi bi-backspace"></i></button>
           </div>
           <button class="btn btn-outline-primary mt-2 form-control"
             @click="create_new_play_playlist(name_of_play_list)">Создать</button>
@@ -128,8 +89,7 @@ import Swal from 'sweetalert2';
 
         <!-- панель загрузки -->
         <div class="col-sm mb-1 mt-1">
-          <button @click="sdp" class="btn form-control mt-1 btn-outline-danger"
-            title="youtube-dl/search">
+          <button @click="sdp" class="btn btn-sm form-control mt-1 btn-outline-danger" title="youtube-dl/search">
             <i class="bi bi-download"></i>
           </button>
         </div>
@@ -146,8 +106,8 @@ import Swal from 'sweetalert2';
             <div v-for="(item, i) in batch_list" :key="item"
               class="alert alert-info text-primary d-flex align-items-center mb-1 ps-2" role="alert">
               <div>{{ item }}</div>
-              <button class="btn btn-outline-info ms-auto me-1">Отменить</button>
-              <button class="btn btn-outline-danger">
+              <button class="btn btn-sm btn-outline-info ms-auto me-1">Отменить</button>
+              <button class="btn btn-sm btn-outline-danger">
                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>%
               </button>
               <!-- <i class="bi bi-x-diamond"></i> -->
@@ -155,18 +115,17 @@ import Swal from 'sweetalert2';
           </div>
           <!-- очистить стек загружаемых видео -->
           <div class="col-sm-12 mb-1 mt-1">
-            <button class="btn btn-outline-danger form-control mt-1" @click="clean"
+            <button class="btn btn-sm btn-outline-danger form-control mt-1" @click="clean"
               title="Очистить буффер от загружаемых видео">clean</button>
           </div>
         </div>
 
         <div class="col-sm mb-1 mt-1">
-          <button @click="show_pen =! show_pen" class="btn form-control mt-1 btn-outline-danger"
-            title="Редактировать play list">
+          <button @click="show_pen = !show_pen" class="btn btn-sm form-control mt-1 btn-outline-danger" title="Редактировать play list">
             <i class="bi bi-pen"></i>
           </button>
         </div>
-        
+
         <div v-if="show_pen" class="col-sm mt-2 ">
           <table class="table table-hover mb-0">
             <tbody>
@@ -174,24 +133,75 @@ import Swal from 'sweetalert2';
                 <td>{{ item[0] }}</td>
                 <td class="">
                   <div class="d-flex justify-content-end">
-                    <button @click="delete_albom(item[0])" v-if="item[1].edit_mode_video" class="btn btn-outline-info"><i class="bi bi-x"></i></button>
-                    <button @click="show_like_button_func(item[0])" v-if="item[1].edit_mode_video" class="btn btn-outline-info ms-1"><i class="bi bi-plus-circle-dotted"></i></button>
-                    <button @click="edit_item(item[1])" class="btn btn-outline-info ms-1"><i class="bi bi-pencil"></i></button>
+                    <button @click="delete_albom(item[0])" v-if="item[1].edit_mode_video" class="btn btn-outline-info"><i
+                        class="bi bi-x"></i></button>
+                    <button @click="show_like_button_func(item[0])" v-if="item[1].edit_mode_video"
+                      class="btn btn-outline-info ms-1"><i class="bi bi-plus-circle-dotted"></i></button>
+                    <button @click="edit_item(item[1])" class="btn btn-outline-info ms-1"><i
+                        class="bi bi-pencil"></i></button>
                   </div>
                 </td>
               </tr>
             </tbody>
           </table>
-          <p v-if="play_list_array.size==0" class="text-center mb-2 p-0">Тут пока ничего нет {{ play_list_array.size }}</p>
+          <p v-if="play_list_array.size == 0" class="text-center mb-2 p-0">Тут пока ничего нет {{ play_list_array.size }}
+          </p>
         </div>
 
 
 
 
         <div class="col mb-1 mt-1">
-          <button @click="lock =! lock" class="btn btn-outline-danger form-control mt-1" title="Зашифровать/Расшифровать"><i :class="{ 'bi bi-lock': true, 'bi bi-unlock': (lock) }"></i></button>
+          <button @click="lock = !lock" class="btn btn-sm btn-outline-danger form-control mt-1"
+            title="Зашифровать/Расшифровать"><i :class="{ 'bi bi-lock': true, 'bi bi-unlock': (lock) }"></i></button>
         </div>
 
+        <!-- количество видео на одной странице -->
+        <div class="col-sm mb-1 mt-1">
+          <select @change="change_count" v-model="video_values" class="form-select mt-1 bg-dark text-white" name=""
+            title="Количество видео на одной странице">
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option :value="totalvideos">{{ totalvideos }}</option>
+
+          </select>
+        </div>
+
+        <!-- количество столбцов -->
+        <div class="col-sm mb-1 mt-1">
+          <!-- <input type="number" class="form-control mt-1" min="1" max="4"> -->
+          <select v-model="selected" class="form-select mt-1 bg-dark text-white" name="" title="Количество столбцов">
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+            <option value="4">Four</option>
+            <option value="6">Six</option>
+            <option value="12">Twelve</option>
+          </select>
+        </div>
+
+        <div class="col mb-1 mt-2">
+          <div class="btn-group form-control p-0">
+            <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              <i class="bi bi-list-stars"></i> {{ current_play_list }}
+              <!-- <span class="visually-hidden">Toggle Dropdown</span> -->
+            </button>
+            <!-- {{play_list_array}} -->
+            <ul class="dropdown-menu">
+              <li @click="rx_array = array_videos; current_play_list = 'All'"><a class="dropdown-item">All</a></li>
+
+
+              <li @click="select_play(item)" v-for="(item, index) in play_list_array" :key="item">
+                <!-- {{ item }} -->
+                <a class="dropdown-item" href="#">
+                  {{ item[0] }}
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
 
       </div>
 
@@ -200,14 +210,17 @@ import Swal from 'sweetalert2';
 
 
 
-      <div class="col-sm-12 input-group mb-2 mt-2">
+      <div class="col-sm-12 input-group mb-2 mt-2 m-0 p-0">
         <span class="input-group-text" id=""><i class="bi bi-search"></i></span>
-        <input type="text" placeholder="Панель поиска" class="form-control bg-dark text-white"
-          v-on:input="searching(name)" v-model="name">
-        <button @click="name = ''; rx_array = array_videos" class="input-group-text" id=""><i
-            class="bi bi-backspace"></i></button>
+        <input type="text" placeholder="Панель поиска" class="form-control bg-dark text-white" v-on:keyup.enter="template_request" v-on:input="searching(name)" v-model="name">
+        <button @click="name = ''; rx_array = array_videos.slice(0)" class="input-group-text" id=""><i class="bi bi-backspace"></i></button>
       </div>
 
+      <div class="col-sm-12 mx-2 my-2">
+        <div class="" v-for="(item, index) in sampling_by_template" :key="item">
+          {{ item.name }}
+        </div>
+      </div>
 
 
 
@@ -260,42 +273,39 @@ import Swal from 'sweetalert2';
       <!-- {{ rx_array.length }} -->
       <!-- :poster="`/gifs/${encodeURIComponent(item.replace('.mp4', '.gif'))}`" -->
       <!-- отображаемые видео -->
-      
+
       <div v-for="(item, i) in rx_array" :key="item"
         :class="{ 'p-1 pt-2': true, 'col-1': (selected == 12), 'col-2': (selected == 6), 'col-3': (selected == 4), 'col-sm-4': (selected == 3), 'col-6': (selected == 2), 'col-12': (selected == 1) }">
-        
+
         <!-- {{ item }} -->
         <div class="frame-video p-1 rounded">
           <div class="row p-0 mb-2">
-            <div v-if="current_play_list == 'All'" class="col"><button class="m-0 p-0 btn btn-sm btn-outline-danger form-control" @click="add_to_like(item.name)"><i
+            <div v-if="current_play_list == 'All'" class="col"><button
+                class="m-0 p-0 btn btn-sm btn-outline-danger form-control" @click="add_to_like(item.name)"><i
                   class="bi bi-heart"></i> {{ like_button_label }}</button>
             </div>
-            <div class="col"><button @click="delete_from_albom(i)" class="m-0 p-0 btn btn-sm btn-outline-secondary form-control"><i class="bi bi-x"></i></button></div>
-            <div class="col"><button class="m-0 p-0 btn btn-sm btn-outline-danger form-control"
-                @click="reset_video(i)"><i class="bi bi-stop-btn"></i></button></div>
-            <div class="col"><button class="m-0 p-0 btn btn-sm btn-outline-danger form-control"
-                @click="play_video(i)"><i class="bi bi-play-btn"></i></button></div>
+            <div class="col"><button @click="delete_from_albom(i)"
+                class="m-0 p-0 btn btn-sm btn-outline-secondary form-control"><i class="bi bi-x"></i></button></div>
+            <div class="col"><button class="m-0 p-0 btn btn-sm btn-outline-danger form-control" @click="reset_video(i)"><i
+                  class="bi bi-stop-btn"></i></button></div>
+            <div class="col"><button class="m-0 p-0 btn btn-sm btn-outline-danger form-control" @click="play_video(i)"><i
+                  class="bi bi-play-btn"></i></button></div>
           </div>
           <figure class="m-0">
             <video class="w-100 videos m-0 p-0"
-              v-bind:poster="(show_poster == true && item.upHere !== true ) ? '/images/periodic_table.jpg' : `/gifs/${encodeURIComponent(item.name.replace(/(.webm|.mp4|.mkv|.avi)/gi, '.gif'))}`"
-              @mouseover="item.upHere = true"
-              @mouseleave="item.upHere = false"
-              loop preload="none" 
-              controls="controls">
+              v-bind:poster="(show_poster == true && item.upHere !== true) ? '/images/periodic_table.jpg' : `/gifs/${encodeURIComponent(item.name.replace(/(.webm|.mp4|.mkv|.avi)/gi, '.gif'))}`"
+              @mouseover="item.upHere = true" @mouseleave="item.upHere = false" loop preload="none" controls="controls">
               <source :src="`/g?name=${encodeURIComponent(item.name)}`" type="video/mp4" />
             </video>
             <!-- <figcaption>
               <label id="timer" for="progress" role="timer"></label>
               <progress id="progress" max="100" value="0">Progress</progress>
             </figcaption> -->
-            <figcaption
-              style="font-size: small" v-if="true"
-              @mouseover="shw_nm_vd=true"
-              @mouseleave="shw_nm_vd=false"
+            <figcaption style="font-size: small" v-if="true" @mouseover="shw_nm_vd = true" @mouseleave="shw_nm_vd = false"
               class="text-break ms-auto">
-              <marquee behavior="scroll" direction="left">{{ item.name }}</marquee>
-              <!-- {{ (shw_nm_vd==false) ? item.slice(0, 40) + '...' : item }} -->
+              <!-- <marquee behavior="scroll" direction="left">{{ item.name }}</marquee> -->
+              <!-- {{ item.name }} -->
+              {{ nameVideo(item) }}
             </figcaption>
           </figure>
         </div>
@@ -303,7 +313,7 @@ import Swal from 'sweetalert2';
       </div>
       <!-- {{ rx_array.length==0 }} -->
       <div class="mt-1 d-flex justify-content-center">
-        <p v-if="rx_array.length==0">Тут пока ничего нет...</p>
+        <p v-if="rx_array.length == 0">Тут пока ничего нет...</p>
       </div>
 
       <!-- переключатель страниц -->
@@ -349,15 +359,23 @@ import Swal from 'sweetalert2';
 
 
 <style scoped>
+
+.style_searching {
+  background-color: #111111;
+  padding: 3px;
+}
+
 .page-link {
-  background-color: black;  
+  background-color: black;
   border-color: #dc3545;
   color: #dc3545;
 }
+
 .page-item {
   /* border: 2px solid red; */
   /* border-color: red; */
 }
+
 .pagination {
   /* border-color: red; */
 }
@@ -365,6 +383,7 @@ import Swal from 'sweetalert2';
 .active {
   /* background-color: aqua; */
 }
+
 .frame-video {
   background-color: rgb(0, 0, 0);
   /* padding: 10px; */
@@ -387,8 +406,6 @@ progress[value]::-webkit-progress-value {
   );
   transition: width 1s linear;
 } */
-
-
 </style>
 
 
@@ -449,7 +466,9 @@ export default {
       show_pen: false,
       edit_mode_video: false,
       like_button_label: '',
-      prev_edit_play_list: ''
+      prev_edit_play_list: '',
+      lst_srch: [],
+      sampling_by_template: []
     }
   },
 
@@ -461,17 +480,21 @@ export default {
 
   async mounted() {
     console.log('Выполнился метод: mounted')
+
+    // В этом методе происходит, чтение или создание хранилища для пользовательских данных в кэше браузера.
     if (window.localStorage.getItem('url_list') == null) {
       window.localStorage.setItem('url_list', JSON.stringify([]));
 
     }
 
     this.batch_list = JSON.parse(window.localStorage.getItem('url_list'))
-
-
     console.log(window.localStorage.getItem('url_list'))
     console.log(this.batch_list)
+
+    await this.g(true)
+
     await this.g()
+
 
     if (window.localStorage.getItem('lst_ply_lst') == null) {
       window.localStorage.setItem('lst_ply_lst', JSON.stringify(Array.from((new Map()).entries()))); // записываем словарь в локальное хранилище
@@ -487,7 +510,7 @@ export default {
     // wait: Boolean,
   },
   created() {
-    console.log('Выполнился метод: created')
+    console.log('Выполнился метод: created да да именно он!')
     // alert('created hello')
     console.log("Запускаю процедуру подключения к WebSocket Server")
     this.ws = new WebSocket("ws://192.168.1.103:3000")
@@ -544,6 +567,10 @@ export default {
 
 
     },
+    
+    nameVideo(item) {
+      return (this.shw_nm_vd==false) ? item.name.slice(0, 40) + '...' : item.name
+    },
 
     async delete_from_albom(i) {
       console.log('current play-list: ', this.current_play_list)
@@ -554,11 +581,33 @@ export default {
       tmp.get(this.current_play_list).videos.splice(i, 1)
 
       // // console.log(this.play_list_array.get())
-      window.localStorage.setItem('lst_ply_lst', JSON.stringify(Array.from(tmp.entries()))); 
+      window.localStorage.setItem('lst_ply_lst', JSON.stringify(Array.from(tmp.entries())));
       this.play_list_array = tmp
       console.log('vides into self album: ', this.play_list_array.get(this.current_play_list).videos);
       this.rx_array = this.play_list_array.get(this.current_play_list).videos;
 
+    },
+
+    async template_request() {
+      this.rx_array = this.sampling_by_template.slice(0);
+      // let properties = {
+      //   type: "video",
+      //   page: this.currentPage,
+      //   limit: this.video_values,
+      //   flag: flag
+      // }
+
+      // console.info(this.selected_part)
+      // const response = await fetch('/g', {
+      //   method: 'POST',
+      //   credentials: 'include',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify(properties)
+      // })
+
+      // let result = await response.json()
     },
 
     async open_addvance() {
@@ -567,15 +616,15 @@ export default {
     },
 
     async sdp() {
-      this.show_download_panel =! this.show_download_panel
+      this.show_download_panel = !this.show_download_panel
       this.like_button_label = ""
     },
 
     async show_like_button_func(key) {
-      this.show_like_button =! this.show_like_button;
+      this.show_like_button = !this.show_like_button;
       this.like_button_label = key;
       this.current_play_list = 'All'
-      this.rx_array = this.array_videos;
+      this.rx_array = this.array_videos.slice(0);
 
     },
 
@@ -584,7 +633,7 @@ export default {
 
 
       this.play_list_array.delete(key)
-      window.localStorage.setItem('lst_ply_lst', JSON.stringify(Array.from(this.play_list_array.entries()))); 
+      window.localStorage.setItem('lst_ply_lst', JSON.stringify(Array.from(this.play_list_array.entries())));
       //console.log(tmp)
       //console.log(item)
 
@@ -610,7 +659,7 @@ export default {
 
       this.play_list_array.set(this.name_of_play_list, obj)
 
-      window.localStorage.setItem('lst_ply_lst', JSON.stringify(Array.from(this.play_list_array.entries()))); 
+      window.localStorage.setItem('lst_ply_lst', JSON.stringify(Array.from(this.play_list_array.entries())));
       //this.play_list_array = new Map(JSON.parse(localStorage.getItem('lst_ply_lst')))
 
 
@@ -632,7 +681,7 @@ export default {
 
     },
     async edit_item(item) {
-      item.edit_mode_video =! item.edit_mode_video
+      item.edit_mode_video = !item.edit_mode_video
     },
 
     async add_to_like(name_of_video) {
@@ -657,10 +706,10 @@ export default {
 
       console.log(name_of_video)
       let tmp = new Map(JSON.parse(window.localStorage.getItem('lst_ply_lst')));
-      tmp.get(this.like_button_label).videos.push({name: name_of_video})
+      tmp.get(this.like_button_label).videos.push({ name: name_of_video })
 
       // console.log(this.play_list_array.get())
-      window.localStorage.setItem('lst_ply_lst', JSON.stringify(Array.from(tmp.entries()))); 
+      window.localStorage.setItem('lst_ply_lst', JSON.stringify(Array.from(tmp.entries())));
       this.play_list_array = tmp
       //this.play_list_array = new Map(JSON.parse(localStorage.getItem('lst_ply_lst')))
       //this.current_play_list.videos.push(name_of_video);
@@ -753,12 +802,17 @@ export default {
     async searching() {
 
       let rx = new RegExp(this.name)
-      this.rx_array = []
-      for (let i = 0; i < this.array_videos.length; i++) {
-        if (rx.test(this.array_videos[i].name.toLowerCase())) {
-          this.rx_array.push(this.array_videos[i])
-          console.log(this.array_videos[i])
-        }
+      this.sampling_by_template = []
+      if (this.name != "") {
+        for (let i = 0; i < this.lst_srch.length; i++) {
+          if (rx.test(this.lst_srch[i].name.toLowerCase())) {
+            this.sampling_by_template.push(this.lst_srch[i])
+
+            console.log(`this.video: ${this.lst_srch[i].name}`)
+          }
+        } 
+      } else {
+        this.rx_array = this.array_videos.slice(0)
       }
 
       // console.log(this.rx_array)
@@ -773,12 +827,14 @@ export default {
 
     },
 
-    async g() {
+    async g(flag=false) {
       let properties = {
         type: "video",
         page: this.currentPage,
-        limit: this.video_values
+        limit: this.video_values,
+        flag: flag
       }
+
       console.info(this.selected_part)
       const response = await fetch('/g', {
         method: 'POST',
@@ -790,16 +846,22 @@ export default {
       })
 
       let result = await response.json()
-      this.array_videos = result['items'].slice(0)
-      this.rx_array = this.array_videos.slice(0)
-      this.backup = this.array_videos.slice(0)
-      this.folder = result['route']
 
-      console.log('Ограничение видео на страницу: ', properties.limit)
-      // this.totalpages = Math.ceil(productscount / productsPerPage)
-      this.totalpages = Math.ceil(result['count_videos'] / properties.limit)
+      if (!flag) {
+        this.array_videos = result['items'].slice(0)
+        this.rx_array = this.array_videos.slice(0)
+        this.backup = this.array_videos.slice(0)
+        this.folder = result['route']
 
-      this.totalvideos = result['count_videos']
+        console.log('Ограничение видео на страницу: ', properties.limit)
+        // this.totalpages = Math.ceil(productscount / productsPerPage)
+        this.totalpages = Math.ceil(result['count_videos'] / properties.limit)
+
+        this.totalvideos = result['count_videos']
+      } else {
+        this.lst_srch = result['items']
+        //this.sampling_by_template = result['items']
+      }
 
 
     },
@@ -824,8 +886,8 @@ export default {
       this.batch_list = JSON.parse(window.localStorage.getItem('url_list'))
       // console.log('аааааааааа')
       // await this.sendMessage()
-      
-      
+
+
       await this.g()
 
 

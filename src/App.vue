@@ -19,14 +19,14 @@ import { RouterLink, RouterView } from 'vue-router'
     <div class="content-header">
 
       <nav :class="{ 'navbar navbar-expand-lg navbar-light border-bottom': true, 'bg-body-tertiary': (dark) }">
-        <div class="container-fluid">
+        <div class="container">
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <!-- {{ dark }} -->
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <ul class="navbar-nav me-auto mb-lg-0">
               <li class="nav-item">
                 <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
                 <router-link class="nav-link" to="/g/files"><i class="bi bi-card-list"></i> Файлы</router-link>
@@ -105,21 +105,31 @@ import { RouterLink, RouterView } from 'vue-router'
                 </ul>
               </li>
 
-              <li class="nav-item my-auto">
+              <!-- <li class="nav-item mx-5">
                 <div class="input-group">
                   <span class="input-group-text" id=""><i class="bi bi-search"></i></span>
                   <input type="text" placeholder="Поиск файлов" class="form-control" v-on:input="searching"
                     v-model="name">
-                  <button @click="name = ''; rx_files = files" class="input-group-text" id=""><i class="bi bi-backspace"></i></button>
+                  <button @click="name = ''; rx_files = files" class="btn btn-sm btn-outline-danger px-3" id=""><i class="bi bi-backspace"></i></button>
                 </div>
-              </li>
+              </li> -->
 
             </ul>
 
 
-            <div class="d-flex ">
-              <a class="" href="#"><i class="bi bi-box-arrow-in-right"></i> Войти</a>
+
+            <div class="d-flex">
+              <div class="input-group input-group-sm me-1">
+                <span class="input-group-text" id=""><i class="bi bi-search"></i></span>
+                <input type="text" placeholder="" class="form-control" v-on:input="searching" v-model="name">
+                <button class="btn btn-sm btn-outline-info me-1">log in</button>
+                <button class="btn btn-sm btn-outline-info">log out</button>
+              </div>
+
             </div>
+            <!-- <div class="d-flex">
+
+            </div> -->
 
           </div>
         </div>
@@ -131,7 +141,7 @@ import { RouterLink, RouterView } from 'vue-router'
 
 
 
-  <main class="container-fluid">
+  <main class="container">
     <RouterView :wait="wait" :theme="dark" @updateParent="someFunc" />
 
   </main>
@@ -143,7 +153,7 @@ import { RouterLink, RouterView } from 'vue-router'
   <footer class="mt-auto border-top ">
 
 
-    <div class="container-fluid">
+    <div class="container">
       <div class="row">
 
         <div class="col">
@@ -189,7 +199,7 @@ export default {
     return {
       wait: false,
       dark: false,
-      current_version: '2.4.1'
+      current_version: '2.4.9'
     }
   },
   watch: {
