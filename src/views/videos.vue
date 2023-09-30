@@ -213,10 +213,10 @@ import Swal from 'sweetalert2';
       <div class="col-sm-12 input-group mb-2 mt-2 m-0 p-0">
         <span class="input-group-text" id=""><i class="bi bi-search"></i></span>
         <input type="text" placeholder="Панель поиска" class="form-control bg-dark text-white" v-on:keyup.enter="template_request" v-on:input="searching(name)" v-model="name">
-        <button @click="name = ''; rx_array = array_videos.slice(0)" class="input-group-text" id=""><i class="bi bi-backspace"></i></button>
+        <button @click="csr" class="input-group-text" id=""><i class="bi bi-backspace"></i></button>
       </div>
 
-      <div class="col-sm-12 mx-2 my-2">
+      <div class="col-sm-12 style_searching" v-if="sampling_by_template.length !== 0">
         <div class="" v-for="(item, index) in sampling_by_template" :key="item">
           {{ item.name }}
         </div>
@@ -362,7 +362,11 @@ import Swal from 'sweetalert2';
 
 .style_searching {
   background-color: #111111;
-  padding: 3px;
+  padding: 5px;
+  border-radius: 5px;
+  text-decoration: underline;
+  /* box-sizing: border-box;
+  -moz-box-sizing: border-box; */
 }
 
 .page-link {
@@ -547,6 +551,12 @@ export default {
 
   },
   methods: {
+    async csr() {
+      this.name = ''; 
+      this.rx_array = this.array_videos.slice(0)
+      this.sampling_by_template = []
+
+    },
     func(page) {
       let n = Number(page)
       if (page < 4 || page > this.totalpages - 3) {
@@ -811,7 +821,7 @@ export default {
             console.log(`this.video: ${this.lst_srch[i].name}`)
           }
         } 
-      } else {
+      } else { // заполняем тем что было до поиска
         this.rx_array = this.array_videos.slice(0)
       }
 
