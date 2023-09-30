@@ -9,7 +9,7 @@ lerna-debug.log*
 
 node_modules
 .DS_Store
-dist
+#dist
 dist-ssr
 coverage
 *.local
@@ -17,10 +17,20 @@ coverage
 *.mp3
 *.mkv
 *.avi
+<<<<<<< HEAD
 *.png
 *.jpg
 *.jpeg
 *.gif
+=======
+*.part
+*.gif
+Share/files/*
+Share/videos/*
+Share/txt/*
+Share/musics/*
+Share/
+>>>>>>> t2
 
 /cypress/videos/
 /cypress/screenshots/

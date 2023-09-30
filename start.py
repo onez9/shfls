@@ -8,12 +8,17 @@ import io
 import logging
 import webbrowser
 
+<<<<<<< HEAD
+=======
+import colorama
+>>>>>>> t2
 
 
 clear = lambda: os.system('clear')
 
 
 def changeIP(name, ip):
+<<<<<<< HEAD
 
 
     print(f'ip: {ip}')
@@ -26,10 +31,22 @@ def changeIP(name, ip):
         txt=txt.replace(element, ip)
 
     file.close()
+=======
+    print(f'ip: {ip}')
+    print(f'name: {name}')
+
+    with io.open(name, 'r', buffering=5) as file:
+        # txt = file.read()
+        txt=file.read()
+        res = re.findall(r'(\d+.\d+.\d+.\d+|localhost)', txt)
+        for element in res:
+            txt=txt.replace(element, ip)
+>>>>>>> t2
 
     with io.open(name, 'w') as fo:
         fo.write(txt)
 
+<<<<<<< HEAD
 if __name__=='__main__':
     logging.basicConfig(level=logging.INFO)
     path_config='./Configs/config.mjs'
@@ -76,6 +93,48 @@ if __name__=='__main__':
 
 
         changeIP('src/views/chat.vue', ip)
+=======
+
+
+if __name__=='__main__':
+    logging.basicConfig(level=logging.INFO)
+    # path_config='./Configs/config.mjs'
+    print('Начинаю запуск')
+    os.chdir(os.path.dirname(__file__))
+    try:
+        #host=socket.gethostname()+'.org'
+        #host = socket.gethostname()
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        try:
+            print('Запуск в локальной сети')
+            sock.connect(('1.1.1.1', 1234))
+            ip,port=sock.getsockname()
+
+        except OSError:
+            print('Запуск на локалхост')
+            ip='127.0.0.1'
+
+        #local_ip, local_port = sock.getsockname()
+        #print(host)
+        #ip,port=socket.gethostbyname(host)
+        #print(ip)
+
+        # ip='0.0.0.0'
+        #ip='192.168.1.9'
+
+
+        #print('hello')
+        #ip='192.168.160.184'
+
+        print(f'ip: {ip}')
+
+        changeIP('src/server/configs/config.mjs', ip)
+        changeIP('index.html', ip)
+        changeIP('src/views/files.vue', ip)
+
+        # changeIP('src/views/chat.vue', ip)
+        changeIP('.env', ip)
+>>>>>>> t2
 
 
 

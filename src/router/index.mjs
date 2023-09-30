@@ -12,10 +12,17 @@ import crypt from '../views/crypt.vue'
 import code from '../views/code.vue'
 import poligon from '../views/poligon.vue'
 import chat from '../views/chat.vue'
+<<<<<<< HEAD
+=======
+import settings from '../views/settings.vue'
+import chemistry from '../views/chemistry.vue'
+
+>>>>>>> t2
 
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  //history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(),
   routes: [
     {
       path: '/',
@@ -29,11 +36,29 @@ const router = createRouter({
       component: lang
     },
     {
+<<<<<<< HEAD
+=======
+      path: '/g/chemistry',
+      name: 'chemistry',
+      component: chemistry
+    },
+    
+    {
+>>>>>>> t2
       path: '/g/chat',
       name: 'chat',
       component: chat
     },
     {
+<<<<<<< HEAD
+=======
+      path: '/g/settings',
+      name: 'settings',
+      component: settings
+    }
+    ,
+    {
+>>>>>>> t2
       path: '/g/books',
       name: 'books',
       component: books

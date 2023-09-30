@@ -25,14 +25,26 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  //build: {
+  //  // generate manifest.json in outDir
+  //  manifest: true,
+  //  rollupOptions: {
+  //    // overwrite default .html entry
+  //    input: './src/main.js'
+  //  }
+  //},
   build: {
-    // generate manifest.json in outDir
+    outDir: 'dist',
     manifest: true,
     rollupOptions: {
-      // overwrite default .html entry
-      input: './src/main.js'
+      input: ['src/main.js', './index.html']
+      //input: ['src/server/server.mjs' ]
     }
+<<<<<<< HEAD
   },
+=======
+  }
+>>>>>>> t2
   // define: {
   //   __VALUE__: `"${process.env.VITE_TEST_VAR}"` // wrapping in "" since it's a string
   // },
