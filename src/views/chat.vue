@@ -88,7 +88,7 @@ export default {
         console.log("Запускаю процедуру подключения к WebSocket Server")
         console.log(this.$attrs)
 
-        this.connection = new WebSocket("ws://192.168.96.184:3000")
+        this.connection = new WebSocket("ws://127.0.1.1:3000")
         this.connection.binaryData = "blob";
         this.connection.onmessage = (event) => {
             // console.log(event.data.text());

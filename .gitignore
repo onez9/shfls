@@ -17,6 +17,10 @@ coverage
 *.mp3
 *.mkv
 *.avi
+*.png
+*.jpg
+*.jpeg
+*.gif
 
 /cypress/videos/
 /cypress/screenshots/
