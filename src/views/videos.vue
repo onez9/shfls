@@ -67,33 +67,33 @@ import Swal from 'sweetalert2';
     </div>
     <div class="row">
 
-      <div v-if="show_extra" class="col-sm p-0 m-0">
-        <div class="col-sm mb-1 mt-2">
+      <div v-if="show_extra" class="col-sm" style="background-color: #000000; border-radius: 5px; padding: 5px;">
+        <div class="col-sm mb-1">
           <button @click="show_playlist = !show_playlist"
             :class="{ 'btn btn-sm btn-outline-danger form-control': true, 'btn btn-outline-success': (show_playlist == true) }"
             title="Создать новый плейлист">
             <i class="bi bi-folder-plus"></i>
           </button>
         </div>
-        <div v-if="show_playlist == true" class="col-sm mt-2 mb-2 ">
-          <div class="input-group ">
+        <div v-if="show_playlist == true" class="col-sm mb-2 ">
+          <div class="input-group mb-1">
             <input class="form-control border border-outline-primary" id="name_list" placeholder="Название плейлиста"
               v-model="name_of_play_list">
             <button @click="name_of_play_list = ''" class="input-group-text" id=""><i
                 class="bi bi-backspace"></i></button>
           </div>
-          <button class="btn btn-outline-primary mt-2 form-control"
+          <button class="btn btn-outline-primary form-control"
             @click="create_new_play_playlist(name_of_play_list)">Создать</button>
         </div>
 
 
         <!-- панель загрузки -->
-        <div class="col-sm mb-1 mt-1">
-          <button @click="sdp" class="btn btn-sm form-control mt-1 btn-outline-danger" title="youtube-dl/search">
+        <div class="col-sm mb-1">
+          <button @click="sdp" class="btn btn-sm form-control btn-outline-danger" title="youtube-dl/search">
             <i class="bi bi-download"></i>
           </button>
         </div>
-        <div v-if="show_download_panel == true" class="col-sm-12 mt-2 mb-2 ">
+        <div v-if="show_download_panel == true" class="col-sm-12 mb-2 ">
           <div class="input-group mb-2">
             <input type="text" class="form-control bg-dark text-white" :disabled="false" v-model="url"
               placeholder="Панель загрузки видео">
@@ -115,19 +115,19 @@ import Swal from 'sweetalert2';
           </div>
           <!-- очистить стек загружаемых видео -->
           <div class="col-sm-12 mb-1 mt-1">
-            <button class="btn btn-sm btn-outline-danger form-control mt-1" @click="clean"
+            <button class="btn btn-sm btn-outline-danger form-control" @click="clean"
               title="Очистить буффер от загружаемых видео">clean</button>
           </div>
         </div>
 
-        <div class="col-sm mb-1 mt-1">
-          <button @click="show_pen = !show_pen" class="btn btn-sm form-control mt-1 btn-outline-danger" title="Редактировать play list">
+        <div class="col-sm mb-1">
+          <button @click="show_pen = !show_pen" class="btn btn-sm form-control btn-outline-danger" title="Редактировать play list">
             <i class="bi bi-pen"></i>
           </button>
         </div>
 
-        <div v-if="show_pen" class="col-sm mt-2 ">
-          <table class="table table-hover mb-0">
+        <div v-if="show_pen" class="col-sm">
+          <table class="table table-hover mb-1">
             <tbody>
               <tr v-for="(item, index) in play_list_array" :key="item">
                 <td>{{ item[0] }}</td>
@@ -144,15 +144,15 @@ import Swal from 'sweetalert2';
               </tr>
             </tbody>
           </table>
-          <p v-if="play_list_array.size == 0" class="text-center mb-2 p-0">Тут пока ничего нет {{ play_list_array.size }}
+          <p v-if="play_list_array.size == 0" class="text-center p-0">Тут пока ничего нет {{ play_list_array.size }}
           </p>
         </div>
 
 
 
 
-        <div class="col mb-1 mt-1">
-          <button @click="lock = !lock" class="btn btn-sm btn-outline-danger form-control mt-1"
+        <div class="col mb-1">
+          <button @click="lock = !lock" class="btn btn-sm btn-outline-danger form-control"
             title="Зашифровать/Расшифровать"><i :class="{ 'bi bi-lock': true, 'bi bi-unlock': (lock) }"></i></button>
         </div>
 
@@ -181,27 +181,31 @@ import Swal from 'sweetalert2';
           </select>
         </div>
 
+
+        <div class="col-sm mb-1 mt-1">
+          <!-- <input type="number" class="form-control mt-1" min="1" max="4"> -->
+          <select @change="select_play(sortType)" v-model="sortType" class="form-select mt-1 bg-dark text-white" name="" title="Выбор плейлиста">
+            <option  v-for="(item, index) in play_list_array" v-bind:key="index" v-bind:value="item">{{ item[0] }}</option>
+          </select>
+        </div>
+
+<!-- 
         <div class="col mb-1 mt-2">
           <div class="btn-group form-control p-0">
             <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"
               aria-expanded="false">
               <i class="bi bi-list-stars"></i> {{ current_play_list }}
-              <!-- <span class="visually-hidden">Toggle Dropdown</span> -->
             </button>
-            <!-- {{play_list_array}} -->
             <ul class="dropdown-menu">
               <li @click="rx_array = array_videos; current_play_list = 'All'"><a class="dropdown-item">All</a></li>
-
-
               <li @click="select_play(item)" v-for="(item, index) in play_list_array" :key="item">
-                <!-- {{ item }} -->
                 <a class="dropdown-item" href="#">
                   {{ item[0] }}
                 </a>
               </li>
             </ul>
           </div>
-        </div>
+        </div> -->
 
       </div>
 
@@ -472,7 +476,8 @@ export default {
       like_button_label: '',
       prev_edit_play_list: '',
       lst_srch: [],
-      sampling_by_template: []
+      sampling_by_template: [],
+      sortType: ""
     }
   },
 
@@ -731,7 +736,7 @@ export default {
     },
 
     async select_play(item) {
-      console.log('selected_play: ', item)
+      console.log('selected_play 12313: ', item)
       this.hide_default_point_tmp = true; // логика с выбором дэфолтного плей листа
       this.current_play_list = item[0]
       let tmp = new Map(JSON.parse(window.localStorage.getItem('lst_ply_lst')))
