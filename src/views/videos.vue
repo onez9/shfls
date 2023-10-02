@@ -216,7 +216,7 @@ import Swal from 'sweetalert2';
         <button @click="csr" class="input-group-text" id=""><i class="bi bi-backspace"></i></button>
       </div>
 
-      <div class="col-sm-12 style_searching" v-if="sampling_by_template.length !== 0">
+      <div class="col-sm-12 style_searching" style="" v-if="sampling_by_template.length !== 0">
         <div class="" v-for="(item, index) in sampling_by_template" :key="item">
           {{ item.name }}
         </div>

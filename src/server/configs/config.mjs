@@ -17,7 +17,6 @@ export default {
         books: "Share/books",
         gifs: "Share/video/"
     },
-
     routes: {
         files: "/downloads",
         musics: "/musics",
