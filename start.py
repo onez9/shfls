@@ -8,30 +8,13 @@ import io
 import logging
 import webbrowser
 
-<<<<<<< HEAD
-=======
 import colorama
->>>>>>> t2
 
 
 clear = lambda: os.system('clear')
 
 
 def changeIP(name, ip):
-<<<<<<< HEAD
-
-
-    print(f'ip: {ip}')
-    print(f'name: {name}')
-    file = io.open(name, 'r', buffering=5)
-    # txt = file.read()
-    txt=file.read()
-    res = re.findall(r'\d+.\d+.\d+.\d+', txt)
-    for element in res:
-        txt=txt.replace(element, ip)
-
-    file.close()
-=======
     print(f'ip: {ip}')
     print(f'name: {name}')
 
@@ -41,59 +24,10 @@ def changeIP(name, ip):
         res = re.findall(r'(\d+.\d+.\d+.\d+|localhost)', txt)
         for element in res:
             txt=txt.replace(element, ip)
->>>>>>> t2
 
     with io.open(name, 'w') as fo:
         fo.write(txt)
 
-<<<<<<< HEAD
-if __name__=='__main__':
-    logging.basicConfig(level=logging.INFO)
-    path_config='./Configs/config.mjs'
-    print('Начинаю запуск')
-    os.chdir(os.path.dirname(__file__))
-    try:
-        host=socket.gethostname()
-        ip=socket.gethostbyname(host)
-        # ip='0.0.0.0'
-
-        print(f'ip: {ip}')
-        with open(path_config, 'r') as fi:
-            txt=fi.read()
-            result = re.findall(r'\d+.\d+.\d+.\d+', txt)
-
-            print(result)
-            with open(path_config, 'w') as fo:
-                for item in result:
-                    txt = txt.replace(item, ip)
-                    fo.write(txt)
-        
-        file = io.open('index.html', 'r', buffering=5)
-        # txt = file.read()
-        txt=file.read()
-        res = re.findall(r'\d+.\d+.\d+.\d+', txt)
-        for element in res:
-            txt=txt.replace(element, ip)
-
-        file.close()
-
-        with io.open('index.html', 'w') as fo:
-            fo.write(txt)
-
-        path_file = 'src/views/videos.vue'
-        file = io.open(path_file, mode='r')
-        text=file.read()
-        res = re.findall(r'\d+.\d+.\d+.\d+', text)
-        for element in res:
-            text=text.replace(element, ip)
-        file.close()
-
-        with io.open(path_file, mode='w') as fo:
-            fo.write(text)
-
-
-        changeIP('src/views/chat.vue', ip)
-=======
 
 
 if __name__=='__main__':
@@ -134,7 +68,6 @@ if __name__=='__main__':
 
         # changeIP('src/views/chat.vue', ip)
         changeIP('.env', ip)
->>>>>>> t2
 
 
 

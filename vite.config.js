@@ -40,11 +40,7 @@ export default defineConfig({
       input: ['src/main.js', './index.html']
       //input: ['src/server/server.mjs' ]
     }
-<<<<<<< HEAD
-  },
-=======
   }
->>>>>>> t2
   // define: {
   //   __VALUE__: `"${process.env.VITE_TEST_VAR}"` // wrapping in "" since it's a string
   // },

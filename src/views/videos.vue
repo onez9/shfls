@@ -1,10 +1,7 @@
 <script setup>
 import { registerRuntimeCompiler } from 'vue';
 import search from '../../Components/search.vue'
-<<<<<<< HEAD
-=======
 import Swal from 'sweetalert2';
->>>>>>> t2
 </script>
 
 <template>

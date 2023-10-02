@@ -1,14 +1,7 @@
 @import '../../public/assets/bootstrap/dist/css/bootstrap.css';
 @import '../../public/assets/bootstrap-icons/font/bootstrap-icons.css';
-<<<<<<< HEAD
-@import './urvanov_syntax_highlighter.min.css';
-@import './urvanov_syntax_highlighter_te.css';
-
-
-=======
 
 @import '../../node_modules/highlight.js/styles/panda-syntax-dark.css';
->>>>>>> t2
 
 
 /* 
@@ -31,10 +24,5 @@
 
 ::-webkit-scrollbar-thumb {
     border-radius: 10px;
-<<<<<<< HEAD
-    -webkit-box-shadow: inset 0 0 6px     rgba(246, 246, 246, 0.955); 
-}
-=======
     -webkit-box-shadow: inset 0 0 6px     rgba(1, 1, 1, 0.955); 
 }
->>>>>>> t2

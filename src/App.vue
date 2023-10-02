@@ -1,15 +1,9 @@
 <script setup>
 
 import { RouterLink, RouterView } from 'vue-router'
-<<<<<<< HEAD
-import search from '../Components/search.vue';
-import nv from '../Components/nv.vue'
-import Swal from 'sweetalert2';
-=======
 // import search from '../Components/search.vue';
 // import nv from '../Components/nv.vue'
 // import Swal from 'sweetalert2';
->>>>>>> t2
 
 </script>
 
@@ -17,22 +11,6 @@ import Swal from 'sweetalert2';
 
 <template>
   <!-- <p>The username to test is <%=process.env.VITE_TEST_VAR %></p> -->
-<<<<<<< HEAD
-  <header class="container-fluid p-0">
-    <nv :theme="theme" />
-
-    <!-- <content-header></content-header> -->
-  </header>
-  <main class="container-fluid">
-    <RouterView :wait="wait" :theme="theme" />
-
-  </main>
-
-  <!-- <footer>
-
-  </footer> -->
-
-=======
   <!-- <header class="container-fluid p-0">
     <nv :theme="theme" />
 
@@ -196,7 +174,6 @@ import Swal from 'sweetalert2';
   <!-- <footer>
 
   </footer> -->
->>>>>>> t2
 </template>
 
 <style scoped></style>
@@ -221,12 +198,8 @@ export default {
   data() {
     return {
       wait: false,
-<<<<<<< HEAD
-      theme: 'dark',
-=======
       dark: false,
       current_version: '2.4.9'
->>>>>>> t2
     }
   },
   watch: {
@@ -243,14 +216,6 @@ export default {
   // },
   async mounted() {
     // console.log(process.env)
-<<<<<<< HEAD
-    console.log(import.meta.env.VITE_TEST_VAR)
-    console.log(import.meta.env.VITE_APP_F23)
-  },
-
-  methods: {
-
-=======
     console.log(this.dark)
     console.log(import.meta.env.VITE_TEST_VAR)
     console.log(import.meta.env.VITE_APP_F23)
@@ -263,7 +228,6 @@ export default {
       this.dark = isDark
       console.log(isDark)
     }
->>>>>>> t2
   }
 
 }

@@ -2,13 +2,6 @@
   "name": "fileloader",
   "version": "0.0.0",
   "private": true,
-<<<<<<< HEAD
-  "scripts": {
-    "start": "nodemon Server/server.mjs",
-    "dev": "vite --host 0.0.0.0",
-    "build": "vite build",
-    "preview": "vite preview"
-=======
   "main": "index.html",
   "scripts": {
     "dev": "vite --host",
@@ -20,19 +13,11 @@
     "preview": "vite preview",
     "serve": "vue-cli-service serve",
     "build1": "vue-cli-service build"
->>>>>>> t2
   },
   "type": "module",
   "dependencies": {
     "@clickhouse/client": "^0.0.15",
     "@vue/cli": "^5.0.8",
-<<<<<<< HEAD
-    "aes-js": "^3.1.2",
-    "axios": "^1.4.0",
-    "body-parser": "^1.20.2",
-    "chart.js": "^4.3.0",
-    "cheerio": "^1.0.0-rc.12",
-=======
     "@vue/cli-service": "^5.0.8",
     "aes-js": "^3.1.2",
     "axios": "^1.4.0",
@@ -42,15 +27,11 @@
     "cheerio": "^1.0.0-rc.12",
     "concurrently": "^8.2.0",
     "cors": "^2.8.5",
->>>>>>> t2
     "dotenv": "^16.0.3",
     "execa": "^7.1.1",
     "express": "^4.18.2",
     "express-fileupload": "^1.4.0",
-<<<<<<< HEAD
-=======
     "highlight.js": "^11.8.0",
->>>>>>> t2
     "http": "^0.0.1-security",
     "iconv": "^3.0.1",
     "jsdom": "^22.0.0",
@@ -60,21 +41,14 @@
     "qrcode": "^1.5.3",
     "redis": "^4.6.6",
     "selenium-webdriver": "^4.9.2",
-<<<<<<< HEAD
-    "sweetalert2": "^11.7.5",
-=======
     "sweetalert2": "^11.7.12",
->>>>>>> t2
     "tedious": "^16.1.0",
     "three": "^0.152.2",
     "uuid": "^9.0.0",
     "vue": "^3.2.47",
     "vue-router": "^4.1.6",
-<<<<<<< HEAD
-=======
     "vue3-highlight-component": "^0.3.4",
     "webpack": "^5.88.1",
->>>>>>> t2
     "ws": "^8.13.0",
     "youtube-dl-exec": "^2.4.1"
   },
