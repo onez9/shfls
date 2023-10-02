@@ -282,7 +282,7 @@ router.get('/s', (req, res) => {
 
 	try {
 		//const url = 'https://www.youtube.com/watch?v=6xKWiCMKKJg'
-		
+		 
 		// method #3
 		/*
 		const subprocess = youtubedl.exec(url, {
@@ -585,13 +585,8 @@ router.post('/', async (req, res) => {
 				let result = Array()
                 try {
                     for (let item of items) {
-                        // (async () => {
-                        // 	let r1 = await fs.promises.stat(`${dir}/${item}`)
-                        // 	res1.push(r1.ctime)
-                        // })().catch(console.error)
                         var fileStats = fs.statSync(`${dir}/${item}`)
-                        // res1.push()
-                        // console.log(item)3
+
                         if (['.jpg', '.png', 'jpeg'].indexOf(path.parse(item).ext.toLowerCase()) > -1) {
                             result.push({
                                 name: item,
@@ -599,7 +594,7 @@ router.post('/', async (req, res) => {
                             })
                         }
                     }
-                    // console.log(1213123213,123, res1)
+
                     result.sort(function (a, b) {
                         return a.ctime - b.ctime
                     })
@@ -620,7 +615,7 @@ router.post('/', async (req, res) => {
 			console.log('dir: ', dir)
 			
 			if (fs.existsSync(dir)) {
-				console.log('Всё хорошо!')
+				console.log('Директория существует!')
 				
 			} else {
 				console.log('Директория не найдена')
