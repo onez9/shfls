@@ -67,9 +67,12 @@ import HighLight from "vue3-highlight-component";
         <button @click="user.settings.mode = !user.settings.mode"
           class="btn btn-outline-primary form-control mt-2 style_button">Настройки пользователя</button>
 
+
+
+
         <template v-if="user.settings.mode == true" class="mt-2">
           <span for="nick_id">Ник</span>
-          <input type="text" placeholder="Your nikname" id="nick_id" class="form-control">
+          <input type="text" placeholder="Your nikname" id="nick_id" class="form-control" v-model="nickname">
           <span for="pass_id">Пароль</span>
           <input type="password" placeholder="password" name="" id="pass_id" class="form-control">
         </template>
@@ -81,10 +84,10 @@ import HighLight from "vue3-highlight-component";
         <button @click="run('redis')" class="btn btn-outline-primary form-control mt-2 style_button">Запустить redis</button>
         <button @click="run('mongo')" class="btn btn-outline-primary form-control mt-2 style_button">Запустить mongo</button>
         <button @click="run('off_db')" class="btn btn-outline-primary form-control mt-2 style_button">Выключить базу данных</button>
-        <button class="btn btn-outline-danger mt-2 form-control style_button"><i class=""></i> Сохранить</button>
+        <button @click="save_set" class="btn btn-outline-danger mt-2 form-control style_button"><i class=""></i> Сохранить</button>
 
 
-        <HighLight  :with-header="true" language="js" header-language="JavaScript"  :code="code"/>
+        <!-- <HighLight  :with-header="true" language="js" header-language="JavaScript"  :code="code"/> -->
       </div>
     </div>
   </div>
@@ -196,7 +199,9 @@ export default {
       // console.log(this.theme)
       this.$emit('updateParent', !this.theme)
     },
-
+    async save_set() {
+      window.localStorage.setItem('user', this.nickname);
+    }
 
   }
 }

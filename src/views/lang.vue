@@ -1,137 +1,159 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 import search from '../../Components/search.vue'
+import axios from 'axios';
+
 </script>
 <template>
+
+
   <div class="row">
+    <div class="col-sm-4">
+      <div class="col-sm mb-1 mt-1">
+        <!-- <input type="number" class="form-control mt-1" min="1" max="4"> -->
+        <select @change="selLang(name_lang)" v-model="name_lang" class="form-select mt-1 bg-dark text-white " name="" title="Выберете язык">
+          <option  v-for="(value, key) of dict_lang" v-bind:value="key">{{ value }}</option>
+        </select>
+
+      </div>
+
+   
+      <div class="border rounded p-1">
+        <p class="border rounded d-flex justify-content-center">Настройка списка</p>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" v-model="check_foreign_word" id="flexCheck_foreign_word" >
+          <label class="form-check-label" for="flexCheck_foreign_word">
+            Иностранное слово
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" v-model="check_trascription" id="flexCheck_transcription" >
+          <label class="form-check-label" for="flexCheck_transcription">
+            Транскрипция
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" v-model="check_translate" id="flexCheck_translate" >
+          <label class="form-check-label" for="flexCheck_translate">
+            Перевод
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" v-model="check_modify" id="flexCheck_modify" >
+          <label class="form-check-label" for="flexCheck_modify">
+            Дата модификации
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" v-model="check_edit_record" id="flexCheck_edit_record" >
+          <label class="form-check-label" for="flexCheck_edit_record">
+            Редактировать записи
+          </label>
+        </div>
+
+        <label class="mt-1">Перевернуть список</label>
+        <button @click="reverse_array" class="form-control btn btn-sm btn-outline-danger mb-1">reverse</button>
+        <label>Вернуть в исходное состояние</label>
+        <button @click="reset_array" class="form-control btn btn-sm btn-outline-danger">reset</button>
+        <label>Удалить выделенное (муляж)</label>
+        <button @click="delete_selected" class="btn btn-sm btn-outline-danger form-control">Delete</button>
+        <label>Объеденить в группу (муляж)</label>
+        <button class="btn btn-sm btn-outline-danger form-control">merge</button>
+   
+      </div>
 
 
-    <div class="col-sm-2">
-      <!-- <button class="btn btn-info me-1 mt-1 mb-1" @click="lang('jp'); ll1 = true">японский</button> -->
-      <!-- <button class="btn btn-info" @click="lang('en'); ll1 = false">английский</button> -->
-
-      <ul class="list-unstyled mb-2 mt-2">
-
-        <li class="mb-1">
-          <button @click="lang('jp'); ll1=true"
-            class="btn btn-sm btn-info w-100 btn-toggle d-inline-flex align-items-center rounded border-0 collapsed"
-            data-bs-toggle="collapse" data-bs-target="#download-collapse" aria-expanded="true">
-            Японский
-          </button>
-          <!-- <div class="collapse mt-1" id="download-collapse">
-            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-              <li><textarea v-model="history" class="form-control mе-1" name="ta1" id="id_ta1" placeholder="История"
-                  cols="20" rows="10" disabled></textarea></li>
-            </ul>
-          </div> -->
-        </li>
-        <li class="mb-1">
-          <button @click="lang('en'); ll1=false"
-            class="btn btn-sm btn-info w-100 btn-toggle d-inline-flex align-items-center rounded border-0 collapsed"
-            data-bs-toggle="collapse" data-bs-target="#download-collapse" aria-expanded="true">
-            Английский
-          </button>
-          <!-- <div class="collapse" id="download-collapse">
-            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-              <li><input class="form-control mt-1" v-model="caesar_shift" placeholder="Введите сдвиг"></li>
-            </ul>
-          </div> -->
-        </li>
-
-        <li class="mb-1">
-          <button @click="type_crypt = 'aes'"
-            class="btn btn-sm btn-info w-100 btn-toggle d-inline-flex align-items-center rounded border-0 collapsed"
-            data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="true">
-            Китайский
-          </button>
-          <!-- <div class="collapse" id="home-collapse">
-            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-              <li><input class="form-control mt-1" placeholder="Введите ключ"></li>
-            </ul>
-          </div> -->
-        </li>
-
-        <li class="mb-1">
-          <button @click="type_crypt = 'xor'"
-            class="btn btn-sm btn-info w-100 btn-toggle d-inline-flex align-items-center rounded border-0 collapsed"
-            data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" aria-expanded="false">
-            Корейский
-          </button>
-          <!-- <div class="collapse" id="dashboard-collapse">
-            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-              <li><input v-model="xor_key" class="form-control mt-1" placeholder="Введите ключ"></li>
-            </ul>
-          </div> -->
-        </li>
-
-        <li class="mb-1">
-          <button @click="type_crypt = 'hex'"
-            class="btn btn-sm btn-info w-100 btn-toggle d-inline-flex align-items-center rounded border-0 collapsed"
-            data-bs-toggle="collapse" data-bs-target="#orders-collapse" aria-expanded="false">
-            Немецкий
-          </button>
-        </li>
-      </ul>
-
+      <div class="border rounded p-1 mt-1">
+        <p class="border rounded d-flex justify-content-center">Добавить новое слово:</p>
+        <input v-model="one" type="text" class="form-control" title="Иностранный" placeholder="Иностранный"/>
+        <input v-model="two" type="text" class="form-control mt-1" title="Родной" placeholder="Расшифровка"/>
+        <input v-model="three" type="text" class="form-control mt-1" title="Родной" placeholder="Родной"/>
+        <button @click="send_new_word(one, two, three)" class="btn btn-sm btn-outline-info form-control mb-1 mt-1"><i class="bi bi-send"></i></button>
+      </div>
 
 
     </div>
+
+
     <div class="col-sm-8">
 
+      <div class="row">
+        <div class="col-sm-12 mt-1">
+          <div class="input-group">
+            <button class="btn btn-outline-warning"><i class="bi bi-search"></i></button>
+            <input v-model="word" @keyup.enter="find_func" class="form-control" placeholder="Введите текст" title="Панель для поиска" />
 
-      <table class="table table-bordered border-secondary mt-2" >
-        <!-- 
-        <thead>
-        </thead> -->
-        <tbody>
-          <tr v-for="(string, i) in text">
-            <td>{{ i }}</td>
-            <td v-if="ll1 == true">{{ string }}</td>
-            <td v-if="ll1 == false">{{ string[0] }}</td>
-            <td v-if="ll1 == false">{{ string[1] }}</td>
+            <button @click="resu_search = []; word = ''" class="btn btn-outline-warning"><i class="bi bi-backspace"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-12 rounded p-1 mt-1" v-if="resu_search.length!==0" style="background-color: #111111;">
+        <div class="" v-for="(item, index) in resu_search.slice(0, 10)" :key="item">
+          {{ item['one'] }} - {{ item['two'] }} - {{ item['three'] }}
+        </div>
+      </div>
+
+      <table class="table table-bordered border-secondary mt-1 rounded"  >
+        <thead class="p-0">
+          <tr>
+            <td v-if="check_edit_record" class="p-1"></td>
+            <td v-if="check_foreign_word" class="p-1">
+              <button @click="sortArr('one')" class="btn btn-sm btn-outline-warning mt-1 me-1">Sort</button>
+            </td>
+            <td v-if="check_trascription" class="p-1">
+              <button @click="sortArr('two')" class="btn btn-sm btn-outline-warning mt-1 me-1">Sort</button>
+            </td>
+            <td v-if="check_translate" class="p-1">
+              <button @click="sortArr('three')" class="btn btn-sm btn-outline-warning mt-1 me-1">Sort</button>
+            </td>
+            <td v-if="check_modify" class="p-1">
+              <button @click="sortArr('date')" class="btn btn-sm btn-outline-warning mt-1 me-1">Sort</button>
+            </td>
           </tr>
-          <!-- {{ text }} -->
+        </thead>
+        <tbody class="">
+          <tr v-for="(value, index) of resu">
+
+            <th v-if="check_edit_record" class="p-0 ps-1">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" v-model="value['select']" >
+                <!-- {{ value }} -->
+              </div>
+            </th>
+            
+            <td v-if="check_foreign_word" class="p-0 ps-1">
+              {{ value['one'] }}
+            </td>
+            <td v-if="check_trascription" class="p-0 ps-1">
+              {{ value['two'] }}
+            </td>
+            <td v-if="check_translate" class="p-0 ps-1">
+              {{ value['three'] }}
+            </td>
+            <td v-if="check_modify" class="p-0 ps-1">
+              {{ value['date'] }}
+            </td>
+          </tr>
         </tbody>
 
       </table>
 
     </div>
 
-
-    <!-- <div id="urvanov-syntax-highlighter-6468a9bddc745355398570" class="urvanov-syntax-highlighter-syntax crayon-theme-monokai-copy urvanov-syntax-highlighter-font-monaco urvanov-syntax-highlighter-os-pc print-yes notranslate" data-settings=" minimize scroll-always" style=" margin-top: 12px; margin-bottom: 12px; font-size: 13px !important; line-height: 20px !important;">
-		
-        <div class="urvanov-syntax-highlighter-plain-wrap"><textarea wrap="soft" class="urvanov-syntax-highlighter-plain print-no" data-settings="" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 13px !important; line-height: 20px !important;">
-int max(int a, int b)
-{
-return (a &gt; b) ? a : b;
-}</textarea></div>
-        <div class="urvanov-syntax-highlighter-main" style="">
-            <table class="crayon-table">
-                <tr class="urvanov-syntax-highlighter-row">
-            <td class="crayon-nums " data-settings="show">
-                <div class="urvanov-syntax-highlighter-nums-content" style="font-size: 13px !important; line-height: 20px !important;"><div class="crayon-num" data-line="urvanov-syntax-highlighter-6468a9bddc745355398570-1">1</div><div class="crayon-num crayon-striped-num" data-line="urvanov-syntax-highlighter-6468a9bddc745355398570-2">2</div><div class="crayon-num" data-line="urvanov-syntax-highlighter-6468a9bddc745355398570-3">3</div><div class="crayon-num crayon-striped-num" data-line="urvanov-syntax-highlighter-6468a9bddc745355398570-4">4</div></div>
-            </td>
-                    <td class="urvanov-syntax-highlighter-code"><div class="crayon-pre" style="font-size: 13px !important; line-height: 20px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="urvanov-syntax-highlighter-6468a9bddc745355398570-1"><span class="crayon-t">int</span><span class="crayon-h"> </span><span class="crayon-e">max</span><span class="crayon-sy">(</span><span class="crayon-t">int</span><span class="crayon-h"> </span><span class="crayon-v">a</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-t">int</span><span class="crayon-h"> </span><span class="crayon-v">b</span><span class="crayon-sy">)</span></div><div class="crayon-line crayon-striped-line" id="urvanov-syntax-highlighter-6468a9bddc745355398570-2"><span class="crayon-sy">{</span></div><div class="crayon-line" id="urvanov-syntax-highlighter-6468a9bddc745355398570-3"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">return</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">a</span><span class="crayon-h"> </span><span class="crayon-o">&gt;</span><span class="crayon-h"> </span><span class="crayon-v">b</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">?</span><span class="crayon-h"> </span><span class="crayon-v">a</span><span class="crayon-h"> </span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-v">b</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="urvanov-syntax-highlighter-6468a9bddc745355398570-4"><span class="crayon-sy">}</span></div></div></td>
-                </tr>
-            </table>
-        </div>
-    </div> -->
-    <!-- <search 
-        placeholder="Название книги" 
-        :type="type"
-        @input="onInputChild">
-
-    </search> -->
-    <!-- <p>{{ match_books.length }}</p> -->
-    <!-- <div class="col">
-            <div v-for="(item, i) in match_books" :key="i">{{ item }}</div>
-
-        </div> -->
-
-
   </div>
 </template>
 
+
+<style scoped>
+/* .table,.tbody,.thead {
+  border-radius: 3%;
+} */
+tr, td, tbody {
+  border-radius: 3%;
+}
+
+</style>
 <script>
 export default {
   data() {
@@ -141,70 +163,190 @@ export default {
       count: '',
       name: '',
       match_books: [],
-      text: '',
+      dict: '',
       ll1: '',
+      dict_lang: [],
+      name_lang: 'en',
+      resu: [],
+      resu_backup: [],
+      resu_search: [],
+      // reverse_array: false,
+      // reset_array: false,
+      word: '',
+      one: '',
+      two: '',
+      three: '',
+      check_foreign_word: true,
+      check_trascription: false,
+      check_translate: true,
+      check_modify: false,
+      check_edit_record: false,
+
     }
   },
   async mounted() {
-    // await this.get_books()
-    // await this.read_file()
+    await this.support_lang()
+    await this.selLang('en')
+  },
+  watch: {
+
+    word() {
+      let rx = new RegExp(this.word.toLowerCase())
+
+      this.resu_search = []
+      if (this.word!=='') {
+        for (let i=0;i<this.resu.length;i++) {
+          if (rx.test(this.resu[i]['one'].toLowerCase())) {
+            this.resu_search.push(this.resu[i]);
+          }
+          if (rx.test(this.resu[i]['two'].toLowerCase())) {
+            this.resu_search.push(this.resu[i]);
+          }
+          if (rx.test(this.resu[i]['three'].toLowerCase())) {
+            this.resu_search.push(this.resu[i]);
+          }
+        
+        }
+      } else {
+        this.resu = this.resu_backup.slice(0)
+      }
+
+
+
+    }
+
   },
   components: {
-    search
   },
   methods: {
-    async lang(l1) {
-      // alert(this.v1)
-      console.log('sofsfjoffejw wejrowjrj owerjewo')
+    async delete_selected() {
+      let send_on_del = []
+      this.resu = this.resu
+      .filter(item => {
+        if (item['select'] === true) send_on_del.push(item)
+        return item['select'] !== true
+      })
+      console.info('Это то что нужно удалить: ', send_on_del)
+
+      const response = await fetch('/g/del', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(send_on_del)
+      })
+
+      let result = await response.json()
+      console.log('Ответ на запрос об удалении из БД: ', result)
+
+
+    },
+    async reverse_array() {
+      this.resu.reverse()
+    },
+    async reset_array() {
+      this.resu = this.resu_backup.slice(0)
+    },
+
+    async send_new_word(one, two, three) {
+      let send_date = new Date().toISOString()
+      this.resu.unshift({one: one, two: two, three: three, date: send_date})
+      this.resu_backup = this.resu.slice(0)
+
+
+      let words = { 
+        one: this.one, 
+        two: this.two, 
+        three: this.three, 
+        name_lang: this.name_lang, 
+        date: send_date
+      }
+
+      const responce = await fetch('/upload/dict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(words)
+
+      })
+
+      console.log(await responce.json())
+
+      this.one = ""
+      this.two = ""
+      this.three = ""
+
+
+
+
+
+
+
+
+    },
+
+    async find_func() {
+      this.resu = this.resu_search.slice(0)
+    },
+
+    async support_lang() {  // запрос доступных языков
+      // for (let l of ['Английский', 'Японский', 'Китайский', 'Корейский', 'Немецкий']) this.dict_lang.push(l)
+      // let ls = {'en': 'Английский', 'jp': 'Японский', 'cn': 'Китайский', 'kr': 'Корейский', 'de': 'Немецкий'}
+      //this.dict_lang = ls;
+
+
+      const response = await fetch('/upload/lang', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        //body: JSON.stringify({ 'lang': lang_code })
+      })
+
+      this.dict_lang = await response.json()
+      console.log('Это ответ: ', this.dict_lang)
+    },
+
+    async sortArr(mode='one') { // сортировка по колонкам
+      // console.log(Object.keys(result).sort())
+      // console.info('firts: ', first)
+      // console.info('second: ', second)
+      console.log(this.resu)
+      this.resu.sort(function(first, second) {
+        // console.log(`first: ${first['one']}\nsecond: ${second}`)
+        return first[mode].localeCompare(second[mode]);
+      })
+
+      // console.log(items)
+
+
+    },
+    async selLang(lang_code) { // запрашивает словари
       const response = await fetch('/g/lang', {
         method: 'POST',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 'lang': l1 })
+        body: JSON.stringify({ 'lang': lang_code })
       })
-      let result = (await response.json())['res']
-      // result=result.split('\n')
-      this.text = result
-      console.log(this.text)
+
+      let result = (await response.json())
+      // result.sort((a, b) => .localeCompare(b.firstname))
+      
+      console.log('Это результат: ', result)
+      // let items = Object.keys(result).map(function(key) {
+      //   return [key, result[key]];
+      // });
+
+      this.resu = result
+      this.resu_backup = this.resu.slice(0)
+      this.dict = result
+      // console.log('Я тут получил кое-что: ', this.dict)
       // this.rx_array=[]
       // this.array_videos=[]
       // await this.g()
     },
 
-    // async onInputChild(value) {
-    //     console.log(value)
-    //     alert(value)
-    //     // this.count=value
-    // },
-    // async searching() {
-    //     let rx = new RegExp(this.name)
-    //     this.match_books = []
-    //     this.books.forEach(item => {
-    //         if (rx.test(item.toLowerCase())) {
-    //             this.match_books.push(item)
-    //         }
-    //     })
-    // },
-    // async get_books() {
-    //     let properties = {
-    //         type: "book",
-    //     }
-    //     const response = await fetch('/g', {
-    //         method: 'POST',
-    //         credentials: 'include',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //         },
-    //         body: JSON.stringify(properties)
-    //     })
-    //     const result = await response.json()
-    //     console.log(result)
-    //     this.books = result['items']
-    //     this.route = result['route']
-    //     this.match_books=this.books
-    // }
   }
 }
 </script>

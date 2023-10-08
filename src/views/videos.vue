@@ -5,7 +5,7 @@ import Swal from 'sweetalert2';
 </script>
 
 <template>
-  <div class="container-fluid">
+  <div class="container-fluid ">
     <div class="row">
       <!-- <div class="form-check form-switch">
         <input class="form-check-input" v-model="v1" @change="func" type="checkbox" id="flexSwitchCheckDefault">
@@ -21,42 +21,6 @@ import Swal from 'sweetalert2';
           title="Показывает\Скрывает постеры на видео"><i class="bi bi-emoji-heart-eyes"></i></button>
       </div>
 
-
-
-
-      <!-- {{ name_of_play_list }} -->
-
-      <!-- {{  play_list_array }} -->
-      <!-- <div class="col mb-1 mt-1">
-        <button :class="{'btn btn-secondary form-control mt-1': true, 'btn-success': (aaa>0)}" @click="sorting"><i class="bi bi-filter"></i></button>
-      </div> -->
-      <!-- <div v-if="false" class="col mb-1 mt-1">
-        <button :class="{ 'btn btn-secondary form-control mt-1': true, 'btn-success': (show_names == true) }"
-          @click="show_names_f">{{ name_button_spidoznoe_govno }}</button>
-      </div> -->
-
-      <!-- раздел просмотра -->
-      <!-- <div class="col-sm mb-1 mt-1">
-        <select @change="change_page" v-model="selected_part" class="form-select mt-1 bg-dark text-white" name="">
-          <option value="add_folder">Добавить папку</option>
-          <option value="porno">Порно</option>
-          <option value="programming">Программирование</option>
-          <option value="_2r2r">2rbina2rista</option>
-        </select>
-      </div> -->
-
-
-
-
-
-
-
-      <!-- <div class="col mb-1 mt-1">
-        <button :class="{'btn btn-secondary form-control mt-1': true, 'btn-success': (show_poster==true)}" @click="show_poster_func"><i class="bi bi-stickies-fill"></i> {{ button_text_poster }}</button>
-      </div> -->
-
-
-      <!-- {{ video_values }} -->
 
       <div class="col-sm mb-1 mt-2 m-0 p-0">
         <button @click="open_addvance" class="btn btn-sm btn-outline-danger form-control" title="Дополнительно">
@@ -77,12 +41,12 @@ import Swal from 'sweetalert2';
         </div>
         <div v-if="show_playlist == true" class="col-sm mb-2 ">
           <div class="input-group mb-1">
-            <input class="form-control border border-outline-primary" id="name_list" placeholder="Название плейлиста"
+            <input v-on:keyup.enter="create_new_play_playlist(name_of_play_list)" class="form-control border border-outline-primary" id="name_list" placeholder="Название плейлиста"
               v-model="name_of_play_list">
             <button @click="name_of_play_list = ''" class="input-group-text" id=""><i
                 class="bi bi-backspace"></i></button>
           </div>
-          <button class="btn btn-outline-primary form-control"
+          <button class="btn btn-sm btn-outline-primary form-control"
             @click="create_new_play_playlist(name_of_play_list)">Создать</button>
         </div>
 
@@ -93,11 +57,11 @@ import Swal from 'sweetalert2';
             <i class="bi bi-download"></i>
           </button>
         </div>
-        <div v-if="show_download_panel == true" class="col-sm-12 mb-2 ">
-          <div class="input-group mb-2">
-            <input type="text" class="form-control bg-dark text-white" :disabled="false" v-model="url"
+        <div v-if="show_download_panel == true" class="col-sm-12 mb-2">
+          <div class="input-group mb-1">
+            <input v-on:keyup.enter="run_download(url)" type="text" class="form-control bg-dark text-white" :disabled="false" v-model="url"
               placeholder="Панель загрузки видео">
-            <button class="btn btn-secondary" @click="run_download(url)">
+            <button class="btn btn-sm btn-secondary" @click="run_download(url)">
               <i class="bi bi-download"></i>
             </button>
           </div>
@@ -127,32 +91,29 @@ import Swal from 'sweetalert2';
         </div>
 
         <div v-if="show_pen" class="col-sm">
-          <table class="table table-hover mb-1">
-            <tbody>
-              <tr v-for="(item, index) in play_list_array" :key="item">
-                <td>{{ item[0] }}</td>
-                <td class="">
-                  <div class="d-flex justify-content-end">
-                    <button @click="delete_albom(item[0])" v-if="item[1].edit_mode_video" class="btn btn-outline-info"><i
-                        class="bi bi-x"></i></button>
-                    <button @click="show_like_button_func(item[0])" v-if="item[1].edit_mode_video"
-                      class="btn btn-outline-info ms-1"><i class="bi bi-plus-circle-dotted"></i></button>
-                    <button @click="edit_item(item[1])" class="btn btn-outline-info ms-1"><i
-                        class="bi bi-pencil"></i></button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <p v-if="play_list_array.size == 0" class="text-center p-0">Тут пока ничего нет {{ play_list_array.size }}
-          </p>
+
+          <div v-for="(item, index) in play_list_array" :key="item" class="bg-outline-danger my-1">
+
+            <div class="d-flex justify-content-end align-items-center border rounded">
+              <div class="me-auto p-1">{{ item[0] }}</div>
+              <button @click="delete_albom(item[0])" v-if="item[1].edit_mode_video" class="btn btn-sm btn-outline-info"><i
+                  class="bi bi-x"></i></button>
+              <button @click="show_like_button_func(item[0])" v-if="item[1].edit_mode_video"
+                class="btn btn-sm btn-outline-info ms-1"><i class="bi bi-plus-circle-dotted"></i> Добавить видео</button>
+              <button @click="edit_item(item[1])" class="btn btn-sm btn-outline-info ms-1"><i
+                  class="bi bi-pencil"></i></button>
+            </div>
+            
+          </div>
+
+          <p v-if="play_list_array.size == 0" class="text-center p-0">Тут пока ничего нет {{ play_list_array.size }}</p>
         </div>
 
 
 
-
+        <!-- v-shortkey="['ctrl', 'p']" @shortkey="alert(123)" -->
         <div class="col mb-1">
-          <button @click="lock = !lock" class="btn btn-sm btn-outline-danger form-control"
+          <button @click="lock = !lock" class="btn btn-sm btn-outline-danger form-control" 
             title="Зашифровать/Расшифровать"><i :class="{ 'bi bi-lock': true, 'bi bi-unlock': (lock) }"></i></button>
         </div>
 
@@ -184,8 +145,10 @@ import Swal from 'sweetalert2';
 
         <div class="col-sm mb-1 mt-1">
           <!-- <input type="number" class="form-control mt-1" min="1" max="4"> -->
-          <select @change="select_play(sortType)" v-model="sortType" class="form-select mt-1 bg-dark text-white" name="" title="Выбор плейлиста">
-            <option  v-for="(item, index) in play_list_array" v-bind:key="index" v-bind:value="item">{{ item[0] }}</option>
+          <select @change="select_play(playlist_name)" v-model="playlist_name" class="form-select mt-1 bg-dark text-white" name="" title="Выбор плейлиста">
+            <option value="all">All</option>
+            <option value="recent">Recent</option>
+            <option  v-for="(item, index) in play_list_array" v-bind:value="item">{{ item[0] }}</option>
           </select>
         </div>
 
@@ -284,31 +247,33 @@ import Swal from 'sweetalert2';
         <!-- {{ item }} -->
         <div class="frame-video p-1 rounded">
           <div class="row p-0 mb-2">
-            <div v-if="current_play_list == 'All'" class="col"><button
-                class="m-0 p-0 btn btn-sm btn-outline-danger form-control" @click="add_to_like(item.name)"><i
+            <div v-if="current_play_list == 'All' && show_like_button==true" class="col"><button
+                class="btn btn-sm btn-outline-danger form-control" @click="add_to_like(item.name)"><i
                   class="bi bi-heart"></i> {{ like_button_label }}</button>
             </div>
-            <div class="col"><button @click="delete_from_albom(i)"
-                class="m-0 p-0 btn btn-sm btn-outline-secondary form-control"><i class="bi bi-x"></i></button></div>
-            <div class="col"><button class="m-0 p-0 btn btn-sm btn-outline-danger form-control" @click="reset_video(i)"><i
+            <div class="col" v-if="current_play_list !== 'All'"><button @click="delete_from_albom(i)" 
+                class="btn btn-sm btn-outline-secondary form-control"><i class="bi bi-x"></i></button></div>
+            <div class="col"><button class="btn btn-sm btn-outline-danger form-control" @click="reset_video(i)"><i
                   class="bi bi-stop-btn"></i></button></div>
-            <div class="col"><button class="m-0 p-0 btn btn-sm btn-outline-danger form-control" @click="play_video(i)"><i
+            <div class="col"><button class="btn btn-sm btn-outline-danger form-control" @click="play_video(i)"><i
                   class="bi bi-play-btn"></i></button></div>
           </div>
-          <figure class="m-0">
+          <figure class="m-0" @mouseover="item.upHere = true" @mouseleave="item.upHere = false" >
             <video class="w-100 videos m-0 p-0"
               v-bind:poster="(show_poster == true && item.upHere !== true) ? '/images/periodic_table.jpg' : `/gifs/${encodeURIComponent(item.name.replace(/(.webm|.mp4|.mkv|.avi)/gi, '.gif'))}`"
-              @mouseover="item.upHere = true" @mouseleave="item.upHere = false" loop preload="none" controls="controls">
-              <source :src="`/g?name=${encodeURIComponent(item.name)}`" type="video/mp4" />
+              loop preload="none" controls="controls">
+              <!-- <source :src="`/g?name=${encodeURIComponent(item.name)}`" type="video/mp4" /> -->
+              <source :src="`/g?name=${encodeURIComponent(item.name)}`" type='video/mp4' />
             </video>
             <!-- <figcaption>
               <label id="timer" for="progress" role="timer"></label>
               <progress id="progress" max="100" value="0">Progress</progress>
             </figcaption> -->
-            <figcaption style="font-size: small" v-if="true" @mouseover="shw_nm_vd = true" @mouseleave="shw_nm_vd = false"
+            <figcaption style="font-size: small"
               class="text-break ms-auto">
               <!-- <marquee behavior="scroll" direction="left">{{ item.name }}</marquee> -->
               <!-- {{ item.name }} -->
+              <!-- {{ item.shw_nm_vd }} -->
               {{ nameVideo(item) }}
             </figcaption>
           </figure>
@@ -477,7 +442,8 @@ export default {
       prev_edit_play_list: '',
       lst_srch: [],
       sampling_by_template: [],
-      sortType: ""
+      playlist_name: "all",
+      recent_arr: []
     }
   },
 
@@ -584,7 +550,7 @@ export default {
     },
     
     nameVideo(item) {
-      return (this.shw_nm_vd==false) ? item.name.slice(0, 40) + '...' : item.name
+      return (!item.upHere && item.name.length > 40) ? item.name.slice(0, 40) + '...' : item.name
     },
 
     async delete_from_albom(i) {
@@ -628,6 +594,7 @@ export default {
     async open_addvance() {
       this.show_extra = !this.show_extra
       this.show_pen = false
+      if (!this.show_extra) this.show_like_button = false;
     },
 
     async sdp() {
@@ -636,10 +603,11 @@ export default {
     },
 
     async show_like_button_func(key) {
-      this.show_like_button = !this.show_like_button;
+      //this.show_like_button = !this.show_like_button;
       this.like_button_label = key;
       this.current_play_list = 'All'
       this.rx_array = this.array_videos.slice(0);
+      this.show_like_button = true
 
     },
 
@@ -697,6 +665,7 @@ export default {
     },
     async edit_item(item) {
       item.edit_mode_video = !item.edit_mode_video
+
     },
 
     async add_to_like(name_of_video) {
@@ -737,21 +706,34 @@ export default {
 
     async select_play(item) {
       console.log('selected_play 12313: ', item)
-      this.hide_default_point_tmp = true; // логика с выбором дэфолтного плей листа
-      this.current_play_list = item[0]
-      let tmp = new Map(JSON.parse(window.localStorage.getItem('lst_ply_lst')))
+
+      if (item=='recent') {
+        console.log('Тут Тут Тут сработало!!!!!!!!!!!!')
+        console.log(this.rx_array)
+        this.rx_array = this.recent_arr.slice(0); 
+        this.current_play_list = 'Recent'
+        console.log(this.recent_arr)
+
+        //.name_of_play_list = item[0]
+        // for (let [key, value] of tmp) {
+        //   console.log(key, value, item[0])
+
+        //   // this.rx_array = value;
+        // }
+
+        //this.totalpages = Math.ceil(this.rx_array / this.video_values)
+      } else if (item == 'all') {
+        this.rx_array = this.array_videos.slice(0); 
+        this.current_play_list = 'All'
+      } else {
+        this.hide_default_point_tmp = true; // логика с выбором дэфолтного плей листа
+        this.current_play_list = item[0]
+        let tmp = new Map(JSON.parse(window.localStorage.getItem('lst_ply_lst')))
 
 
-      console.log('wtf', tmp.get(item[0]))
-      this.rx_array = tmp.get(item[0]).videos
-      //.name_of_play_list = item[0]
-      // for (let [key, value] of tmp) {
-      //   console.log(key, value, item[0])
-
-      //   // this.rx_array = value;
-      // }
-
-      //this.totalpages = Math.ceil(this.rx_array / this.video_values)
+        console.log('wtf', tmp.get(item[0]))
+        this.rx_array = tmp.get(item[0]).videos
+      }
 
 
     },
@@ -866,6 +848,7 @@ export default {
         this.rx_array = this.array_videos.slice(0)
         this.backup = this.array_videos.slice(0)
         this.folder = result['route']
+        this.recent_arr = result['recent']
 
         console.log('Ограничение видео на страницу: ', properties.limit)
         // this.totalpages = Math.ceil(productscount / productsPerPage)

@@ -5,20 +5,22 @@ import search from '../../Components/search.vue'
 <template>
   <div class="container-fluid">
     <div class="row">
-      <!-- <search></search>  -->
+
       <div class="col-12 input-group mb-2 mt-2">
         <span class="input-group-text" id=""><i class="bi bi-search"></i></span>
-        <input type="text" placeholder="Поиск картинок" class="form-control" v-on:input="searching(name)" v-model="name">
+        <input type="text" placeholder="Поиск картинок" class="form-control" v-on:keyup.enter="get_select_image" v-on:input="searching(name)" v-model="name">
       </div>
 
-      <!-- {{ computed_func }} -->
-      <!-- {{ theme }} -->
 
-      <!-- <div class="col">
-        <button class="btn btn-outline-danger me-1 form-control" @click="sorting">
-          <i class="bi bi-filter"></i>
-        </button>
-      </div> -->
+      <div class="col-sm-12 style_searching" style="" v-if="find_arr.length !== 0">
+        <div class="" v-for="(item, index) in find_arr" :key="item">
+          {{ item.name }}
+        </div>
+      </div>
+
+
+
+
       <div class="col">
         <button class="btn btn-outline-info me-1 form-control" @click="reversing">
           <i :class="{'bi bi-sort-alpha-down': true, 'bi bi-sort-alpha-up': (reverse==false)}"></i>
@@ -54,12 +56,12 @@ import search from '../../Components/search.vue'
       <div class="col-12"></div>
 
 
-      <div :class="{'pb-1 pt-1': true, 'col-1': (selected==12), 'col-2': (selected==6), 'col-3': (selected==4), 'col-sm-4': (selected==3), 'col-6': (selected==2), 'col-12': (selected==1) }" v-for="(item, i) in find_arr" :key="i">
+      <div :class="{'p-1': true, 'col-1': (selected==12), 'col-2': (selected==6), 'col-3': (selected==4), 'col-sm-4': (selected==3), 'col-6': (selected==2), 'col-12': (selected==1) }" v-for="(item, i) in array_img" :key="i">
         <!-- {{ item }} -->
         <figure v-if="show_image==true">
           <!-- {{ folder }} -->
           <img loading="lazy" class="img-thumbnail p-0" :src="`${route}/${encodeURIComponent(item['name'])}`" @click="canvas2(item['name'])" alt="">
-          <figcaption class="text-break">{{ item['name'] }}</figcaption>
+          <!-- <figcaption class="text-break">{{ item['name'] }}</figcaption> -->
         </figure>
         <p v-else class="mt-0 mb-0">{{ `${item['name']}` }}</p>
 
@@ -75,6 +77,15 @@ import search from '../../Components/search.vue'
 .img-thumbnail {
   width: 100%;
 }
+.style_searching {
+  background-color: #111111;
+  padding: 5px;
+  border-radius: 5px;
+  text-decoration: underline;
+  /* box-sizing: border-box;
+  -moz-box-sizing: border-box; */
+}
+
 </style>
 
 
@@ -87,6 +98,7 @@ export default {
       array_img: [],
       // mySetChangeTracker: 1,
       find_arr: [],
+      tmp_array_img: [],
       route: '',
       name: '',
       reverse: true,
@@ -136,11 +148,18 @@ export default {
     async searching() {
       let rx = new RegExp(this.name)
       this.find_arr=[]
-      this.array_img.forEach(item=>{
-        if(rx.test(item.name.toLowerCase())){
-          this.find_arr.push(item)
-        }
-      })
+      if (this.name !== '') {
+        this.array_img.forEach(item=>{
+          if(rx.test(item.name.toLowerCase())){
+            this.find_arr.push(item)
+          }
+        })
+      } else {
+        this.array_img = this.tmp_array_img.slice(0)
+      }
+    },
+    async get_select_image() {
+      this.array_img = this.find_arr.slice(0)
     },
     async sorting() {
       console.log('Sorting!')
@@ -170,7 +189,7 @@ export default {
       const result = await response.json()
       this.array_img = result['items']
       this.route = result['route']
-      this.find_arr = this.array_img
+      this.tmp_array_img = this.array_img.slice(0)
       // console.log(this.find_arr[2])
       // console.log(this.array_img[2])
     },

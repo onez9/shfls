@@ -58,10 +58,10 @@ import { RouterLink, RouterView } from 'vue-router'
                   <li><router-link class="dropdown-item" to="/g/works">
                       <!-- <i class="bi bi-person-workspace"></i> -->
                       Работа</router-link></li>
-                  <!-- <li>
+                  <li>
                     <router-link class="dropdown-item" to="/g/lang">
                       Язык</router-link>
-                  </li> -->
+                  </li>
 
                   <li>
                     <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
@@ -199,7 +199,7 @@ export default {
     return {
       wait: false,
       dark: false,
-      current_version: '2.4.9'
+      current_version: '2.5.9'
     }
   },
   watch: {

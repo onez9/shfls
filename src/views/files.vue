@@ -18,44 +18,6 @@ import Swal from 'sweetalert2';
 
         </div>
       </div>
-      <!-- 
-      <div>
-        <b-progress :value="value" :max="max" show-progress animated></b-progress>
-        <b-progress class="mt-2" :max="max" show-value>
-          <b-progress-bar :value="value * (6 / 10)" variant="success"></b-progress-bar>
-          <b-progress-bar :value="value * (2.5 / 10)" variant="warning"></b-progress-bar>
-          <b-progress-bar :value="value * (1.5 / 10)" variant="danger"></b-progress-bar>
-        </b-progress>
-
-        <b-button class="mt-3" @click="randomValue">Click me</b-button>
-      </div> -->
-
-      <!-- </div> -->
-      <!-- <p align="left">sdfsdf fsdfjo jfosdof j</p> -->
-      <!-- <p><img src="/images/europe.png" alt="Европа" width="422" height="387" usemap="#Map">
-				<map name="Map">
-					<area shape="poly"
-						coords="192.168.1.103,192.168.1.103,192.168.1.103,84,95, 192.168.1.103,192.168.1.103,192.168.1.103"
-						href="is.html" alt="Исландия">
-					<area shape="poly"
-						coords="192.168.1.103,192.168.1.103,192.168.1.103, 192.168.1.103,192.168.1.103,192.168.1.103,192.168.1.103"
-						href="fr.html" alt="Франция">
-					<area shape="poly"
-						coords="192.168.1.103,192.168.1.103,192.168.1.103, 192.168.1.103,192.168.1.103,192.168.1.103"
-						href="pl.html" alt="Польша">
-				</map>
-			</p> -->
-      <!-- <p>Напитки</p>
-			<ol>
-
-				<li>Кофе</li>
-				<li>Чай
-					<ul>
-						<li>Зелёный Чай</li>
-						<li>Черный Чай</li>
-					</ul>
-				</li>
-			</ol> -->
       <div class="row">
         <div class="col-sm">
           <button class="btn btn-outline-danger mb-1 w-100" @click="upload_file">
@@ -99,15 +61,10 @@ import Swal from 'sweetalert2';
         <tbody>
           <template @click="activeElem = element" v-for="(item, index) in  array " :key="index">
             <tr>
-              <!-- {{ item }} -->
-              <!-- <td><button class="btn btn-danger"><i class="bi bi-file-binary-fill"></i></button></td> -->
               <td @click="item.showmode = !item.showmode" class="align-middle text-break p-0">{{ item.name }}</td>
               <td v-if="show_info" class="align-middle text-break p-0">{{ parseInt(item.info.size / 1024) }} Kb</td>
               <td v-if="show_info" class="align-middle text-break p-0">{{ item.info.mtime.split('T')[0].toString() }}</td>
               <td v-if="show_info" class="align-middle text-break p-0">{{ item.info.mtime.split('T')[1].toString() }}</td>
-              <!-- <td><img v-if="item.showmode" class="w-100" :src="`/downloads/${item.name}`" alt=""></td> -->
-              <!-- {{ item }} -->
-
 
               <td class="p-0">
                 <div class="d-flex justify-content-end">

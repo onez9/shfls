@@ -1,6 +1,6 @@
 import express from 'express'; // web-сервер
 import path, { resolve } from 'path'; // Разрешение путей
-import fs, { existsSync } from 'fs' // доступ к файлам
+import fs, { existsSync, writeFileSync } from 'fs' // доступ к файлам
 const router = express.Router();
 import { v4 } from 'uuid'
 import Iconv from 'iconv'
@@ -18,8 +18,10 @@ import redis from 'redis' // драйвер для подключения к NoS
 import user_agent from '../configs/user_agent.mjs'; // файковый юзерагент
 import { load } from 'cheerio'; // парсинг 
 import axios from 'axios'; // загрузка страниц
+import { ObjectLoader } from 'three';
 // import utils from 'util'
-
+import sqlite from 'sqlite3';
+const db_path = "./db.sqlite3"
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -225,36 +227,84 @@ router.post('/code', (req, res) => {
 	}
 })
 
+
+router.post('/del', (req, res) => {
+	try {
+		const db = new sqlite.Database('db.sqlite3')
+		const data = req.body
+		console.log('Тут что надо удалить из бд: ', req.body)
+		let sql = "delete from words where one=? and two=? and three=? and date=?"
+		db.serialize(() => {
+			const stmt = db.prepare(sql);
+			for (let item of data) {
+				let params = [item['one'], item['two'], item['three'], item['date']]
+				stmt.run(params);
+			}
+			stmt.finalize();
+		
+		});
+
+
+		db.close()
+		res.json({answer: 200})
+	} catch (e) {
+		console.error('Чё-то пошло не так!')
+		res.json({answer: 404})
+	}
+})
+
 router.post('/lang', (req, res) => {
+	const checkLang = (text) => {
+		// U+4E00 and U+9FFF
+		for (let i=0;i<text.length;i++) {
+			
+			// let codeHex = '0'+text.charCodeAt(i).toString(16).toUpperCase()
+			let codeHex = text.charCodeAt(i)
+			codeHex = text[i] + " " + codeHex + ";"
+			process.stdout.write(`${codeHex}`)
+		}
+	}
+
 	try {
 		let lang = req.body.lang
-		console.log('я тут я тут сука')
-		console.log(path.resolve('Share', 'txt', '1.txt'))
+		console.log('это язык: ', req.body.lang)
+
+		// console.log(path.resolve('Share', 'txt', '1.txt'))
 		let txt
-		// let filename=(lang=='jp')? '1.txt' : '2.txt'
-		if (lang == 'jp') {
-			txt = fs.readFileSync(path.resolve('Share', 'txt', '1.txt'), {
-				encoding: 'utf-8'
-			})
-			console.log(txt)
-			txt = txt
-				.split('\n')
-				.filter(n => !(n.trim() == ''))
-		} else {
-			txt = fs.readFileSync(path.resolve('Share', 'txt', '2.txt'), {
-				encoding: 'utf-8'
-			})
-			console.log(txt)
+		let dict = new Map();
+		dict['en']=1;
+		dict['jp']=2;
+		dict['ru']=3;
+		dict['kr']=4;
+		dict['cn']=5;
 
-			txt = txt
-				.split('\n')
-				.filter(n => !(n.trim() == ''))
-				.map(item => item.split(' - '))
-		}
-		console.log(txt)
+		const db = new sqlite.Database('db.sqlite3')
+		let sql;
 
 
-		res.send(JSON.stringify({ 'res': txt }))
+		sql = 'select one, two, three, date from words where dictionary_id=?';
+		db.all(sql, [dict[lang]], (err, rows) => {
+			try {
+				if (err) {
+					throw err;
+				}
+				
+				console.log(rows)
+				res.json(rows)
+
+			} catch (e) {
+				console.info('Сработал catch (при запросе к /get/lang (запрос словарей)) ошибка ниже')
+				console.log(e);
+
+			}
+		});
+
+
+			
+
+		
+		db.close();
+
 	} catch (e) {
 		console.log(e)
 	}
@@ -441,7 +491,7 @@ router.get('/s', (req, res) => {
 
 
 			const result = logger(promise, `Obtaining ${url}`, {
-				estimate: 10000 // приблизительное время завершения
+				estimate: 100000 // приблизительное время завершения
 			}).then(info => {
 				console.log('this is result logger: ', info)
 				//console.log('this is webSocket: ', req.wsServer)
@@ -632,7 +682,7 @@ router.post('/', async (req, res) => {
 			})
 			*/
 
-			console.log(dir)
+			//console.log(dir)
 
             fs.readdir(dir, (err, items) => {
                 try {
@@ -640,13 +690,27 @@ router.post('/', async (req, res) => {
 						console.log(err);
 						
 					}
+
                     let result = Array()
+					let left = {};
+					let right = {};
                     items.forEach(item => {
 						try {
-							if (['.webm', '.avi', '.mp4', '.mkv'].indexOf(path.parse(item).ext.toLowerCase()) > -1) {
+							const ext = path.parse(item).ext.toLowerCase()
+							
+							if (['.webm', '.avi', '.mp4', '.mkv'].indexOf(ext) > -1) {
 								result.push({
 									name: item
 								})
+								let name = item.split(/.webm|.avi|.mp4|.mkv/)[0]
+								// console.warn(name + ext)
+								left[name] = ext
+							}
+
+							if (ext == '.gif') {
+								let name = item.split(/.gif/)[0]
+								// console.warn('i\m home', name + ext)
+								right[name] = ext
 							}
 
 						} catch (e) {
@@ -656,6 +720,25 @@ router.post('/', async (req, res) => {
 						}
 
                     })
+
+
+					let res_except = Object.keys(left).filter(function (x) {
+						return Object.keys(right).indexOf(x) < 0;
+					})
+
+					console.info(`Новые видосы: `)
+					console.info(`left: ${Object.keys(left).length}`)
+					console.info(`right: ${Object.keys(right).length}`)
+					for (let i=0; i<res_except.length; i++) {
+						// res_except[i] = left[res_except[i]];
+						// console.log()
+						res_except[i] = {
+							name: res_except[i]+left[res_except[i]]
+						}
+						console.info(res_except[i])
+					}
+					// console.warn(right);
+					// console.error(left)
 
 					let fromIndex = page * limit     // начальный индекс товара
 					let toIndex = page*limit + limit // конечный индекс товара
@@ -670,7 +753,9 @@ router.post('/', async (req, res) => {
 					console.log(`toIndex: ${toIndex}`)
 					// return c.JSON(http.StatusOK, productsPage)
 					console.log(productsPage)
-                    res.json({ "items": productsPage, "route": route, "count_videos": result.length })
+
+
+                    res.json({ "items": productsPage, "route": route, "count_videos": result.length, "recent": res_except })
                 
 				} catch (e) {
                     console.log('Ошибка тут ошибка: ', e)

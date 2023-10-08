@@ -16,70 +16,44 @@ import Swal from 'sweetalert2';
                 <div class="alert alert-primary" role="alert">
                     A simple secondary alert—check it out!
                 </div> -->
-                <div v-for="(item, i) in messages" :key="i" :class="{'alert alert-info myclass my-1 py-1': (true), 'alert alert-primary': (item['name']!=name)}" role="alert">
-                    <span>{{ item['name'] }}</span><br />
+                <div v-for="(item, i) in messages" :key="i" 
+                    :class="{'alert alert-info myclass my-1 py-1': (true), 'alert alert-primary': (item['name']!=name)}" role="alert">
+                    <div class="d-flex justify-content-end border rounded mb-1">
+                        <span class="me-auto ms-3">{{ item['name'] }}</span>
+                        <!-- {{ item['sinf']?.type }} -->
+                        <button v-if="item['sinf']?.type == 'config'" class="btn btn-sm btn-outline-info" @click="apply_setting(item)">применить</button>
+                    </div>
+
 
                     <div class="alert alert-secondary m-0 py-0">{{ item['message'] }}</div>
         
-
+                    <!-- {{ item['name'] }} -->
                     <div class="flex-grow-1 mb-1"></div>
                     <div id="time_id" class="d-flex justify-content-end">
                         {{ item['time'] }}
                     </div>
+                   
                 </div>
-                    <!-- </tbody>
-                </table> -->
-                <!-- {{ messages }} -->
             </div>
 
-            <div class="col-sm-6">
+            <div class="col-sm-12">
                 <div class="input-group my-1">
-                    <input v-on:keyup.enter="send" v-model="message" type="text" class="form-control ps-2">
-                    <span class="input-group-text" id="">{{ messages.length }}</span>
-                    <!-- <input type="file" class="form-control ps-2"> -->
+                    <textarea v-on:keyup.enter="send" v-model="message" type="text" class="form-control ps-2"></textarea>
+                    <span class="input-group-text" id="" title="Колличество сообщений">{{ messages.length }}</span>
                     <button class="btn btn-outline-primary"><i class="bi bi-card-text"></i></button>
                     <button id="send1" class="btn btn-outline-primary" @click="send"><i class="bi bi-send"></i></button>
+
                 </div>
+                <button @click="send_settings" class="btn btn-outline-info form-control">Добавить настройки в сообщение</button>
             </div>
 
-            <!-- <div class="col-sm-6">
-                <div class="input-group my-1">
 
-                </div>
-            </div> -->
-
-            <!-- <div class="col-sm-6 my-1">
-                <button class="btn btn-dark ps-1 pe-1">Изменить имя</button>
-
-            </div> -->
-
-
-            <div class="col-sm-6" v-if="true">
-                <div class="input-group my-1">
-                    <input v-model="name" type="text" class="form-control">
-                    <button @click="setNewName" class="btn btn-outline-primary p-0 ps-1 pe-1">Изменить имя</button>
-        
-                </div>
-
-            </div>
-            <!-- {{ $attrs }} -->
         </div>
     </div>
 </template>
 
 
 <style scoped>
-.myclass {
-    word-wrap: break-word;
-}
-
-.child {
-  /* display: flex; */
-  /* flex-direction: column; */
-
-  /* overflow: ; */
-  
-}
 td {
     width: 33%;
     word-break:break-all;
@@ -112,6 +86,7 @@ export default {
             messages: [],
             message: '',
             name: '',
+            sinf: '',
         }
     },
     async mounted() {
@@ -130,7 +105,7 @@ export default {
         this.connection.onmessage = (event) => {
             // console.log(event.data.text());
             // console.log(event.data);
-            console.log('this value: ', JSON.parse(event.data))
+            //console.log('this value: ', JSON.parse(event.data))
             // JSON.stringify
             this.my=false
             this.messages.push(JSON.parse(event.data)) // принимаем сообщения от других пользователей
@@ -167,7 +142,29 @@ export default {
 
 
     },
+
+    computed: {
+
+    },
     methods: {
+        async get_type(item) {
+            console.log('вот это сообщение: ', item['sinf']['type'])
+        },
+        async send_settings() {
+            const jplist = window.localStorage.getItem('lst_ply_lst')
+            this.sinf = ({ 
+                info: jplist,
+                type: 'config',
+            })
+            //console.info('this.settings: ', settings.mark)
+        },
+
+        async apply_setting(item) { // применяется только когда клиент получил сообщение
+            alert(item['message'])
+            
+            window.localStorage.setItem('lst_ply_lst', item['sinf'].info)
+        },
+
         async get_message() { // запрашивает все сообщения при старте 
             const response = await fetch('/g/message', {
                 method: 'POST',
@@ -181,30 +178,50 @@ export default {
             this.messages=await response.json()
             console.log(this.messages)
         },
-        async send() { // send me
+        async send() { // send me // show only my client but not send on server
             if (this.message!=="") {
                 let current_time = new Date();
                 // this.messages.push({'name': this.name, 'message': this.message, 'time': `${current_time.getHours()}:${current_time.getMinutes()}`})
-                this.messages.push({'name': this.name, 'message': this.message, 'time': current_time})
+                
+                console.log('current_time: ', current_time.toISOString())
+
+                const mess = { 
+                    'name': this.name, 
+                    'message': this.message, 
+                    'time': current_time.toISOString(), 
+                    'sinf': this.sinf 
+                }
+                // 
+                this.messages.push(mess)
                 await this.sendMessage()
-                document.getElementById('cont1').scrollTop+=[...document.getElementsByClassName('myclass')].slice(-1)[0].offsetHeight + 4
+                document.getElementById('cont1').scrollTop += [...document.getElementsByClassName('myclass')].slice(-1)[0].offsetHeight + 4
                 
                 // document.getElementById('cont1').scrollTop=document.getElementById("tabl1").offsetHeight
                 
                 
                 // alert(document.getElementsByClassName('child').heigth()); //document.getElementsByClassName('child').height();
                 // this.messages.reverse()
-                console.log()
+   
             }
             
         },
         async sendMessage() { // send all users
-            // alert(message)
             console.log(this.connection);
-            let current_time = new Date();
+            const current_time = new Date();
+
+
+            const mess = {
+                'name': this.name.toString(),
+                'message': this.message, 
+                'time': current_time.toISOString(),
+                'sinf': this.sinf
+            }
+            
+            
             // await this.connection.send(JSON.stringify({'name': this.name, 'message': this.message, 'time': `${current_time.getHours()}:${current_time.getMinutes()}`}));
-            await this.connection.send(JSON.stringify({'name': this.name, 'message': this.message, 'time': current_time}))
+            await this.connection.send(JSON.stringify(mess))
             this.message=""
+            this.sinf = ""
             
         },
 
