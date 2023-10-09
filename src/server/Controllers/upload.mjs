@@ -102,7 +102,9 @@ router.post('/dict', (req, res) => {
         case 'cn':
             dictionary_id = 5;
             break;
-    
+        case 'de':
+            dictionary_id = 6;
+            break;
         default:
             break;
     }
@@ -112,8 +114,8 @@ router.post('/dict', (req, res) => {
 
         if (true) {
 
-            let sql = "insert into words ('dictionary_id', 'one', 'two', 'three', 'date') VALUES (?, ?, ?, ?, ?)"
-            let params = [dictionary_id, recieved_data['one'], recieved_data['two'], recieved_data['three'], recieved_data['date']]
+            let sql = "insert into words ('dictionary_id', 'one', 'two', 'three', 'date', 'time') VALUES (?, ?, ?, ?, ?, ?)"
+            let params = [dictionary_id, recieved_data['one'], recieved_data['two'], recieved_data['three'], recieved_data['date'], recieved_data['time']]
             db.serialize(() => {
                 const stmt = db.prepare(sql);
                 stmt.run(params);

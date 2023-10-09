@@ -227,17 +227,65 @@ router.post('/code', (req, res) => {
 	}
 })
 
+router.post('/upd', (req, res) => {
+	try {
+		const db = new sqlite.Database('db.sqlite3')
+		const data = req.body // хранит обновляемый объект
+		console.log('Тут что надо обновить в бд: ', req.body)
+		let sql = "update words set one=?, two=?, three=?, date=?, time=? where one=? and two=? and three=? and date=? and time=? and dictionary_id=?"
+		
+		let dict = new Map();
+		dict['en']=1;
+		dict['jp']=2;
+		dict['ru']=3;
+		dict['kr']=4;
+		dict['cn']=5;
+		dict['de']=6;
+		
+		
+		
+		db.serialize(() => {
+			const stmt = db.prepare(sql);
+			//for (let item of data) {
+			let params = [
+				data['one'], 
+				data['two'], 
+				data['three'], 
+				data['date'], 
+				data['time'],
+				data['one_bak'], 
+				data['two_bak'], 
+				data['three_bak'], 
+				data['date_bak'],
+				data['time_bak'],
+				dict[data['lang']]
+			]
+			stmt.run(params);
+			//}
+			stmt.finalize();
+		
+		});
 
+
+		db.close()
+		res.json({answer: 200, description: 'Данные обновлены'})
+
+
+	} catch (e) {
+		console.error('Чё-то пошло не так! при обновлении выборочных данных. Описание ошибки ниже')
+		console.error(e)
+	}
+})
 router.post('/del', (req, res) => {
 	try {
 		const db = new sqlite.Database('db.sqlite3')
 		const data = req.body
 		console.log('Тут что надо удалить из бд: ', req.body)
-		let sql = "delete from words where one=? and two=? and three=? and date=?"
+		let sql = "delete from words where one=? and two=? and three=? and date=? and time=?"
 		db.serialize(() => {
 			const stmt = db.prepare(sql);
 			for (let item of data) {
-				let params = [item['one'], item['two'], item['three'], item['date']]
+				let params = [item['one'], item['two'], item['three'], item['date'], item['time']]
 				stmt.run(params);
 			}
 			stmt.finalize();
@@ -277,12 +325,13 @@ router.post('/lang', (req, res) => {
 		dict['ru']=3;
 		dict['kr']=4;
 		dict['cn']=5;
+		dict['de']=6;
 
 		const db = new sqlite.Database('db.sqlite3')
 		let sql;
 
 
-		sql = 'select one, two, three, date from words where dictionary_id=?';
+		sql = 'select one, two, three, date, time from words where dictionary_id=?';
 		db.all(sql, [dict[lang]], (err, rows) => {
 			try {
 				if (err) {

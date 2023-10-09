@@ -152,24 +152,6 @@ import Swal from 'sweetalert2';
           </select>
         </div>
 
-<!-- 
-        <div class="col mb-1 mt-2">
-          <div class="btn-group form-control p-0">
-            <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"
-              aria-expanded="false">
-              <i class="bi bi-list-stars"></i> {{ current_play_list }}
-            </button>
-            <ul class="dropdown-menu">
-              <li @click="rx_array = array_videos; current_play_list = 'All'"><a class="dropdown-item">All</a></li>
-              <li @click="select_play(item)" v-for="(item, index) in play_list_array" :key="item">
-                <a class="dropdown-item" href="#">
-                  {{ item[0] }}
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div> -->
-
       </div>
 
 
@@ -184,7 +166,7 @@ import Swal from 'sweetalert2';
       </div>
 
       <div class="col-sm-12 style_searching" style="" v-if="sampling_by_template.length !== 0">
-        <div class="" v-for="(item, index) in sampling_by_template" :key="item">
+        <div class="" v-for="(item, index) in sampling_by_template.slice(0, 20)" :key="item">
           {{ item.name }}
         </div>
       </div>
@@ -205,16 +187,7 @@ import Swal from 'sweetalert2';
                 <li v-if="(currentPage - 2 < page) && (currentPage + 4 > page)"
                   :class="{ 'page-item': true, 'active': (page - 1 == currentPage) }">
                   <a class="page-link" @click="crumbs(page - 1)" href="#">{{ page }}</a>
-                  <!-- <a v-else class="page-link" @click="crumbs(page-1)" href="#"></a> -->
                 </li>
-                <!-- {{ func(page) }} -->
-                <!-- {{ (4+totalpages-3)/2 }} -->
-                <!-- <li v-if="page==Number((4+totalpages-3)/2)" class="page-item">
-                <a class="page-link">...</a>
-              </li> -->
-                <!-- <li class="page-item" v-if="check">
-                <a class="page-link" href="#">...</a>
-              </li> -->
               </template>
 
 

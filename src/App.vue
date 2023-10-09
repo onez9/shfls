@@ -199,7 +199,7 @@ export default {
     return {
       wait: false,
       dark: false,
-      current_version: '2.5.9'
+      current_version: '2.6.3'
     }
   },
   watch: {
