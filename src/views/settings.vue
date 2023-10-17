@@ -173,7 +173,9 @@ export default {
       }
       axios.post('/control', {
         //credentials: 'include',
-        headers: {},
+        headers: {
+          authorization: window.localStorage.getItem('jwt'),
+        },
         body: JSON.stringify(properties)
       })
       .then( (response) => {

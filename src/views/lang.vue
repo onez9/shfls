@@ -2,6 +2,9 @@
 import { RouterLink, RouterView } from 'vue-router'
 import search from '../../Components/search.vue'
 import axios from 'axios';
+import Swal from 'sweetalert2';
+
+
 
 </script>
 <template>
@@ -9,71 +12,135 @@ import axios from 'axios';
 
   <div class="row">
     <div class="col-sm-4">
-      <div class="col-sm mb-1 mt-1">
-        <label>Выберете язык</label>
-        <!-- <input type="number" class="form-control mt-1" min="1" max="4"> -->
-        <select @change="selLang(name_lang)" v-model="name_lang" class="form-select mt-1 bg-dark text-white " name="" title="Выберете язык">
-          <option  v-for="(value, key) of dict_lang" v-bind:value="key">{{ value }}</option>
-        </select>
+      <div v-if="false" class="border rounded p-1 mt-1 " >
+        <input type="search" id="site-search" name="q" />
+      </div>
+      
+      <div v-if="false" class="border rounded p-1 mt-1 " >
+        <!-- <button type="color" class="btn btn-sm btn-outline-danger">123</button> -->
+        <input type="week" />
+      </div>
+      <div v-if="false" class="border rounded p-1 mt-1 " >
+        <!-- <button type="color" class="btn btn-sm btn-outline-danger">123</button> -->
+        <input type="color" value="#ff0000" />
+      </div>
+      <div v-if="false" class="border rounded p-1 mt-1 " >
+        <button class="btn btn-sm btn-outline-danger"><i class="bi bi-gear"></i></button>
+      </div>
+
+
+      <select @change="selLang(name_lang)" v-model="name_lang" class="form-select mt-1 bg-dark text-white " name="" title="Выберете язык">
+        <option  v-for="(value, key) of dict_lang" v-bind:value="key">{{ value }}</option>
+      </select>
+
+
+      <div v-if="false" class="border rounded p-1 mt-1">
+        <label class="d-flex justify-content-start" @click="show_alphavit_mode =! show_alphavit_mode">Показать алфавит</label>
+        <div v-if="show_alphavit_mode" class="border rounded p-1 mt-1 " >
+          <img class="w-100" style="background-color: white;" src="/images/hiragana.png" alt="">
+        </div>
+        <div v-if="show_alphavit_mode" class="border rounded p-1 mt-1 ">
+          <img class="w-100" src="/images/katakana.jpeg" alt="">
+        </div>
+      </div>
+      <div :class="{'border rounded p-1 mt-1': true, 'border-danger': new_word_mode}">
+        <label @click="new_word_func" class="d-flex justify-content-start">Слова</label>
+        <input v-if="new_word_mode" v-model="one" ref="myinput" type="text" class="form-control" title="Иностранный" placeholder="Иностранный"/>
+        <input v-if="new_word_mode" v-model="two" type="text" class="form-control mt-1" title="Родной" placeholder="Транскрипция"/>
+        <input v-if="new_word_mode" v-model="three" type="text" class="form-control mt-1" title="Родной" placeholder="Родной"/>
+        <button v-if="new_word_mode" @click="send_new_word(one, two, three)" class="btn btn-sm btn-outline-danger form-control mb-1 mt-1" :disabled="(one=='' || three=='')? true : false"><i class="bi bi-send"></i></button>
+      
+
+        <!-- <button v-if="new_word_mode" @click="get_words()" class="btn btn-sm btn-outline-danger form-control mt-1">Показать слова</button> -->
 
       </div>
 
-   
-      <div class="border rounded p-1">
-        <p class="border rounded d-flex justify-content-center">Настройка списка</p>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" v-model="check_foreign_word" id="flexCheck_foreign_word" >
-          <label class="form-check-label" for="flexCheck_foreign_word">
-            Иностранное слово
-          </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" v-model="check_trascription" id="flexCheck_transcription" >
-          <label class="form-check-label" for="flexCheck_transcription">
-            Транскрипция
-          </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" v-model="check_translate" id="flexCheck_translate" >
-          <label class="form-check-label" for="flexCheck_translate">
-            Перевод
-          </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" v-model="check_date" id="flexCheck_date" >
-          <label class="form-check-label" for="flexCheck_date">
-            Дата модификации
-          </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" v-model="check_time" id="flexCheck_time" >
-          <label class="form-check-label" for="flexCheck_time">
-            Время модификации
-          </label>
-        </div>
-
-
-        <label class="mt-1">Перевернуть список</label>
-        <button @click="reverse_array" class="form-control btn btn-sm btn-outline-danger mb-1">reverse</button>
-        <label>Вернуть в исходное состояние</label>
-        <button @click="reset_array" class="form-control btn btn-sm btn-outline-danger">reset</button>
-        <label>Удалить выделенное</label>
-        <button @click="delete_selected" class="btn btn-sm btn-outline-danger form-control">Delete</button>
-        <label>Объеденить в группу (муляж)</label>
-        <button class="btn btn-sm btn-outline-danger form-control">merge</button>
-        <!-- <label v-if="check_edit_record">Сохранить выделенную группу</label> -->
-        <!-- <button v-if="check_edit_record" @click="save_selected" class="btn btn-sm btn-outline-danger form-control">Save</button> -->
-   
+      <div :class="{'border rounded p-1 mt-1': true, 'border-danger': (create_rule_mode)}">
+        <label @click="create_rule_func" class="d-flex justify-content-start">Правила</label>
+        <input v-if="create_rule_mode" v-model="name_rule" type="text" class="form-control mb-1" title="Название" placeholder="Название">
+        <textarea v-if="create_rule_mode" v-model="description_rule" type="text" class="form-control mb-1" title="Описание" placeholder="Описание"></textarea>
+        <button v-if="create_rule_mode" @click="add_rule(name_rule, description_rule)" class="btn btn-sm btn-outline-danger form-control" :disabled="(name_rule=='' || description_rule=='')? true : false">Создать</button>
+    
+        <!-- <button v-if="create_rule_mode" @click="get_rules()" class="btn btn-sm btn-outline-danger form-control mt-1">Показать правила</button> -->
       </div>
 
+      <div :class="{'border rounded p-1 mt-1': true, 'border-danger': (add_phrase_mode)}">
+        <label @click="add_phrase_func" class="d-flex justify-content-start">Фразеологизмы</label>
+        <!-- <input type="text" class="form-control mb-1" title="Название" placeholder="Название"> -->
+        <textarea v-if="add_phrase_mode" v-model="fi_phrase" type="text" class="form-control mb-1" title="Описание" placeholder="Иностранный"></textarea>
+        <textarea v-if="add_phrase_mode" v-model="fo_phrase" type="text" class="form-control mb-1" title="Описание" placeholder="Русский"></textarea>
+        <button v-if="add_phrase_mode" @click="phraseological_unit(fi_phrase, fo_phrase)" class="btn btn-sm btn-outline-danger form-control" :disabled="(fi_phrase=='' || fo_phrase=='')? true : false">Создать</button>
+
+        <button v-if="add_phrase_mode" @click="get_phrase()" class="btn btn-sm btn-outline-danger form-control mt-1">Показать фразеологизмы</button>
+      </div>
 
       <div class="border rounded p-1 mt-1">
-        <p class="border rounded d-flex justify-content-center">Добавить новое слово:</p>
-        <input v-model="one" type="text" class="form-control" title="Иностранный" placeholder="Иностранный"/>
-        <input v-model="two" type="text" class="form-control mt-1" title="Родной" placeholder="Расшифровка"/>
-        <input v-model="three" type="text" class="form-control mt-1" title="Родной" placeholder="Родной"/>
-        <button @click="send_new_word(one, two, three)" class="btn btn-sm btn-outline-info form-control mb-1 mt-1"><i class="bi bi-send"></i></button>
+        <label @click="show_groups_func" class="d-flex justify-content-start">Группы ({{ current_group }})</label>
+
+        <div v-if="new_group_mode">
+          <input v-if="true" v-model="name_group" ref="myinput1" v-on:keyup.enter="create_group(name_group)" type="text" class="form-control mb-1" title="Название" placeholder="Название">
+          <button v-if="true" @click="create_group(name_group)" class="btn btn-sm btn-outline-danger form-control mb-1">Создать</button>
+          
+          
+          <div v-for="(item, index) in groups" :key="item" class="border rounded p-0 mb-1 d-flex align-items-center">
+            <div class="me-auto ps-2">{{ item['name'] }}</div>
+            
+            <button @click="get_values_from_group(item)" class="btn btn-sm btn-outline-danger me-1"><i class="bi bi-badge-8k-fill"></i></button>
+            <button @click="add_to_group" class="btn btn-sm btn-outline-danger me-1"><i class="bi bi-save"></i></button>
+            <button @click="" class="btn btn-sm btn-outline-danger me-1"><i class="bi bi-pen"></i></button>
+            <button @click="selGroup(item)" class="btn btn-sm btn-outline-danger me-1"><i class="bi bi-plus"></i></button>
+            <button @click="delGroup(item)" class="btn btn-sm btn-outline-danger"><i class="bi bi-x"></i></button>
+          </div>
+
+        </div>
+
       </div>
+
+
+
+
+
+   
+      <div class="border rounded p-1 mt-1">
+        <label @click="edit_list_mode =! edit_list_mode" class="d-flex justify-content-start">Настроить список</label>
+        <div v-if="edit_list_mode" class="border rounded p-1">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" v-model="check_foreign_word" id="flexCheck_foreign_word" >
+            <label class="form-check-label" for="flexCheck_foreign_word">
+              Иностранное слово
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" v-model="check_trascription" id="flexCheck_transcription" >
+            <label class="form-check-label" for="flexCheck_transcription">
+              Транскрипция
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" v-model="check_translate" id="flexCheck_translate" >
+            <label class="form-check-label" for="flexCheck_translate">
+              Перевод
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" v-model="check_date" id="flexCheck_date" >
+            <label class="form-check-label" for="flexCheck_date">
+              Дата модификации
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" v-model="check_time" id="flexCheck_time" >
+            <label class="form-check-label" for="flexCheck_time">
+              Время модификации
+            </label>
+          </div>
+
+
+        </div>
+
+
+      </div>
+
 
 
     </div>
@@ -85,20 +152,20 @@ import axios from 'axios';
         <div class="col-sm-12 mt-1">
           <div class="input-group">
             <button class="btn btn-outline-danger"><i class="bi bi-search"></i></button>
-            <input v-model="word" @keyup.enter="find_func" class="form-control" placeholder="Введите текст" title="Панель для поиска" />
+            <input v-model="word" @input="word_change" @keyup.enter="find_func" class="form-control" placeholder="Введите текст" title="Панель для поиска" />
 
-            <button @click="resu_search = []; word = ''" class="btn btn-outline-danger"><i class="bi bi-backspace"></i></button>
+            <button @click="resu_search = []; word = ''; resu = resu_backup.slice()" class="btn btn-outline-danger"><i class="bi bi-backspace"></i></button>
           </div>
         </div>
       </div>
 
-      <div class="col-sm-12 rounded p-1 mt-1" v-if="resu_search.length!==0" style="background-color: #111111;">
+      <div class="col-sm-12 rounded p-1 mt-1 style_searching" v-if="resu_search.length!==0">
         <div class="" v-for="(item, index) in resu_search.slice(0, 10)" :key="item">
-          {{ item['one'] }} - {{ item['two'] }} - {{ item['three'] }}
+          {{ `${item['one']}  ${item['two']}  ${item['three']}` }}
         </div>
       </div>
 
-      <table class="table table-bordered table-dark mt-1 rounded"  >
+      <table v-if="resu.length !== 0" class="table table-bordered table-dark mt-1 rounded"  >
         <thead class="p-0">
           <tr class="bg-info p-0">
             <td class="p-0 m-0">
@@ -122,12 +189,15 @@ import axios from 'axios';
             <td v-if="check_date" class="p-0 m-0">
               <div class="d-flex">
                 <button @click="sortArr('date', f4), f4 =! f4" class="btn btn-sm btn-outline-danger"><i :class="{'bi': true,  'bi-sort-alpha-down': (f4==true), 'bi-sort-alpha-up': (f4==false)}"></i></button>
+                <!-- <button class="btn  btn-sm btn-outline-danger"><i class="bi bi-calendar"></i></button> -->
+                <input type="date" v-model="select_date" class="btn btn-sm btn-outline-danger" @change="get_date(select_date)">
               </div>
             </td>
             <td v-if="check_time" class="p-0 m-0">
               <div class="d-flex">
                 <button  @click="sortArr('time', f5), f5 =! f5" class="btn btn-sm btn-outline-danger"><i :class="{'bi': true,  'bi-sort-alpha-down': (f5==true), 'bi-sort-alpha-up': (f5==false)}"></i></button>
-                
+                <!-- <button class="btn  btn-sm btn-outline-danger"><i class="bi bi-clock-history"></i></button> -->
+                <input type="time" v-model="select_time" class="btn btn-sm btn-outline-danger" @change="get_time(select_time)">
               </div>
             </td>
             <td class="p-0 m-0">
@@ -143,7 +213,7 @@ import axios from 'axios';
                 <div v-if="check_edit_record"  class="form-check ">
                   <input class="form-check-input " type="checkbox" v-model="value['select']" >
                 </div>
-                <label v-else class="badge text-bg-danger"> {{ index + 1 }} </label>
+                <label v-else class="badge text-bg-danger w-100"> {{ index + 1 }} </label>
               </div>
             </td>
             
@@ -179,6 +249,11 @@ import axios from 'axios';
 
       </table>
 
+      <label v-else class="d-flex justify-content-center mt-5">Тут ничего нет</label>
+
+      
+
+
     </div>
 
   </div>
@@ -186,6 +261,15 @@ import axios from 'axios';
 
 
 <style scoped>
+.style_searching {
+  background-color: #111111;
+  padding: 5px;
+  border-radius: 5px;
+  text-decoration: underline;
+  /* box-sizing: border-box;
+  -moz-box-sizing: border-box; */
+}
+
 tr, td, tbody {
   border-radius: 3%;
 }
@@ -210,7 +294,19 @@ tr, td, tbody {
     box-shadow: none !important;
 }
 
+.custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {
+  background-color: green!important;
+}
 
+.form-check-input .custom-checkbox .custom-control-input:checked:focus ~ .custom-control-label::before {
+  box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(0, 255, 0, 0.25)
+}
+.form-check-input .custom-checkbox .custom-control-input:focus ~ .custom-control-label::before {
+  box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(0, 0, 0, 0.25)
+}
+.form-check-input .custom-checkbox .custom-control-input:active ~ .custom-control-label::before {
+  background-color: #C8FFC8; 
+}
 
 
 </style>
@@ -220,6 +316,7 @@ export default {
     return {
       books: [],
       type: 'file',
+      focused: false,
       count: '',
       name: '',
       match_books: [],
@@ -247,7 +344,25 @@ export default {
       f2: true,
       f3: true,
       f4: true,
-      f5: true
+      f5: true,
+      fi_phrase: '',
+      fo_phrase: '',
+      name_rule: '',
+      description_rule: '',
+      new_word_mode: true,
+      create_rule_mode: false,
+      add_phrase_mode: false,
+      new_group_mode: false,
+      edit_list_mode: false,
+      change_lang_mode: false,
+      show_alphavit_mode: false,
+      phraseologicals: [],
+      rules: [],
+      groups: [],
+      select_date: '',
+      select_time: '',
+      name_group: '',
+      current_group: {},
 
     }
   },
@@ -255,28 +370,11 @@ export default {
     await this.support_lang()
     await this.selLang('en')
   },
+  directives: {
+
+  },
   watch: {
-    // check_edit_record() { // при любом изменении check_edit_record, item['select'] будет равен false
-    //   this.resu = this.resu.map(item => {
-    //     if (item['select']===true) {
-    //       item['select'] = false
-
-    //       item['one'] = item['one_bak']
-    //       item['two'] = item['two_bak']
-    //       item['three'] = item['three_bak']
-    //       item['date'] = item['date_bak']
-    //       item['time'] = item['time_bak']
-    //       item['lang'] = this.name_lang
-
-
-    //     }
-
-
-    //     return item;
-    //   })
-    // },
-
-
+    /*
     word() {
       let rx = new RegExp(this.word.toLowerCase())
 
@@ -284,13 +382,16 @@ export default {
       if (this.word!=='') {
         for (let i=0;i<this.resu.length;i++) {
           if (rx.test(this.resu[i]['one'].toLowerCase())) {
-            this.resu_search.push(this.resu[i]);
+            // console.log(this.resu[i])
+            this.resu_search.push(this.resu[i]['one']);
           }
           if (rx.test(this.resu[i]['two'].toLowerCase())) {
-            this.resu_search.push(this.resu[i]);
+            // console.log(this.resu[i])
+            this.resu_search.push(this.resu[i]['two']);
           }
           if (rx.test(this.resu[i]['three'].toLowerCase())) {
-            this.resu_search.push(this.resu[i]);
+            // console.log(this.resu[i])
+            this.resu_search.push(this.resu[i]['three']);
           }
         
         }
@@ -301,11 +402,336 @@ export default {
 
 
     }
+    */
 
   },
   components: {
   },
   methods: {
+    async delGroup(item) {
+      console.log(item)
+      axios({
+        method: 'DELETE',
+        url: '/del/group',
+        headers: {
+          authorization: window.localStorage.getItem('jwt'),
+        },
+        //responseType: 'stream'
+        data: item,
+        "mode":"cors"
+      
+      }).then((response) => {
+        console.log(response)
+        if (response['data']['result'] == 'success') {
+          this.groups.splice(this.groups.indexOf(item), 1)
+        } else if (response['data']['result'] == 'failed') {
+          alert('Произошла ошибка где-то на сервере!')
+        } else {
+          alert('Я не знаю где ошибка!')
+        }
+        //response.data.pipe(fs.createWriteStream('ada_lovelace.jpg'))
+
+      });
+    },
+    async get_values_from_group(item) {
+      this.current_group = item
+      if (this.current_group['id'] != null) {
+        const response = await fetch('/g/from_group', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: window.localStorage.getItem('jwt'),
+          },
+          body: JSON.stringify({
+            group_id: this.current_group['id']
+          }),
+          "mode":"cors"
+        })
+
+        let result = await response.json()
+        console.log('Arrive a result: ', result)
+
+        this.resu = result
+      } else {
+        await alert(54353454, this.current_group)
+      }
+    },
+    async add_to_group() {
+      this.check_edit_record = true
+      
+      let selected_group = []
+      this.resu
+      .filter(item => {
+        if (item['select'] === true) selected_group.push(item)
+        return item['select'] !== true
+      })
+
+      console.log(selected_group)
+      //this.resu=selected_group.slice(0)
+
+
+      if (selected_group.length != 0) {
+        const response = await fetch('/g/add_to_group', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: window.localStorage.getItem('jwt'),
+          },
+          body: JSON.stringify({
+            group_id: this.current_group['id'],
+            items: selected_group.map(item => item['id']),
+          }),
+          "mode":"cors"
+        })
+
+        let result = await response.json()
+        //console.log(result)
+        await alert('Данные добавленны!', result)
+      } else {
+        console.info('Список пуст не каких запросов не будет!')
+        alert('Список пуст не каких запросов не будет!')
+      }
+
+    },
+    async selGroup(item) {
+      this.current_group = item
+      this.check_edit_record = true 
+      this.resu = this.resu_backup.slice(0)
+    },
+    async create_group(name) {
+      const time_date = new Date()
+      const time = time_date.toLocaleTimeString()
+      const date = time_date.toLocaleDateString()
+
+      if (name.trim() != "") {
+        const obj = {
+          name: name,
+          time: time,
+          date: date,
+          lang: this.name_lang
+        }
+        
+        const response = await fetch('/g/set_group', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: window.localStorage.getItem('jwt'),
+          },
+          body: JSON.stringify(obj),
+          "mode":"cors"
+        })
+
+        this.groups.unshift(obj)
+        let result = await response.json()
+        this.name_group = ""
+        console.log(`Result creating group: ${JSON.stringify(result)}`)
+        
+        await this.submitData1() // смена фокуса
+     
+     
+     
+      } else {
+        alert('Придумай название группы!')
+        //Swal.fire('Придумай название группы!')
+
+      }
+
+
+
+    },
+    async show_groups_func() {
+      this.new_group_mode =! this.new_group_mode
+      this.add_phrase_mode = false
+      this.new_word_mode = false
+      this.create_rule_mode = false
+
+      if (this.new_group_mode==true) {
+        await this.get_groups()
+      } else {
+        this.current_group = {}
+      }
+
+    },
+    async add_phrase_func() {
+      this.add_phrase_mode =! this.add_phrase_mode
+      this.new_word_mode = false
+      this.create_rule_mode = false
+      this.new_group_mode = false
+
+      if (this.add_phrase_mode==true) {
+        await this.get_phrase()
+      }
+
+    },
+    async create_rule_func() {
+      this.create_rule_mode =! this.create_rule_mode
+      this.add_phrase_mode = false
+      this.new_word_mode = false
+      this.new_group_mode = false
+
+      if (this.create_rule_mode==true) {
+        await this.get_rules()
+      }
+    },
+    async new_word_func() {
+      this.new_word_mode =! this.new_word_mode
+      this.add_phrase_mode = false
+      this.create_rule_mode = false
+      this.new_group_mode = false
+
+      if (this.new_word_mode==true) {
+        await this.get_words()
+      }
+    },
+    async get_time(value) {
+      console.log('типо время: ', value)
+    },
+    async get_date(value) {
+
+      //console.log('типо дата: ', value == "")
+
+      this.resu = this.resu_backup.slice(0)
+
+      if (value !== "") {
+        let date = value.split('-')
+        date = `${date[2]}.${date[1]}.${date[0]}`
+        this.resu = this.resu.filter(item => item['date'] == date)
+
+      }
+      
+    },
+    async get_words() {
+      this.resu = this.resu_backup.slice(0)
+    },
+    async get_groups() {
+      const response = await fetch('/g/get_groups', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: window.localStorage.getItem('jwt'),
+        },
+        body: JSON.stringify({
+          lang: this.name_lang
+        }),
+        "mode": "cors"
+      })
+
+      let result = await response.json()
+      //console.log(result)
+      this.groups = result
+
+    },
+    async get_phrase() {
+      // this.show_words_mode = false
+      if (this.phraseologicals.length==0) {
+        const response = await fetch('/g/phrase', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: window.localStorage.getItem('jwt'),
+
+          },
+          body: JSON.stringify({
+            lang: this.name_lang
+          }),
+          "mode": "cors"
+        })
+
+
+        let result = await response.json()
+        this.phraseologicals = result
+
+      } 
+      this.resu = this.phraseologicals.slice(0)
+
+    },
+    async get_rules() {
+      const response = await fetch('/g/rule', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: window.localStorage.getItem('jwt'),
+
+        },
+        body: JSON.stringify({
+          lang: this.name_lang
+        }),
+        "mode": "cors"
+      })
+
+
+      let result = await response.json()
+      this.resu = result
+
+    },
+    async phraseological_unit(fi, fo) {
+      const time = new Date().toLocaleTimeString()
+      const date = new Date().toLocaleDateString()
+      const response = await fetch('/g/add_phrase', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: window.localStorage.getItem('jwt'),
+
+
+        },
+        body: JSON.stringify({
+          input: fi,
+          output: fo,
+          lang: this.name_lang,
+          time: time,
+          date: date
+        }),
+        "mode":"cors"
+      })
+
+      this.phraseologicals.unshift({one: fi, three: fo, time: time, date: date})
+      this.resu = this.phraseologicals.slice(0)
+      this.fi_phrase = ""
+      this.fo_phrase = ""
+
+
+      let result = await response.json()
+      //console.log(`add new phrase unit(this answer): ${result}`)
+    },
+    async add_rule(name, description) {
+      const date_time = new Date()
+      const time = date_time.toLocaleTimeString()
+      const date = date_time.toLocaleDateString()
+      
+      //console.info(name, description)
+      const response = await fetch('/g/add_rule', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: window.localStorage.getItem('jwt'),
+
+        },
+        body: JSON.stringify({
+          name: name,
+          description: description,
+          lang: this.name_lang,
+          time: time,
+          date: date
+        }),
+        "mode":"cors"
+      })
+
+      this.rules.unshift({one: name, three: description, time: time, date: date})
+      this.resu = this.rules.slice(0)
+
+      this.name_rule = ""
+      this.description_rule = ""
+
+      let result = await response.json()
+      //console.log('add new rule: answer: ', result)
+    },
+    async submitData() {
+      this.$refs.myinput.focus()
+    },
+    async submitData1() {
+      this.$refs.myinput1.focus()
+    },
     async next1(value) {
       value['edit'] = true
       
@@ -329,7 +755,6 @@ export default {
       value['time'] = value['time_bak']
 
     },
-
     async save_value(value) {
       //let modify_lst = [] 
       //modify_lst = this.resu.filter(item => item['edit'] === true)
@@ -343,8 +768,11 @@ export default {
           method: 'POST',
           headers: {
             'Content-Type': 'Application/json',
+            authorization: window.localStorage.getItem('jwt'),
+
           },
-          body: JSON.stringify(value)
+          body: JSON.stringify(value),
+          "mode":"cors"
         })
 
         let result = await response.json()
@@ -353,29 +781,60 @@ export default {
 
       value['edit'] = false
     },
+    async word_change() {
+      //console.log('i\'m running !')
+      try {
+        let rx = new RegExp(this.word.toLowerCase())
+
+        this.resu_search = []
+        if (this.word!=='') {
+          for (let i=0, count=0;i<this.resu.length;i++) {
+            if (rx.test(this.resu[i]['one'].toLowerCase()) || rx.test(this.resu[i]['two'].toLowerCase()) || rx.test(this.resu[i]['three'].toLowerCase())) {
+              // console.log(this.resu[i])
+              this.resu_search.push(this.resu[i]);
+              count += 1
+              if (count >= 5) break
+            }
+
+          
+          }
+        } else {
+          this.resu = this.resu_backup.slice(0)
+        }
+
+      } catch (e) {
+        console.log(e)
+      }
 
 
-
+    },
     async delete_selected() {
       let send_on_del = []
       this.resu = this.resu
       .filter(item => {
-        if (item['select'] === true) send_on_del.push(item)
-        return item['select'] !== true
+        try {
+          if (item['select'] === true) send_on_del.push(item)
+          return item['select'] !== true
+        } catch (e) {
+          console.log(e)
+        }
       })
-      console.info('Это то что нужно удалить: ', send_on_del)
+      //console.info('Это то что нужно удалить: ', send_on_del)
 
       if (true) {
         const response = await fetch('/g/del', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            authorization: window.localStorage.getItem('jwt'),
+
           },
-          body: JSON.stringify(send_on_del)
+          body: JSON.stringify(send_on_del),
+          "mode":"cors"
         })
 
         let result = await response.json()
-        console.log('Ответ на запрос об удалении из БД: ', result)
+        //console.log('Ответ на запрос об удалении из БД: ', result)
       }
 
 
@@ -386,7 +845,6 @@ export default {
     async reset_array() {
       this.resu = this.resu_backup.slice(0)
     },
-
     async send_new_word(one, two, three) {
       // let send_date = new Date().toISOString()
 
@@ -412,17 +870,23 @@ export default {
 
       const responce = await fetch('/upload/dict', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(words)
+        headers: { 
+          'Content-Type': 'application/json',
+          authorization: window.localStorage.getItem('jwt'),
+
+        },
+        body: JSON.stringify(words),
+        "mode": "cors"
 
       })
 
-      console.log(await responce.json())
+      //console.log(await responce.json())
 
       this.one = ""
       this.two = ""
-      this.three = ""
+      this.three = "";
 
+      await this.submitData()
 
 
 
@@ -431,11 +895,9 @@ export default {
 
 
     },
-
     async find_func() {
       this.resu = this.resu_search.slice(0)
     },
-
     async support_lang() {  // запрос доступных языков
       // for (let l of ['Английский', 'Японский', 'Китайский', 'Корейский', 'Немецкий']) this.dict_lang.push(l)
       // let ls = {'en': 'Английский', 'jp': 'Японский', 'cn': 'Китайский', 'kr': 'Корейский', 'de': 'Немецкий'}
@@ -444,21 +906,23 @@ export default {
 
       const response = await fetch('/upload/lang', {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': window.localStorage.getItem('jwt'),
         },
+        "mode": "cors"
         //body: JSON.stringify({ 'lang': lang_code })
       })
 
       this.dict_lang = await response.json()
-      console.log('Это ответ: ', this.dict_lang)
+      //console.log('Это ответ: ', this.dict_lang)
     },
-
     async sortArr(mode='one', field) { // сортировка по колонкам
       // console.log(Object.keys(result).sort())
       // console.info('firts: ', first)
       // console.info('second: ', second)
-      console.log(this.resu)
+      // console.log(this.resu)
       this.resu.sort(function(first, second) {
         // console.log(`first: ${first['one']}\nsecond: ${second}`)
         return first[mode].localeCompare(second[mode]);
@@ -476,14 +940,18 @@ export default {
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': window.localStorage.getItem('jwt'),
+
         },
-        body: JSON.stringify({ 'lang': lang_code })
+        body: JSON.stringify({ 'lang': lang_code }),
+        "mode":"cors"
+
       })
 
       let result = (await response.json())
       // result.sort((a, b) => .localeCompare(b.firstname))
       
-      console.log('Это результат: ', result)
+      // console.log('Это результат: ', result)
       // let items = Object.keys(result).map(function(key) {
       //   return [key, result[key]];
       // });
@@ -491,10 +959,15 @@ export default {
       this.resu = result
       this.resu_backup = this.resu.slice(0)
       this.dict = result
-      // console.log('Я тут получил кое-что: ', this.dict)
-      // this.rx_array=[]
-      // this.array_videos=[]
-      // await this.g()
+
+
+
+      this.current_group = {}
+      await this.get_groups()
+
+
+
+
     },
 
   }

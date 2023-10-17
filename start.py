@@ -62,7 +62,7 @@ if __name__=='__main__':
 
         print(f'ip: {ip}')
 
-        changeIP('src/server/configs/config.mjs', ip)
+        changeIP('server/configs/config.mjs', ip)
         changeIP('index.html', ip)
         changeIP('src/views/files.vue', ip)
 

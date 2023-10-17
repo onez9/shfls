@@ -23,13 +23,7 @@ RUN apt install python3 python3-pip -y
 
 EXPOSE 3000 5173
 
-<<<<<<< HEAD
 CMD [ "python3", "start.py" ]
-=======
-ENTRYPOINT ["./entrypoint.sh"]
-#CMD [ "python3", "start.py" ]
->>>>>>> t2
-
 
 
 

@@ -45,6 +45,7 @@ export default {
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
+          authorization: window.localStorage.getItem('jwt'),
         },
         body: JSON.stringify({'srak1': v1})
       })

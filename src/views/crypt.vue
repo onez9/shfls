@@ -456,6 +456,7 @@ export default {
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
+          'authorization': window.localStorage.getItem('jwt'),
         },
         body: JSON.stringify({ 'partion': 'book' })
       })
@@ -486,6 +487,7 @@ export default {
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
+          'authorization': window.localStorage.getItem('jwt'),
         },
         body: JSON.stringify(properties)
       })

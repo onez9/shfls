@@ -183,13 +183,18 @@ export default {
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
+          authorization: window.localStorage.getItem('jwt'),
         },
         body: JSON.stringify(properties)
       })
-      const result = await response.json()
-      this.array_img = result['items']
-      this.route = result['route']
-      this.tmp_array_img = this.array_img.slice(0)
+      if (response.ok) {
+        const result = await response.json()
+        this.array_img = result['items']
+        this.route = result['route']
+        this.tmp_array_img = this.array_img.slice(0)
+      } else {
+        alert('У нас что-т пошло не так!')
+      }
       // console.log(this.find_arr[2])
       // console.log(this.array_img[2])
     },

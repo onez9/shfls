@@ -13,7 +13,10 @@ import redis from 'redis'
 //import cors from 'cors'
 //import {createServer} from 'vite';
 import { createServer as createViteServer } from 'vite'
-
+import jwt from 'jsonwebtoken'
+import session from 'express-session';
+import cors from 'cors'
+import cookieParser from 'cookie-parser';
 
 
 
@@ -33,8 +36,33 @@ const __dirname = path.resolve();
 
 // создаем объект приложения
 const app = express()
-app.set('trust proxy', false)
+// app.set('trust proxy', false)
 const http = createServer(app)
+
+// app.use(function(req, res, next) {
+//     res.header("Access-Control-Allow-Origin", "*");
+//     res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+//     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, access-control-allow-origin, profilerefid(whatever header you need)");
+//     next();
+// }); 
+
+app.use(session({
+    resave: false,
+    saveUninitialized: true,
+    secret: 'keyboard cat',
+    // name: '123',
+    // secret: "anyrandomstring",
+    // cookie: {
+    //   maxAge:269999999999
+    // },
+    cookie: { 
+        secure: false,
+        // originalMaxAge: 3600,
+        // path: '/'
+    }
+}))
+
+
 
 
 
@@ -176,7 +204,17 @@ wsServer.on('connection', ws => {
 // настройка приложения
 app.use(express.json());
 app.use(urlencodedParser);
-//app.use(cors())
+
+
+
+
+
+// const corsOptions = {
+//     origin: "http://192.168.1.103:5173",
+//     credentials: true,
+// };
+
+// app.use(cors(corsOptions))
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
@@ -187,13 +225,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 
-// // app.use(cookieParser('secret key'));
-app.use(fileUpload({
-    defCharset: 'utf8',
-    defParamCharset: 'utf8',
-    useTempFiles: true,
-    tempFileDir: config.folders.files
-}));
+app.use(cookieParser());
+
 
 //app.use(function (req, res, next) {
 //    // Website you wish to allow to connect
@@ -229,6 +262,90 @@ app.use(function (req, res, next) {
 });
 
 
+// CORS middleware
+// const allowCrossDomain = function(req, res, next) {
+// 	res.header('Access-Control-Allow-Methods', '*');
+// 	res.header('Access-Control-Allow-Headers', '*');
+// 	next();
+// }
+// app.use(allowCrossDomain) // позволяем запросы с разных сайтов
+
+
+// app.use((req, res, next) => {
+//     res.header('Access-Control-Allow-Origin', '*');
+//     res.header('Access-Control-Allow-Methods', '*');
+//     res.header('Access-Control-Allow-Headers', 'Content-Type, authorization');
+
+//     console.log(req.headers)
+//     next();
+// });
+
+
+
+app.use((req, res, next) => {
+    // console.log('Авторизация ёбаная: ', req.headers.authorization, req.headers, req.header, req.rawHeaders)
+    // console.log('jwt headers: ', req.headers)
+    try {
+        if (req.headers.authorization) {
+            jwt.verify(req.headers.authorization, config.wlan0.secret, (err, payload) => {
+                try {
+                    if (err) {
+                        console.log(err)
+                        throw 'Токены не совпадают'
+                        // return next()
+                        // return 
+
+                    } else if (payload) {
+                        if (req.session.user_id === payload.id) {
+                            req.user = req.session.email
+                            console.log('Все прошло успешно!')
+                            return next()
+                        }
+                        // res.send(200)
+                        if (!req.user) return next()
+                    }
+                } catch (e) {
+                    if (e instanceof JsonWebTokenError) {
+                        console.error('Токен искажён!')
+                        console.error(e)
+
+                        res.json({'answer': 'exit'})
+                        //res.redirect('/g/login')
+                    }
+                }
+
+
+            })
+
+        } else {
+
+            console.log('JWT malformed');
+            // res.json({'answer': 'exit'})
+            // res.redirect('/g/login')
+            //throw 'Need authorization. Token authorization is Undefined.'
+            return next()
+        }   
+
+    } catch (e) {
+        //res.redirect('/g/login')
+        console.error(e)
+    }
+
+
+})
+
+
+
+
+
+app.use(fileUpload({
+    defCharset: 'utf8',
+    defParamCharset: 'utf8',
+    useTempFiles: true,
+    tempFileDir: config.folders.files
+}));
+
+
 app.use(express.static(__dirname + '/dist'));
 app.use('/g', get);
 app.use('/upload', uploadFile);
@@ -244,11 +361,40 @@ app.use(config.routes.gifs, express.static(path.join(__dirname, config.folders.g
 app.use(config.routes.images, express.static(path.join(__dirname, config.folders.images)))
 app.use(config.routes.public, express.static(path.join(__dirname, config.folders.public)))
 app.use(config.routes.musics, express.static(path.join(__dirname, config.folders.musics)))
+
+
+
+
+// const corsOptions = {
+// 	origin: 'http://192.168.1.103:5173',  //Your Client, do not write '*'
+// 	credentials: true,
+// };
+// app.use(cors(corsOptions));
+
+
+
 // app.use(express.static('files'));
 // app.use('/files1', express.static(path.resolve(__dirname, 'files')));
 // app.use('/files', express.static('files'));
 // app.use('/js', express.static('js'));
 // app.use('/private', express.static('private'));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 app.get('*', (req, res) => {
@@ -259,8 +405,11 @@ app.get('*', (req, res) => {
 })
 
 
+
 //import arr_upload = upload.fields([{ name: 'file', maxCount: 10 }]);
-// запуск приложения
+
+
+
 http.listen(config.wlan0.port, config.wlan0.host, () => {
 
     console.log('А тут мы читаем переменные среды окружения: ', process.env.VITE_TEST_VAR)
@@ -268,8 +417,6 @@ http.listen(config.wlan0.port, config.wlan0.host, () => {
     console.log('Остановить сервер - Ctrl+C');
 
 });
-//}
 
-//createServer1()
 
 

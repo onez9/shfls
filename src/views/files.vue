@@ -79,9 +79,7 @@ import Swal from 'sweetalert2';
 
             </tr>
             <tr v-if="item.showmode && ['png', 'jpg', 'jpeg', 'gif'].indexOf(item.name.split('.').reverse()[0]) > -1" class="bg-dark">
-              
               <img loading="lazy" style="width: 100%;" class="rounded" :src="`/downloads/${item.name}`" alt="">
-              
             </tr>
           </template>
         </tbody>
@@ -221,8 +219,11 @@ export default {
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': window.localStorage.getItem('jwt'),
+
         },
-        body: JSON.stringify(properties)
+        body: JSON.stringify(properties),
+        // "mode": "cors"
       })
       this.result = await response.json()
       this.array = this.result['items']
@@ -263,13 +264,11 @@ export default {
         this.array.splice(index, 1)
       
         const response = await fetch(`/del?name=${item.name}`, {
-          // const response = await fetch('/download', {
           method: 'DELETE',
-          // credentials: 'include',
-          // headers: {
-          //     'Content-Type': 'application/json',
-          // },
-          // body: JSON.stringify({name: name})
+          heaaders: {
+            'authorization': window.localStorage.getItem('jwt'),
+          },
+          "mode":"cors"
         })
 
         console.log(await response.json())
@@ -459,10 +458,11 @@ export default {
 
       const response = await fetch('/qr', {
         method: 'GET',
-        credentials: 'include',
-        // headers: {
-        //     'authorization': window.localStorage.getItem('jwt')
-        // },
+        //credentials: 'include',
+        headers: {
+          'Authorization': window.localStorage.getItem('jwt')
+        },
+        "mode":"cors"
         //body: JSON.stringify({200: 200})
 
       })

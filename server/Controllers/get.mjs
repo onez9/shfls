@@ -25,6 +25,10 @@ const db_path = "./db.sqlite3"
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+import jwt from 'jsonwebtoken'
+
+
+
 
 // function readFileSync_encoding(filename, encoding) {
 // 	var content = fs.readFileSync(filename);
@@ -85,8 +89,6 @@ router.get('/', async (req, res) => {
 		console.log(e)
 	}
 })
-
-
 router.post('/f_file', (req, res) => {
 	try {
 		console.log(`req body p: ${req.body.p}`)
@@ -141,8 +143,6 @@ router.post('/all_files', (req, res) => {
 		console.log(e)
 	}
 })
-
-
 router.post('/code', (req, res) => {
 	try {
 		let dir = config.folders.code
@@ -226,7 +226,6 @@ router.post('/code', (req, res) => {
 		console.log(e)
 	}
 })
-
 router.post('/upd', (req, res) => {
 	try {
 		const db = new sqlite.Database('db.sqlite3')
@@ -300,7 +299,6 @@ router.post('/del', (req, res) => {
 		res.json({answer: 404})
 	}
 })
-
 router.post('/lang', (req, res) => {
 	const checkLang = (text) => {
 		// U+4E00 and U+9FFF
@@ -315,7 +313,7 @@ router.post('/lang', (req, res) => {
 
 	try {
 		let lang = req.body.lang
-		console.log('это язык: ', req.body.lang)
+		//console.log('это язык: ', req.body.lang)
 
 		// console.log(path.resolve('Share', 'txt', '1.txt'))
 		let txt
@@ -331,14 +329,14 @@ router.post('/lang', (req, res) => {
 		let sql;
 
 
-		sql = 'select one, two, three, date, time from words where dictionary_id=?';
+		sql = 'select id, one, two, three, date, time from words where dictionary_id=?';
 		db.all(sql, [dict[lang]], (err, rows) => {
 			try {
 				if (err) {
 					throw err;
 				}
 				
-				console.log(rows)
+				//console.log(rows)
 				res.json(rows)
 
 			} catch (e) {
@@ -358,22 +356,391 @@ router.post('/lang', (req, res) => {
 		console.log(e)
 	}
 })
+router.post('/add_rule', (req, res) => {
+	console.log('шафощуц щукоцщкцо уукцщоцущкш')
+	try {
+		console.log('Привет Здаров!')
+		console.info(req.body)
+		let name = req.body.name
+		let description = req.body.description
+		let lang = req.body.lang
+		let time = req.body.time
+		let date = req.body.date
+		let dict = new Map();
 
-// router.post('/ch1', async (req, res) => {
+		dict['en']=1;
+		dict['jp']=2;
+		dict['ru']=3;
+		dict['kr']=4;
+		dict['cn']=5;
+		dict['de']=6;
+
+		let language_id = dict[lang]
+
+        if (true) {
+			const db = new sqlite.Database('db.sqlite3')
+            let sql = "insert into grammar ('language_id', 'one', 'three', 'date', 'time') VALUES (?, ?, ?, ?, ?);"
+            let params = [language_id, name, description, date, time]
+            db.serialize(() => {
+				console.log('Идёт запись данных:')
+                const stmt = db.prepare(sql);
+                stmt.run(params);
+                stmt.finalize();
+            
+            });
+			db.close()
+			res.json({answer: 'success'})
+		} else {
+			res.json({answer: 'failed проводится тестирование'})
+		}
+
+	} catch (e) {
+		console.error('Произошла предвиденная ошибка (её описание ниже): ')
+		console.log(e)
+	}
+})
+router.post('/add_phrase', (req, res) => {
 
 
-// 	if (req.body.partion=='book') {
-// 		console.log('нормальное видео')
-// 		config.folders.files='Share/books'
-// 	} else if (req.body.partion=='file') {
-// 		console.log('о неет тут порно')
-// 		config.folders.files='Share/files'
-// 	}
+	console.log('Добавка новой фразы')
+	try {
+		console.log('Привет Здаров! Здравствуйте:!!!')
+		console.info(req.body)
+		let input = req.body.input
+		let output = req.body.output
+		let lang = req.body.lang
+		let time = req.body.time
+		let date = req.body.date
+		let dict = new Map();
 
-// })
+		dict['en']=1;
+		dict['jp']=2;
+		dict['ru']=3;
+		dict['kr']=4;
+		dict['cn']=5;
+		dict['de']=6;
 
-// тут загрузка видео через ytb-dl и тут ещё redis тестирую
-router.get('/s', (req, res) => {
+		let language_id = dict[lang]
+
+        if (true) {
+			const db = new sqlite.Database('db.sqlite3')
+            let sql = "insert into phraseological_unit ('language_id', 'one', 'three', 'date', 'time') VALUES (?, ?, ?, ?, ?);"
+            let params = [language_id, input, output, date, time]
+            db.serialize(() => {
+				console.log('Идёт запись данных в фразеологизмы:')
+                const stmt = db.prepare(sql);
+                stmt.run(params);
+                stmt.finalize();
+            
+            });
+			db.close()
+			res.json({answer: 'success'})
+		} else {
+			res.json({answer: 'failed'})
+		}
+
+	} catch (e) {
+		console.error('Произошла предвиденная ошибка (её описание ниже): ')
+		console.log(e)
+	}
+})
+router.post('/phrase', (req, res) => {
+	try {
+		let lang = req.body.lang
+		console.log('это язык: ', req.body.lang)
+
+		let dict = new Map();
+		dict['en']=1;
+		dict['jp']=2;
+		dict['ru']=3;
+		dict['kr']=4;
+		dict['cn']=5;
+		dict['de']=6;
+
+		const db = new sqlite.Database('db.sqlite3')
+		let sql;
+
+		sql = 'select one, three, time, date from phraseological_unit where language_id=?';
+		db.all(sql, [dict[lang]], (err, rows) => {
+			try {
+				if (err) {
+					throw err;
+				}
+				
+				console.log(rows)
+				res.json(rows)
+
+			} catch (e) {
+				console.info('Сработал catch (при запросе к /get/phrase (запрос словарей)) ошибка ниже')
+				console.log(e);
+
+			}
+		});
+
+
+			
+
+		
+		db.close();
+
+	} catch (e) {
+		console.log(e)
+	}
+})
+router.post('/set_group', (req, res) => {
+	console.log('Создание группы')
+	try {
+		console.log('Привет Здаров! я тут /set_group')
+		console.info(req.body)
+		let name = req.body.name
+		let lang = req.body.lang
+		let time = req.body.time
+		let date = req.body.date
+		let dict = new Map();
+
+		dict['en']=1;
+		dict['jp']=2;
+		dict['ru']=3;
+		dict['kr']=4;
+		dict['cn']=5;
+		dict['de']=6;
+
+		let language_id = dict[lang]
+
+        if (true) {
+			const db = new sqlite.Database('db.sqlite3')
+            let sql = "insert into groups ('language_id', 'name', 'date', 'time') VALUES (?, ?, ?, ?);"
+            let params = [language_id, name, date, time]
+            db.serialize(() => {
+				console.log('Идёт запись данных (Создание группы):')
+                const stmt = db.prepare(sql);
+                stmt.run(params);
+                stmt.finalize();
+            
+            });
+			db.close()
+			res.json({answer: 'success'})
+		} else {
+			res.json({answer: 'failed проводится тестирование'})
+		}
+
+	} catch (e) {
+		console.error('Произошла предвиденная ошибка (её описание ниже): ')
+		console.log(e)
+	}
+})
+router.post('/get_groups', (req, res) => {
+	//console.log('Создание группы')
+	try {
+		//console.log('Привет Здаров! я тут /get_group')
+		//console.info(req.body)
+		// let name = req.body.name
+		let lang = req.body.lang
+		// let time = req.body.time
+		// let date = req.body.date
+		let dict = new Map();
+
+		dict['en']=1;
+		dict['jp']=2;
+		dict['ru']=3;
+		dict['kr']=4;
+		dict['cn']=5;
+		dict['de']=6;
+
+		let language_id = dict[lang]
+		//console.info('lang:', language_id)
+        if (true) {
+
+
+			const db = new sqlite.Database('db.sqlite3')
+			let sql = 'select id, name from groups where language_id=?';
+			db.all(sql, [language_id], (err, rows) => {
+				try {
+					if (err) {
+						throw err;
+					}
+					
+					console.log(rows)
+					res.json(rows)
+	
+				} catch (e) {
+					console.info('Сработал catch (при запросе к /get/phrase (запрос словарей)) ошибка ниже')
+					console.log(e);
+	
+				}
+			});
+	
+
+
+
+			db.close()
+			//res.json({answer: 'success'})
+		} else {
+			res.json({answer: 'failed проводится тестирование'})
+		}
+
+	} catch (e) {
+		console.error('Произошла предвиденная ошибка (её описание ниже): ')
+		console.log(e)
+	}
+})
+router.post('/add_to_group', (req, res) => {
+	console.log('Создание группы')
+	try {
+		console.log('Привет Здаров! я тут /add_to_group')
+		// console.info(req.body)
+
+		let group_id = Number(req.body.group_id)
+		let items = req.body.items
+		// let dict = new Map();
+
+		console.info('items', items)
+		console.info('group_id', group_id)
+		
+
+        if (true) {
+			const db = new sqlite.Database('db.sqlite3')
+			//let sql = 'select id from words where language_id=?';
+			/*
+			db.all(sql, [dict[lang]], (err, rows) => {
+				try {
+					if (err) {
+						throw err;
+					}
+					
+					console.log(rows)
+					res.json(rows)
+	
+				} catch (e) {
+					console.info('Сработал catch (при запросе к /get/phrase (запрос словарей)) ошибка ниже')
+					console.log(e);
+	
+				}
+			});
+			*/
+
+            let sql = "insert into gw ('word_id', 'group_id') VALUES (?, ?);"
+
+
+            db.serialize(() => {
+				let params;
+				const stmt = db.prepare(sql);
+				for (const word_id of items) {
+					params = [word_id, group_id]
+
+					stmt.run(params);
+
+					// console.info(word_id)
+				}
+
+				console.log('Идёт запись данных (Создание группы):')
+
+  
+                stmt.finalize();
+            
+            });
+
+
+			db.close()
+			res.json({answer: 'success'})
+
+
+		} else {
+			res.json({answer: 'failed проводится тестирование'})
+		}
+
+	} catch (e) {
+		console.error('Произошла предвиденная ошибка (её описание ниже): ')
+		console.log(e)
+	}
+})
+router.post('/rule', (req, res) => {
+	try {
+		let lang = req.body.lang
+		console.log('это язык: ', req.body.lang)
+
+		let dict = new Map();
+		dict['en']=1;
+		dict['jp']=2;
+		dict['ru']=3;
+		dict['kr']=4;
+		dict['cn']=5;
+		dict['de']=6;
+
+		const db = new sqlite.Database('db.sqlite3')
+		let sql;
+
+		sql = 'select one, three, time, date from grammar where language_id=?';
+		db.all(sql, [dict[lang]], (err, rows) => {
+			try {
+				if (err) {
+					throw err;
+				}
+				
+				console.log(rows)
+				res.json(rows)
+
+			} catch (e) {
+				console.info('Сработал catch (при запросе к /get/phrase (запрос словарей)) ошибка ниже')
+				console.log(e);
+
+			}
+		});
+
+
+			
+
+		
+		db.close();
+
+	} catch (e) {
+		console.log(e)
+	}
+})
+router.post('/from_group', (req, res) => {
+	try {
+		const group_id = req.body.group_id
+
+
+		console.info('Текущий номер группы точнее айди% ', group_id)
+		const db = new sqlite.Database('db.sqlite3')
+		let sql;
+
+		sql = 'select * from words right join gw on words.id=gw.word_id left join groups on groups.id=gw.group_id where groups.id=?;';
+		db.all(sql, [group_id], (err, rows) => {
+			try {
+				if (err) {
+					throw err;
+				}
+				
+				console.log(rows)
+				res.json(rows)
+
+			} catch (e) {
+				console.info('Сработал catch (при запросе к /get/from_group) ошибка ниже')
+				console.log(e);
+
+			} finally {
+				console.info('Я тут тут тут')
+			}
+		});
+
+
+			
+
+		
+		db.close();
+
+
+	} catch (e) {
+		console.log('/from_group')
+		console.error(e)
+
+	} finally {
+		console.info('I\'m running eneway')
+	}
+})
+router.get('/s', (req, res) => { // тут загрузка видео через ytb-dl и тут ещё redis тестирую
 	let url = req.query.url
 	console.log(url)
 	let fine = false;
@@ -642,10 +1009,10 @@ router.get('/s', (req, res) => {
 	// console.log(result)
 
 })
-
-
 // тут запросы для различных типов файлов
 router.post('/', async (req, res) => {
+	
+	// console.log('Music: ', req.headers)
 	try {
 		console.log('nsdlfnsdflsf23449fs')
 		console.log(req.body.type)
@@ -666,7 +1033,7 @@ router.post('/', async (req, res) => {
                 try {
                     if (err) console.log(err);
 					for (let i=0;i<items.length;i++) items[i]=convert(items[i])
-                    console.log(items)
+                    //console.log(items)
                     res.json({ "items": items, "route": route })
                 } catch (e) {
                     console.log(e)
@@ -818,7 +1185,7 @@ router.post('/', async (req, res) => {
 		else if (req.body.type == 'music') {
 			let dir = config.folders.musics
 			let route = config.routes.musics
-
+			// console.log('Music: ', req.headers)
 			fs.readdir(dir, (err, items) => {
 				if (err) console.log(err);
 				let result = Array()
@@ -866,8 +1233,6 @@ router.post('/', async (req, res) => {
 	}
 
 })
-
-
 router.post('/message', async (req, res) => {
 
 	// const redisConfig = {
@@ -936,7 +1301,6 @@ router.post('/message', async (req, res) => {
 
 
 })
-
 // парсер работы не завершено 000000
 router.get('/work', async (req, res) => {
 	try {
@@ -983,6 +1347,138 @@ router.get('/work', async (req, res) => {
 
 
 })
+router.post('/create_account', (req, res) => {
+	// res.redirect(301, '/g/chat')
+	// res.send('<p>Ты умничка</p>')
+	// res.redirect('http://192.168.1.103/g/login')
+
+
+	
+	try {
+		console.info(req.body)
+		let login = req.body.login
+		let email = req.body.email
+		let phone = req.body.phone
+		let age = Number(req.body.age)
+		let password = req.body.password
+
+        if (true) {
+			const db = new sqlite.Database('db.sqlite3')
+
+        
+            db.serialize(() => {
+				try {
+					let params;
+					let sql = "insert into users ('login', 'email', 'phone', 'age', 'password') VALUES (?, ?, ?, ?, ?);"
+					let stmt = db.prepare(sql);
+					params = [login, email, phone, age, password]
+					
+					stmt.run(params, (err) => {
+						// console.log('this is callback')
+						if (err) {
+							console.log(err.errno)
+							console.log(err.code)
+						}
+						// res.status(404)
+					});
+					stmt.finalize()
+					
+					sql = `SELECT * FROM users WHERE email = ?`
+					stmt = db.prepare(sql)
+
+
+					console.info('email: ', req.body.email)
+					stmt.get([req.body.email], (err, rows) => {
+						console.info(rows)
+						if (err) return res.status(500).send({
+							error: err,
+							name: 'vertul'
+						})
+						
+						let token = jwt.sign({ id: rows.id }, config.wlan0.secret, { expiresIn: 86400 });
+						req.session.token = token
+
+
+					})
+
+					res.json({answer: 'success'})
+					stmt.finalize()
+					//res.redirect('/g/login')
+					db.close()
+
+					console.log('Идёт запись данных (Создание аккаунта):')
+
+	
+				} catch (e) {
+					console.error(e);
+					res.json({answer: 'error'})
+
+				} finally {
+					console.log('finally worked')
+				}
+            
+            });
+
+			
+
+			
+
+
+		}
+
+
+
+	} catch (e) {
+		console.error(e)
+	}
+	
+
+
+})
+
+router.post('/login', (req, res) => {
+	console.log('Запуск авторизации')
+	let db = new sqlite.Database('db.sqlite3', (err) => {
+	  console.log(err)
+	})
+  
+  
+	db.get(`SELECT * FROM users WHERE login = ?`, [req.body.login], function(err, user) {
+		console.log('вот это у нас юзер: ', user)
+		if (err) return res.status(500).send('Ошибка на сервере.');
+		
+		if (!user) return res.status(404).send('Пользователь не найден.');
+	
+		console.log(req.body.password)
+		console.log(user.password)
+  
+		//   let passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
+		let passwordIsValid = (req.body.password == user.password)
+	  	// если провал шлем это
+	  	if (!passwordIsValid) return res.status(401).send({ auth: false, token: null });
+	  
+		  // иначе отправляем токен
+		let token = jwt.sign({ id: user.id }, config.wlan0.secret, { expiresIn: 86400 });
+		req.session.token = token
+		req.session.user_id = user.id
+		req.session.email = user.email
+		console.log('token: ', token)
+		console.log('то что получили из БД: ', user)
+		req.session.save()
+		// res.status(200).send({ auth: true, token: token, user: user });
+		res.send({ auth: true, token: token, user: user });
+		// res.redirect('http://localhost:5173/')
+	})
+})
+
+router.post('/log1', (req,res) => {
+	console.log('Вы нажали на кнопку выхода!')
+	// if (!req.body) res.sendStatus(500);
+	// req.session.destroy();
+	res.json({ok: true})
+	//res.redirect('/login');
+});
+
 
 
 export default router

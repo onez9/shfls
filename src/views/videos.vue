@@ -810,6 +810,7 @@ export default {
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': window.localStorage.getItem('jwt'),
         },
         body: JSON.stringify(properties)
       })
@@ -844,6 +845,10 @@ export default {
       // this.$emit('wait', true)
       const response = await fetch(`/g/s?url=${url}`, {
         method: "GET",
+        credentials: 'include',
+        headers: {
+          'Authorization': window.localStorage.getItem('jwt'),
+        }
 
       })
 

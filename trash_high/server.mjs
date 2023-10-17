@@ -9,7 +9,7 @@ import dotenv from 'dotenv' //  используется для чтения п�
 const urlencodedParser = express.urlencoded({ extended: false })
 import fs from 'fs'
 import bodyParser from 'body-parser'
-
+import jwt from 'jsonwebtoken'
 
 
 
@@ -123,6 +123,41 @@ app.use(fileUpload({
 	useTempFiles: true,
 	tempFileDir: config.folders.files
 }));
+
+
+
+app.use((req, res, next) => {
+	if (req.headers.authorization) {
+		jwt.verify(req.headers.authorization, config.secret, (err, payload) => {
+			// console.log('this is payload blad suka tupaya: ', payload)
+			if (err) {
+				return next()
+
+			} else if (payload) {
+				if (req.session.user_id === payload.id) {
+					req.user = req.session.email
+					// console.log('Все прошло успешно!!!!!!!!!!!!!!')
+					return next()
+				}
+				// res.send(200)
+				if (!req.user) return next()
+			}
+
+
+		})
+
+	} else {
+		return next()
+	}
+
+
+})
+
+
+
+
+
+
 
 
 

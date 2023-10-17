@@ -16,6 +16,20 @@ import './assets/main.css'
 // import ShortKey from 'vue-shortkey';
 const app = createApp(App)
 
+
+// app.directive('focus', {
+//     // When the bound element is mounted into the DOM...
+//     mounted(el) {
+//         // Focus the element
+//         el.focus()
+//     }
+// })
+
+
+
+
+
+
 // app.use(ShortKey, { prevent: ['input', 'textarea'] })
 // app.use(hljsVuePlugin)
 app.use(router)
