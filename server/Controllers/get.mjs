@@ -300,23 +300,22 @@ router.post('/del', (req, res) => {
 	}
 })
 router.post('/lang', (req, res) => {
-	const checkLang = (text) => {
-		// U+4E00 and U+9FFF
-		for (let i=0;i<text.length;i++) {
+	// const checkLang = (text) => {
+	// 	// U+4E00 and U+9FFF
+	// 	for (let i=0;i<text.length;i++) {
 			
-			// let codeHex = '0'+text.charCodeAt(i).toString(16).toUpperCase()
-			let codeHex = text.charCodeAt(i)
-			codeHex = text[i] + " " + codeHex + ";"
-			process.stdout.write(`${codeHex}`)
-		}
-	}
+	// 		// let codeHex = '0'+text.charCodeAt(i).toString(16).toUpperCase()
+	// 		let codeHex = text.charCodeAt(i)
+	// 		codeHex = text[i] + " " + codeHex + ";"
+	// 		process.stdout.write(`${codeHex}`)
+	// 	}
+	// }
 
 	try {
 		let lang = req.body.lang
 		//console.log('это язык: ', req.body.lang)
 
 		// console.log(path.resolve('Share', 'txt', '1.txt'))
-		let txt
 		let dict = new Map();
 		dict['en']=1;
 		dict['jp']=2;
@@ -336,7 +335,7 @@ router.post('/lang', (req, res) => {
 					throw err;
 				}
 				
-				//console.log(rows)
+				console.log(rows)
 				res.json(rows)
 
 			} catch (e) {
@@ -351,6 +350,126 @@ router.post('/lang', (req, res) => {
 
 		
 		db.close();
+
+
+
+
+		// let dir = config.folders.videos
+		// let route = config.routes.videos
+		// let page = parseInt(req.body.page, 10)
+		// let limit = parseInt(req.body.limit, 10)
+
+		// console.log('route: ', route)
+		// console.log('dir: ', dir)
+		
+
+
+		// let res_except = Object.keys(left).filter(function (x) {
+		// 	return Object.keys(right).indexOf(x) < 0;
+		// })
+
+
+		// console.info(`left: ${Object.keys(left).length}`)
+		// console.info(`right: ${Object.keys(right).length}`)
+		// for (let i=0; i<res_except.length; i++) {
+		// 	// res_except[i] = left[res_except[i]];
+		// 	// console.log()
+		// 	res_except[i] = {
+		// 		name: res_except[i]+left[res_except[i]]
+		// 	}
+		// 	console.info(res_except[i])
+		// }
+		// // console.warn(right);
+		// // console.error(left)
+
+		// let fromIndex = page * limit     // начальный индекс товара
+		// let toIndex = page*limit + limit // конечный индекс товара
+		// console.log(page*limit + limit)
+		// if (toIndex > result.length) {
+		// 	toIndex = result.length
+		// }
+		
+		// let productsPage = (req.body.flag)? result : result.slice(fromIndex, toIndex)
+		// console.log(page, limit)
+		// console.log(`fromindex: ${fromIndex}`)
+		// console.log(`toIndex: ${toIndex}`)
+		// // return c.JSON(http.StatusOK, productsPage)
+		// console.log(productsPage)
+
+
+		// res.json({ "items": productsPage, "route": route, "count_videos": result.length, "recent": res_except })
+
+		// if (fs.existsSync(dir)) {
+		// 	console.log('Директория существует!')
+			
+		// } else {
+		// 	console.log('Директория не найдена')
+		// 	dir = 'Share/video2'
+		// }
+
+		// fs.readdir(dir, (err, items) => {
+			// try {
+				// if (err) { 
+				// 	console.log(err);
+					
+				// }
+
+				// let result = Array()
+				// let left = {};
+				// let right = {};
+				// items.forEach(item => {
+				// 	try {
+				// 		const ext = path.parse(item).ext.toLowerCase()
+						
+				// 		if (['.webm', '.avi', '.mp4', '.mkv'].indexOf(ext) > -1) {
+				// 			result.push({
+				// 				name: item
+				// 			})
+				// 			let name = item.split(/.webm|.avi|.mp4|.mkv/)[0]
+				// 			// console.warn(name + ext)
+				// 			left[name] = ext
+				// 		}
+
+				// 		if (ext == '.gif') {
+				// 			let name = item.split(/.gif/)[0]
+				// 			// console.warn('i\m home', name + ext)
+				// 			right[name] = ext
+				// 		}
+
+				// 	} catch (e) {
+				// 		console.log('Вот из-за этой ошибки крашится!')
+				// 		console.log(e)
+
+				// 	}
+
+				// })
+
+
+
+			
+			// } catch (e) {
+			// 	console.log('Ошибка тут ошибка: ', e)
+			// 	res.json({ "items": [], "route": route, "count_videos": 0 })
+
+			// }
+		// })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	} catch (e) {
 		console.log(e)
@@ -1478,6 +1597,7 @@ router.post('/log1', (req,res) => {
 	res.json({ok: true})
 	//res.redirect('/login');
 });
+
 
 
 

@@ -74,6 +74,10 @@ import Swal from 'sweetalert2';
         <button v-if="add_phrase_mode" @click="get_phrase()" class="btn btn-sm btn-outline-danger form-control mt-1">Показать фразеологизмы</button>
       </div>
 
+
+
+      
+
       <div class="border rounded p-1 mt-1">
         <label @click="show_groups_func" class="d-flex justify-content-start">Группы ({{ current_group }})</label>
 
@@ -83,9 +87,9 @@ import Swal from 'sweetalert2';
           
           
           <div v-for="(item, index) in groups" :key="item" class="border rounded p-0 mb-1 d-flex align-items-center">
-            <div class="me-auto ps-2">{{ item['name'] }}</div>
+            <!-- <div class="me-auto ps-2"></div> -->
             
-            <button @click="get_values_from_group(item)" class="btn btn-sm btn-outline-danger me-1"><i class="bi bi-badge-8k-fill"></i></button>
+            <button @click="get_values_from_group(item)" class="btn btn-sm btn-outline-danger me-1 w-100">{{ item['name'] }}</button>
             <button @click="add_to_group" class="btn btn-sm btn-outline-danger me-1"><i class="bi bi-save"></i></button>
             <button @click="" class="btn btn-sm btn-outline-danger me-1"><i class="bi bi-pen"></i></button>
             <button @click="selGroup(item)" class="btn btn-sm btn-outline-danger me-1"><i class="bi bi-plus"></i></button>
@@ -252,6 +256,36 @@ import Swal from 'sweetalert2';
       <label v-else class="d-flex justify-content-center mt-5">Тут ничего нет</label>
 
       
+      <div>
+        <!-- переключатель страниц -->
+        <div v-if="totalpages != 1 && current_play_list == 'All'" class="mt-1 d-flex justify-content-center">
+          <nav aria-label="Page navigation mt-1 example">
+            <ul class="pagination">
+              <li v-if="currentPage > 0" class="page-item"><a class="page-link" href="#"
+                  @click="checker_page(currentPage - 1)">&laquo;</a></li>
+              <li v-if="currentPage > 2" class="page-item"><a class="page-link" href="#" @click="checker_page(0)">1</a></li>
+
+              <template v-for="(page, i) in totalpages">
+                <li v-if="(currentPage - 2 < page) && (currentPage + 4 > page)"
+                  :class="{ 'page-item': true, 'active': (page - 1 == currentPage) }">
+                  <a class="page-link" @click="checker_page(page - 1)" href="#">{{ page }}</a>
+                </li>
+              </template>
+
+
+
+              <li v-if="currentPage < totalpages - 3" class="page-item">
+                <a class="page-link" href="#" @click="checker_page(totalpages - 1)">
+                  {{ totalpages }}
+                </a>
+              </li>
+              <!-- <li v-if="currentPage==totalpages-2" class="page-item"><a class="page-link" href="#" @click="checker_page(currentPage+1)">{{ currentPage }}</a></li> -->
+              <li v-if="currentPage < totalpages - 1" class="page-item"><a class="page-link" href="#"
+                  @click="checker_page(currentPage + 1)">&raquo;</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
 
 
     </div>
@@ -363,6 +397,7 @@ export default {
       select_time: '',
       name_group: '',
       current_group: {},
+      currentPage: 0,
 
     }
   },
@@ -408,6 +443,56 @@ export default {
   components: {
   },
   methods: {
+    async g1(flag=false) {
+      let properties = {
+        type: "video",
+        page: this.currentPage,
+        limit: this.video_values,
+        flag: flag
+      }
+
+      console.info(this.selected_part)
+      const response = await fetch('/g', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': window.localStorage.getItem('jwt'),
+        },
+        body: JSON.stringify(properties)
+      })
+
+      let result = await response.json()
+
+      if (!flag) {
+        this.array_videos = result['items'].slice(0)
+        this.rx_array = this.array_videos.slice(0)
+        this.backup = this.array_videos.slice(0)
+        this.folder = result['route']
+        this.recent_arr = result['recent']
+
+        console.log('Ограничение видео на страницу: ', properties.limit)
+        // this.totalpages = Math.ceil(productscount / productsPerPage)
+        this.totalpages = Math.ceil(result['count_videos'] / properties.limit)
+
+        this.totalvideos = result['count_videos']
+      } else {
+        this.lst_srch = result['items']
+        //this.sampling_by_template = result['items']
+      }
+
+
+    },
+
+
+
+    async checker_page(page) {
+      this.currentPage = page
+      await this.g()
+    },
+
+
+
     async delGroup(item) {
       console.log(item)
       axios({
@@ -788,16 +873,15 @@ export default {
 
         this.resu_search = []
         if (this.word!=='') {
-          for (let i=0, count=0;i<this.resu.length;i++) {
-            if (rx.test(this.resu[i]['one'].toLowerCase()) || rx.test(this.resu[i]['two'].toLowerCase()) || rx.test(this.resu[i]['three'].toLowerCase())) {
-              // console.log(this.resu[i])
-              this.resu_search.push(this.resu[i]);
-              count += 1
-              if (count >= 5) break
-            }
+          // for (let i=0, count=0;i<this.resu.length;i++) {
+          this.resu_search = this.resu.filter(item => (rx.test(item['one'].toLowerCase()) || rx.test(item['two'].toLowerCase()) || rx.test(item['three'].toLowerCase())))
+          // console.log(this.resu[i])
+          // this.resu_search.push(this.resu[i]);
+          // count += 1
+          // if (count >= 5) break
+          // }
+          // }
 
-          
-          }
         } else {
           this.resu = this.resu_backup.slice(0)
         }

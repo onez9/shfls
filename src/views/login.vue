@@ -19,6 +19,7 @@ import {sha224, sha256} from 'js-sha256';
 .wh1 {
     /* height: 100vh; */
     height: 100vh;
+    max-height: 100%;
 }
 </style>
 

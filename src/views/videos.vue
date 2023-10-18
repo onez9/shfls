@@ -773,13 +773,13 @@ export default {
       let rx = new RegExp(this.name)
       this.sampling_by_template = []
       if (this.name != "") {
-        for (let i = 0; i < this.lst_srch.length; i++) {
-          if (rx.test(this.lst_srch[i].name.toLowerCase())) {
-            this.sampling_by_template.push(this.lst_srch[i])
+        //for (let i = 0; i < this.lst_srch.length; i++) {
+        this.sampling_by_template = this.lst_srch.filter(item => rx.test(item.name.toLowerCase()))
+            // this.sampling_by_template.push(this.lst_srch[i])
 
-            console.log(`this.video: ${this.lst_srch[i].name}`)
-          }
-        } 
+            //console.log(`this.video: ${this.lst_srch[i].name}`)
+          //}
+        //} 
       } else { // заполняем тем что было до поиска
         this.rx_array = this.array_videos.slice(0)
       }
