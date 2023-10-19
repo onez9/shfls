@@ -6,7 +6,7 @@ import Swal from 'sweetalert2';
 
 <template >
   <div class="container-fluid ">
-    <div class="row">
+    <div class="row" @mouseover="">
       <!-- <div class="form-check form-switch">
         <input class="form-check-input" v-model="v1" @change="func" type="checkbox" id="flexSwitchCheckDefault">
         <label class="form-check-label" for="flexSwitchCheckDefault">Нормальное видео</label>
@@ -33,7 +33,7 @@ import Swal from 'sweetalert2';
       </div>
 
     </div>
-    <div class="row">
+    <div class="row" @mouseover="">
 
       <div v-if="show_extra" class="col-sm" style="background-color: #000000; border-radius: 5px; padding: 5px;">
         <div class="col-sm mb-1">
@@ -165,9 +165,10 @@ import Swal from 'sweetalert2';
 
 
       <div class="col-sm-12 input-group mb-2 mt-2 m-0 p-0">
-        <span class="input-group-text" id=""><i class="bi bi-search"></i></span>
-        <input type="text" placeholder="Панель поиска" class="form-control bg-dark text-white" v-on:keyup.enter="template_request" v-on:keyup.escape="recent_request=false" v-on:input="searching(name)" v-model="name" @focus="recent_request = true" @blur="" autocomplete="on">
-        <button @click="csr" class="input-group-text" id=""><i class="bi bi-backspace"></i></button>
+        <span class="input-group-text p-0 m-0 px-2" id=""><i class="bi bi-search"></i></span>
+        <input type="text" placeholder="Панель поиска" class="form-control bg-dark text-white p-0 m-0" v-on:keyup.enter="template_request" @mouseover="recent_request=true" v-on:input="searching(name)" v-model="name" @focus="recent_request = true" @mouseleave="" @blur="" autocomplete="on">
+        <button @click="clear_history_search" class="btn btn-sm btn-outline-danger" id=""><i class="bi bi-radioactive"></i></button>
+        <button @click="csr" class="btn btn-sm btn-outline-danger" id=""><i class="bi bi-backspace"></i></button>
       </div>
 
       <div class="col-sm-12 style_searching" style="" v-if="sampling_by_template.length !== 0">
@@ -175,7 +176,7 @@ import Swal from 'sweetalert2';
           {{ item.name }}
         </div>
       </div>
-      <div v-if="recent_request && sampling_by_template.length==0" class="col-sm-12 style_searching">
+      <div v-if="recent_request_array.length!=0 && recent_request && sampling_by_template.length==0" class="col-sm-12 style_searching" @mouseleave="recent_request = false">
         <div class="recent_request_class_css" v-for="(request, index) in recent_request_array" :key="request">
           <span @click="sel_last_request(request)" >{{ request }}</span>
         </div>
@@ -241,7 +242,8 @@ import Swal from 'sweetalert2';
                 </div>
                 <div class="" v-if="current_play_list !== 'All'"><button @click="delete_from_albom(i)" class="btn btn-sm btn-outline-secondary form-control"><i class="bi bi-x"></i></button></div>
                 <div class="mb-1 me-1"><button class="btn btn-sm btn-outline-danger" @click="reset_video(i)"><i class="bi bi-stop-btn"></i></button></div>
-                <div class=""><button class="btn btn-sm btn-outline-success" @click="play_video(i)"><i class="bi bi-play-btn"></i></button></div>
+                <div class="mb-1"><button class="btn btn-sm btn-outline-success" @click="play_video(i)"><i class="bi bi-play-btn"></i></button></div>
+                <div class=""><button class="btn btn-sm btn-outline-success" @click="full_video(i)"><i class="bi bi-arrows-fullscreen"></i></button></div>
               </div>
 
               <div>
@@ -485,6 +487,8 @@ export default {
     if (window.localStorage.getItem('recent_request_list') == null) {
       window.localStorage.setItem('recent_request_list', JSON.stringify([]));
 
+    } else {
+      // await this.write_to_db()
     }
 
     this.batch_list = JSON.parse(window.localStorage.getItem('url_list'))
@@ -503,8 +507,6 @@ export default {
       window.localStorage.setItem('lst_ply_lst', JSON.stringify(Array.from((new Map()).entries()))); // записываем словарь в локальное хранилище
 
     }
-
-
     this.play_list_array = new Map(JSON.parse(localStorage.getItem('lst_ply_lst')))
 
 
@@ -550,7 +552,23 @@ export default {
 
   },
   methods: {
+    async write_to_db() {
+      const response = await fetch('/g/write_cash', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': window.localStorage.getItem('jwt'),
+        },
+        body: JSON.stringify({ history_search: window.localStorage.getItem('recent_request_list') })
+      })
 
+      let result = await response.json()
+      conole.info('run in mounted: ', result)
+    },
+    async clear_history_search() {
+      window.localStorage.setItem('recent_request_list', JSON.stringify([]))
+      this.recent_request_array = []
+    },
 
     async sel_last_request(req) {
       console.info(req)
@@ -684,6 +702,10 @@ export default {
     async reset_video(index) {
       let pls = document.getElementsByClassName('videos');
       pls[index].load();
+    },
+    async full_video(index) {
+      let pls = document.getElementsByClassName('videos');
+      pls[index].requestFullscreen()
     },
 
     async create_new_play_playlist(name_of_play_list) {

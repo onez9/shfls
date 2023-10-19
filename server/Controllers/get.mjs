@@ -521,7 +521,6 @@ router.post('/glw', (req, res) => {
 		console.error(e)
 	}
 })
-
 router.post('/add_rule', (req, res) => {
 	console.log('шафощуц щукоцщкцо уукцщоцущкш')
 	try {
@@ -1309,33 +1308,33 @@ router.post('/', async (req, res) => {
 						return Object.keys(right).indexOf(x) < 0;
 					})
 
-					console.info(`Новые видосы: `)
-					console.info(`left: ${Object.keys(left).length}`)
-					console.info(`right: ${Object.keys(right).length}`)
+					//console.info(`Новые видосы: `)
+					//console.info(`left: ${Object.keys(left).length}`)
+					//console.info(`right: ${Object.keys(right).length}`)
 					for (let i=0; i<res_except.length; i++) {
 						// res_except[i] = left[res_except[i]];
 						// console.log()
 						res_except[i] = {
 							name: res_except[i]+left[res_except[i]]
 						}
-						console.info(res_except[i])
+						//console.info(res_except[i])
 					}
 					// console.warn(right);
 					// console.error(left)
 
-					let fromIndex = page * limit     // начальный индекс товара
-					let toIndex = page*limit + limit // конечный индекс товара
-					console.log(page*limit + limit)
+					let fromIndex = page * limit     // начальный индекс 
+					let toIndex = page * limit + limit // конечный индекс 
+					//console.log(page*limit + limit)
 					if (toIndex > result.length) {
 						toIndex = result.length
 					}
 					
 					let productsPage = (req.body.flag)? result : result.slice(fromIndex, toIndex)
-					console.log(page, limit)
-					console.log(`fromindex: ${fromIndex}`)
-					console.log(`toIndex: ${toIndex}`)
+					//console.log(page, limit)
+					//console.log(`fromindex: ${fromIndex}`)
+					//console.log(`toIndex: ${toIndex}`)
 					// return c.JSON(http.StatusOK, productsPage)
-					console.log(productsPage)
+					//console.log(productsPage)
 
 
                     res.json({ "items": productsPage, "route": route, "count_videos": result.length, "recent": res_except })
@@ -1602,7 +1601,6 @@ router.post('/create_account', (req, res) => {
 
 
 })
-
 router.post('/login', (req, res) => {
 	console.log('Запуск авторизации')
 	let db = new sqlite.Database('db.sqlite3', (err) => {
@@ -1637,7 +1635,6 @@ router.post('/login', (req, res) => {
 		// res.redirect('http://localhost:5173/')
 	})
 })
-
 router.post('/log1', (req,res) => {
 	console.log('Вы нажали на кнопку выхода!')
 	// if (!req.body) res.sendStatus(500);
@@ -1645,8 +1642,6 @@ router.post('/log1', (req,res) => {
 	res.json({ok: true})
 	//res.redirect('/login');
 });
-
-
 router.post('/search_by_id', (req, res) => {
 	try {
 		let lang = req.body.lang
@@ -1700,7 +1695,24 @@ router.post('/search_by_id', (req, res) => {
 		console.log(e)
 	}
 })
+router.post('/write_cash', (req, res) => {
+	try {
+		console.log('req.session.user_id: ', req.session.user_id)
+		console.info('body: ', req.body)
+		const db = new sqlite.Database('db.sqlite3')
+
+		let sql = 'insert into record_local_storage (user_id, cash) values (?, ?);'
+
+		let stmt = db.prepare(sql)
+
+		stmt.run([6, req.body])
+		stmt.finalize()
 
 
+		// db.close()
+	} catch (e) {
+		console.error(e)
+	}
+})
 
 export default router

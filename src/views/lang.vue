@@ -157,6 +157,7 @@ import Swal from 'sweetalert2';
           <div class="input-group">
             <button class="btn btn-sm btn-outline-danger"><i class="bi bi-search"></i></button>
             <input v-model="word" @input="word_change" @keyup.enter="find_func" class="form-control p-0 m-0" placeholder="Введите текст" title="Панель для поиска" />
+            <label class="border lc d-flex align-items-center px-2">{{ this.tablo_result }}</label>
             <button @click="downl_search" class="btn btn-sm btn-outline-danger"><i class="bi bi-sliders2-vertical"></i></button>
             <button @click="resu_search = []; word = ''; resu = resu_backup.slice()" class="btn btn-sm btn-outline-danger"><i class="bi bi-backspace"></i></button>
           </div>
@@ -165,7 +166,7 @@ import Swal from 'sweetalert2';
 
       <div class="col-sm-12 rounded p-1 mt-1 style_searching" v-if="resu_search.length!==0">
         <div class="" v-for="(item, index) in resu_search" :key="item">
-          {{ item }}
+          {{ item[1] }}
         </div>
       </div>
 
@@ -308,6 +309,10 @@ tr, td, tbody {
   border-radius: 3%;
 }
 
+.lc {
+  font-size: 10px;
+  border-color: #0a4f4f;
+}
 .badge {
   font-size: 10px;
   background-color: #0a4f4f;
@@ -433,6 +438,7 @@ export default {
       currentPage: 0,
       words_on_page: 30,
       rls: [],
+      tablo_result: 0,
 
     }
   },
@@ -499,6 +505,7 @@ export default {
 
       this.rls = (await response.json())
       console.log(this.rls)
+      this.tablo_result = this.rls.length
     },
     async checker_page(page) {
       this.currentPage = page
@@ -696,6 +703,7 @@ export default {
     },
     async get_words() {
       this.resu = this.resu_backup.slice(0)
+      this.tablo_result = this.resu.length
     },
     async get_groups() {
       const response = await fetch('/g/get_groups', {
@@ -886,6 +894,7 @@ export default {
         if (this.word!=='') {
           // for (let i=0, count=0;i<this.resu.length;i++) {
           this.resu_search = this.rls.filter(item => rx.test(item[1].toLowerCase()))
+          this.tablo_result = this.resu_search.length
           // console.log(this.resu[i])
           // this.resu_search.push(this.resu[i]);
           // count += 1
@@ -895,6 +904,7 @@ export default {
 
         } else {
           this.resu = this.resu_backup.slice(0)
+          this.tablo_result = this.rls.length
         }
 
       } catch (e) {
@@ -991,21 +1001,27 @@ export default {
 
     },
     async find_func() {
-      let arr = this.resu_search.map(item => item[0])
-      console.log(arr)
+      if (this.word=="") {
+        let arr = this.resu_search.map(item => item[0])
+        console.log(arr)
+        this.tablo_result = arr.length
 
-      const response = await fetch('/g/search_by_id', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          arr: arr,
-          lang: this.name_lang
+        const response = await fetch('/g/search_by_id', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            arr: arr,
+            lang: this.name_lang
+          })
         })
-      })
 
-      this.resu = await response.json()
+        this.resu = await response.json()
+      } else {
+        console.info('435 3485 3485 3458 34 53845 3458')
+        this.tablo_result = this.rls.length
+      }
     },
     async support_lang() {  // запрос доступных языков
       // for (let l of ['Английский', 'Японский', 'Китайский', 'Корейский', 'Немецкий']) this.dict_lang.push(l)
