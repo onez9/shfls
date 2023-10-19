@@ -34,7 +34,7 @@ router.post('/', (req, res) => {
 		console.log("body.name: ", JSON.parse(req.body.body).name)
 		switch (JSON.parse(req.body.body).name) {
 			case 'off':
-				command = 'sudo poweroff';
+				command = 'sudo shutdown -P +10';
 				break;
 			case 'reboot':
 				command = 'sudo reboot';

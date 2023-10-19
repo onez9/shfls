@@ -313,9 +313,15 @@ router.post('/lang', (req, res) => {
 
 	try {
 		let lang = req.body.lang
-		//console.log('это язык: ', req.body.lang)
+		let page = parseInt(req.body.page, 10)
+		let limit = parseInt(req.body.limit, 10)
 
-		// console.log(path.resolve('Share', 'txt', '1.txt'))
+		console.log(req.body)
+
+
+
+
+		
 		let dict = new Map();
 		dict['en']=1;
 		dict['jp']=2;
@@ -323,50 +329,58 @@ router.post('/lang', (req, res) => {
 		dict['kr']=4;
 		dict['cn']=5;
 		dict['de']=6;
-
 		const db = new sqlite.Database('db.sqlite3')
 		let sql;
+		let count;
 
 
-		sql = 'select id, one, two, three, date, time from words where dictionary_id=?';
-		db.all(sql, [dict[lang]], (err, rows) => {
-			try {
-				if (err) {
-					throw err;
-				}
-				
-				console.log(rows)
-				res.json(rows)
-
-			} catch (e) {
-				console.info('Сработал catch (при запросе к /get/lang (запрос словарей)) ошибка ниже')
-				console.log(e);
-
-			}
-		});
-
+		db.serialize(() => {
+			sql = 'select count(*) as l from words where dictionary_id = ?;'
+	
+			db.get(sql, dict[lang], (err, row) => {
+				if (err) console.log(err)
+				count = row.l;
+				console.log(count);
 
 			
 
-		
+
+			})
+
+			sql = 'select * from words where dictionary_id=? limit ?, ?;';
+			let fromIndex = page * limit     // начальный индекс товара
+			let toIndex = page * limit + limit // конечный индекс товара
+			//console.info('количество: ', count, 'код страны: ', dict[lang])
+			console.log(fromIndex, toIndex)
+			
+			if (toIndex > count) {
+				toIndex = count
+			}
+
+			db.all(sql, [dict[lang], fromIndex, limit], (err, rows) => {
+				// console.info('количество: ', count, 'код страны: ', dict[lang])
+				try {
+					if (err) {
+						throw err;
+					}
+					
+					// console.log(rows)
+					res.json({
+						body: rows,
+						count: count,
+					})
+	
+				} catch (e) {
+					console.info('Сработал catch (при запросе к /get/lang (запрос словарей)) ошибка ниже')
+					console.log(e);
+	
+				}
+			});
+
+
+		})
+
 		db.close();
-
-
-
-
-		// let dir = config.folders.videos
-		// let route = config.routes.videos
-		// let page = parseInt(req.body.page, 10)
-		// let limit = parseInt(req.body.limit, 10)
-
-		// console.log('route: ', route)
-		// console.log('dir: ', dir)
-		
-
-
-		// let res_except = Object.keys(left).filter(function (x) {
-		// 	return Object.keys(right).indexOf(x) < 0;
-		// })
 
 
 		// console.info(`left: ${Object.keys(left).length}`)
@@ -382,13 +396,7 @@ router.post('/lang', (req, res) => {
 		// // console.warn(right);
 		// // console.error(left)
 
-		// let fromIndex = page * limit     // начальный индекс товара
-		// let toIndex = page*limit + limit // конечный индекс товара
-		// console.log(page*limit + limit)
-		// if (toIndex > result.length) {
-		// 	toIndex = result.length
-		// }
-		
+
 		// let productsPage = (req.body.flag)? result : result.slice(fromIndex, toIndex)
 		// console.log(page, limit)
 		// console.log(`fromindex: ${fromIndex}`)
@@ -475,6 +483,45 @@ router.post('/lang', (req, res) => {
 		console.log(e)
 	}
 })
+router.post('/glw', (req, res) => {
+	try {
+		let lang = req.body.lang
+		console.log(req.body)
+		let dict = new Map();
+		dict['en']=1;
+		dict['jp']=2;
+		dict['ru']=3;
+		dict['kr']=4;
+		dict['cn']=5;
+		dict['de']=6;
+		const db = new sqlite.Database('db.sqlite3')
+		let sql;
+		let count;
+		db.serialize(() => {
+			sql = 'select id, one||" "||two||" "||three as word from words where dictionary_id=?';
+
+			db.all(sql, [dict[lang]], (err, rows) => {
+				try {
+					if (err) throw err;
+					res.json(rows.map(item => [item['id'], item['word']]))
+	
+				} catch (e) {
+					console.info('Сработал catch (при запросе к /get/glw (запрос словарей)) ошибка ниже')
+					console.log(e);
+	
+				}
+			});
+
+
+		})
+
+		db.close();
+
+	} catch (e) {
+		console.error(e)
+	}
+})
+
 router.post('/add_rule', (req, res) => {
 	console.log('шафощуц щукоцщкцо уукцщоцущкш')
 	try {
@@ -1235,7 +1282,8 @@ router.post('/', async (req, res) => {
 							
 							if (['.webm', '.avi', '.mp4', '.mkv'].indexOf(ext) > -1) {
 								result.push({
-									name: item
+									name: item,
+									info: fs.statSync(path.resolve(dir, item))
 								})
 								let name = item.split(/.webm|.avi|.mp4|.mkv/)[0]
 								// console.warn(name + ext)
@@ -1562,7 +1610,7 @@ router.post('/login', (req, res) => {
 	})
   
   
-	db.get(`SELECT * FROM users WHERE login = ?`, [req.body.login], function(err, user) {
+	db.get(`SELECT * FROM users WHERE login = ? or email = ? or phone = ?`, [req.body.login, req.body.login, req.body.login], (err, user) => {
 		console.log('вот это у нас юзер: ', user)
 		if (err) return res.status(500).send('Ошибка на сервере.');
 		
@@ -1598,6 +1646,60 @@ router.post('/log1', (req,res) => {
 	//res.redirect('/login');
 });
 
+
+router.post('/search_by_id', (req, res) => {
+	try {
+		let lang = req.body.lang
+		let arr = req.body.arr
+
+		console.log(req.body)
+		
+		let dict = new Map();
+		dict['en']=1;
+		dict['jp']=2;
+		dict['ru']=3;
+		dict['kr']=4;
+		dict['cn']=5;
+		dict['de']=6;
+
+		const db = new sqlite.Database('db.sqlite3')
+		let sql;
+		let count;
+		db.serialize(() => {
+
+			let placeHolders = new Array(arr.length).fill('?').join(',');
+			sql = `select * from words where dictionary_id=? and id in (${placeHolders})`;
+
+			db.all(sql, [dict[lang], ...arr], (err, rows) => {
+				try {
+					if (err) throw err;
+					res.json(rows)
+	
+				} catch (e) {
+					console.info('Сработал catch (при запросе к /get/glw (запрос словарей)) ошибка ниже')
+					console.log(e);
+	
+				}
+			});
+
+
+		})
+
+		db.close();
+
+
+
+
+
+
+
+
+
+
+	} catch (e) {
+		console.log(e)
+	}
+})
 
 
 

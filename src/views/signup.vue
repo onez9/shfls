@@ -23,7 +23,7 @@ import {sha224, sha256} from 'js-sha256';
             <input name="pass1" v-model="pass1" id="pass1" type="password" class="form-control" placeholder="password">
             <label for="pass2">Повторите пароль: <span v-if="!pass2 && flag" class="text-danger">Это поле обязательно для заполнения</span></label>
             <input name="pass2" v-model="pass2" id="pass2" type="password" class="form-control" placeholder="passwrod">
-            <button class="btn btn-sm btn-outline-danger form-control mt-1" type="button" @click="createAccount()">Зарегистрироваться</button>
+            <button class="btn btn-sm btn-outline-danger form-control mt-1" type="button" @click="createAccount()" disabled>Зарегистрироваться</button>
             <button class="btn btn-sm btn-outline-danger form-control mt-1" type="button" @click="clear()">Отмена</button>
             <!-- </form> -->
 
@@ -67,12 +67,12 @@ export default {
     },
     methods: {
         async clear() {
-            this.login = "123";
-            this.email = "123@3424";
-            this.phone = "123";
-            this.age = "13";
-            this.pass1 = "123";
-            this.pass2 = "123";
+            this.login = "";
+            this.email = "";
+            this.phone = "";
+            this.age = "";
+            this.pass1 = "";
+            this.pass2 = "";
         },
         
 
@@ -117,7 +117,7 @@ export default {
                     })
                     
                     let result = await response.json()
-                    console.info('create new user: ', result.statusOk())
+                    console.info('create new user: ', result.statusOk)
                     //window.location.href = '/g/login'
                     console.log(`Router: ${this.$router}`)
                     this.$router.push({ path: '/g/login' })

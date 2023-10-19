@@ -29,7 +29,7 @@ import Swal from 'sweetalert2';
       </div>
 
 
-      <select @change="selLang(name_lang)" v-model="name_lang" class="form-select mt-1 bg-dark text-white " name="" title="Выберете язык">
+      <select @change="selLang(name_lang, 1)" v-model="name_lang" class="form-select mt-1 bg-dark text-white " name="" title="Выберете язык">
         <option  v-for="(value, key) of dict_lang" v-bind:value="key">{{ value }}</option>
       </select>
 
@@ -43,7 +43,7 @@ import Swal from 'sweetalert2';
           <img class="w-100" src="/images/katakana.jpeg" alt="">
         </div>
       </div>
-      <div :class="{'border rounded p-1 mt-1': true, 'border-danger': new_word_mode}">
+      <div :class="{'border rounded p-1 mt-1': true, 'border-my': new_word_mode}">
         <label @click="new_word_func" class="d-flex justify-content-start">Слова</label>
         <input v-if="new_word_mode" v-model="one" ref="myinput" type="text" class="form-control" title="Иностранный" placeholder="Иностранный"/>
         <input v-if="new_word_mode" v-model="two" type="text" class="form-control mt-1" title="Родной" placeholder="Транскрипция"/>
@@ -55,7 +55,7 @@ import Swal from 'sweetalert2';
 
       </div>
 
-      <div :class="{'border rounded p-1 mt-1': true, 'border-danger': (create_rule_mode)}">
+      <div :class="{'border rounded p-1 mt-1': true, 'border-my': (create_rule_mode)}">
         <label @click="create_rule_func" class="d-flex justify-content-start">Правила</label>
         <input v-if="create_rule_mode" v-model="name_rule" type="text" class="form-control mb-1" title="Название" placeholder="Название">
         <textarea v-if="create_rule_mode" v-model="description_rule" type="text" class="form-control mb-1" title="Описание" placeholder="Описание"></textarea>
@@ -64,7 +64,7 @@ import Swal from 'sweetalert2';
         <!-- <button v-if="create_rule_mode" @click="get_rules()" class="btn btn-sm btn-outline-danger form-control mt-1">Показать правила</button> -->
       </div>
 
-      <div :class="{'border rounded p-1 mt-1': true, 'border-danger': (add_phrase_mode)}">
+      <div :class="{'border rounded p-1 mt-1': true, 'border-my': (add_phrase_mode)}">
         <label @click="add_phrase_func" class="d-flex justify-content-start">Фразеологизмы</label>
         <!-- <input type="text" class="form-control mb-1" title="Название" placeholder="Название"> -->
         <textarea v-if="add_phrase_mode" v-model="fi_phrase" type="text" class="form-control mb-1" title="Описание" placeholder="Иностранный"></textarea>
@@ -155,17 +155,17 @@ import Swal from 'sweetalert2';
       <div class="row">
         <div class="col-sm-12 mt-1">
           <div class="input-group">
-            <button class="btn btn-outline-danger"><i class="bi bi-search"></i></button>
-            <input v-model="word" @input="word_change" @keyup.enter="find_func" class="form-control" placeholder="Введите текст" title="Панель для поиска" />
-
-            <button @click="resu_search = []; word = ''; resu = resu_backup.slice()" class="btn btn-outline-danger"><i class="bi bi-backspace"></i></button>
+            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-search"></i></button>
+            <input v-model="word" @input="word_change" @keyup.enter="find_func" class="form-control p-0 m-0" placeholder="Введите текст" title="Панель для поиска" />
+            <button @click="downl_search" class="btn btn-sm btn-outline-danger"><i class="bi bi-sliders2-vertical"></i></button>
+            <button @click="resu_search = []; word = ''; resu = resu_backup.slice()" class="btn btn-sm btn-outline-danger"><i class="bi bi-backspace"></i></button>
           </div>
         </div>
       </div>
 
       <div class="col-sm-12 rounded p-1 mt-1 style_searching" v-if="resu_search.length!==0">
-        <div class="" v-for="(item, index) in resu_search.slice(0, 10)" :key="item">
-          {{ `${item['one']}  ${item['two']}  ${item['three']}` }}
+        <div class="" v-for="(item, index) in resu_search" :key="item">
+          {{ item }}
         </div>
       </div>
 
@@ -210,28 +210,28 @@ import Swal from 'sweetalert2';
           </tr>
         </thead>
         <tbody class="">
-          <tr v-for="(value, index) of resu">
+          <tr v-for="(value, index) of resu" >
 
-            <td  class="p-0 align-middle" style="width: 1%;">
+            <td  :class="{'p-0 align-middle': true, 'bg-selected': value['edit']}" style="width: 1%;">
               <div class="d-flex justify-content-center">
                 <div v-if="check_edit_record"  class="form-check ">
                   <input class="form-check-input " type="checkbox" v-model="value['select']" >
                 </div>
-                <label v-else class="badge text-bg-danger w-100"> {{ index + 1 }} </label>
+                <label v-else class="badge w-100"> {{ index + 1 }} </label>
               </div>
             </td>
             
-            <td v-if="check_foreign_word" class="p-0 px-1 align-middle col">
+            <td v-if="check_foreign_word" :class="{'p-0 px-1 align-middle col': true, 'bg-selected': value['edit']}">
               <label v-if="!value['edit']">{{ value['one'] }} </label>
-              <input v-if="value['edit']" class="form-control border-0 p-0 align-middle" v-model="value['one']" data-style-base="form-control" data-style="">
+              <input v-if="value['edit']" class="form-control border-0 rounded-0 p-0 align-middle bg-selected" v-model="value['one']" data-style-base="form-control" data-style="">
             </td>
-            <td v-if="check_trascription" class="p-0 px-1 align-middle col">
+            <td v-if="check_trascription" :class="{'p-0 px-1 align-middle col': true, 'bg-selected': value['edit']}">
               <label v-if="!value['edit']">{{ value['two'] }}</label>
-              <input v-if="value['edit']" class="form-control border-0 p-0 align-middle" v-model="value['two']">
+              <input v-if="value['edit']" class="form-control border-0 rounded-0 p-0 align-middle bg-selected" v-model="value['two']">
             </td>
-            <td v-if="check_translate" class="p-0 px-1 align-middle col">
+            <td v-if="check_translate" :class="{'p-0 px-1 align-middle col': true, 'bg-selected': value['edit']}">
               <label v-if="!value['edit']">{{ value['three'] }}</label>
-              <input v-if="value['edit']" class="form-control border-0 p-0 align-middle" v-model="value['three']">
+              <input v-if="value['edit']" class="form-control border-0 rounded-0 p-0 align-middle bg-selected" v-model="value['three']">
             </td>
             <td v-if="check_date" class="p-0 px-1 align-middle col">
               <label>{{ value['date'] }}</label>
@@ -242,7 +242,7 @@ import Swal from 'sweetalert2';
               <!-- <input type="time" v-if="value['select']" class="form-control" v-model="value['time']"> -->
             </td>
             <td class="p-0 col" style="width: 1%;">
-              <div class="d-flex">
+              <div class="d-flex justify-content-end">
                 <button v-if="value['edit']" @click="save_value(value)" class="btn btn-sm btn-outline-danger" ><i class="bi bi-save"></i></button>
                 <button v-if="!value['edit']" @click="next1(value)" class="btn btn-sm btn-outline-danger" ><i class="bi bi-pen"></i></button>
                 <button v-if="value['edit']" @click="back(value)" class="btn btn-sm btn-outline-danger" ><i class="bi bi-back"></i></button>
@@ -258,7 +258,7 @@ import Swal from 'sweetalert2';
       
       <div>
         <!-- переключатель страниц -->
-        <div v-if="totalpages != 1 && current_play_list == 'All'" class="mt-1 d-flex justify-content-center">
+        <div class="mt-1 d-flex justify-content-center">
           <nav aria-label="Page navigation mt-1 example">
             <ul class="pagination">
               <li v-if="currentPage > 0" class="page-item"><a class="page-link" href="#"
@@ -307,6 +307,39 @@ import Swal from 'sweetalert2';
 tr, td, tbody {
   border-radius: 3%;
 }
+
+.badge {
+  font-size: 10px;
+  background-color: #0a4f4f;
+}
+
+.bg-selected {
+  background-color: black;
+}
+.bg-selected:focus {
+  background-color: black;
+}
+button:hover {
+  background-color: #0a4f4f;
+}
+.btn-outline-danger {
+  border-color: #0a4f4f;
+  color: #c3b5b5;
+}
+.border-danger  {
+  border-color: #0a4f4f;
+  color: #c3b5b5;
+}
+
+.border {
+  border-color: #0a4f4f;
+  color: #c3b5b5;
+}
+.border-my {
+  border-color: #0a4f4f;
+  color: #c3b5b5;
+}
+
 
 .bootstrap-select .form-control:focus {
     outline: 0px none #fff !important;
@@ -398,12 +431,15 @@ export default {
       name_group: '',
       current_group: {},
       currentPage: 0,
+      words_on_page: 30,
+      rls: [],
 
     }
   },
   async mounted() {
     await this.support_lang()
     await this.selLang('en')
+    await this.downl_search()
   },
   directives: {
 
@@ -443,56 +479,31 @@ export default {
   components: {
   },
   methods: {
-    async g1(flag=false) {
-      let properties = {
-        type: "video",
-        page: this.currentPage,
-        limit: this.video_values,
-        flag: flag
-      }
 
-      console.info(this.selected_part)
-      const response = await fetch('/g', {
+    async downl_search() {
+      const properties = {
+        lang: this.name_lang,
+      }
+      const response = await fetch('/g/glw', {
         method: 'POST',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': window.localStorage.getItem('jwt'),
+
         },
-        body: JSON.stringify(properties)
+        body: JSON.stringify(properties),
+        "mode":"cors"
+
       })
 
-      let result = await response.json()
-
-      if (!flag) {
-        this.array_videos = result['items'].slice(0)
-        this.rx_array = this.array_videos.slice(0)
-        this.backup = this.array_videos.slice(0)
-        this.folder = result['route']
-        this.recent_arr = result['recent']
-
-        console.log('Ограничение видео на страницу: ', properties.limit)
-        // this.totalpages = Math.ceil(productscount / productsPerPage)
-        this.totalpages = Math.ceil(result['count_videos'] / properties.limit)
-
-        this.totalvideos = result['count_videos']
-      } else {
-        this.lst_srch = result['items']
-        //this.sampling_by_template = result['items']
-      }
-
-
+      this.rls = (await response.json())
+      console.log(this.rls)
     },
-
-
-
     async checker_page(page) {
       this.currentPage = page
-      await this.g()
+      await this.selLang(this.name_lang)
     },
-
-
-
     async delGroup(item) {
       console.log(item)
       axios({
@@ -673,8 +684,6 @@ export default {
     },
     async get_date(value) {
 
-      //console.log('типо дата: ', value == "")
-
       this.resu = this.resu_backup.slice(0)
 
       if (value !== "") {
@@ -818,6 +827,7 @@ export default {
       this.$refs.myinput1.focus()
     },
     async next1(value) {
+      // this.edit_color = true
       value['edit'] = true
       
       // создаём копии для отката
@@ -830,6 +840,7 @@ export default {
 
     },
     async back(value) {
+      // this.edit_color = false
       value['edit'] = false
       
       // откат
@@ -874,7 +885,7 @@ export default {
         this.resu_search = []
         if (this.word!=='') {
           // for (let i=0, count=0;i<this.resu.length;i++) {
-          this.resu_search = this.resu.filter(item => (rx.test(item['one'].toLowerCase()) || rx.test(item['two'].toLowerCase()) || rx.test(item['three'].toLowerCase())))
+          this.resu_search = this.rls.filter(item => rx.test(item[1].toLowerCase()))
           // console.log(this.resu[i])
           // this.resu_search.push(this.resu[i]);
           // count += 1
@@ -980,7 +991,21 @@ export default {
 
     },
     async find_func() {
-      this.resu = this.resu_search.slice(0)
+      let arr = this.resu_search.map(item => item[0])
+      console.log(arr)
+
+      const response = await fetch('/g/search_by_id', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          arr: arr,
+          lang: this.name_lang
+        })
+      })
+
+      this.resu = await response.json()
     },
     async support_lang() {  // запрос доступных языков
       // for (let l of ['Английский', 'Японский', 'Китайский', 'Корейский', 'Немецкий']) this.dict_lang.push(l)
@@ -1018,7 +1043,17 @@ export default {
 
 
     },
-    async selLang(lang_code) { // запрашивает словари
+    async selLang(lang_code, nlm=0) { // запрашивает словари
+      if (nlm==1) {
+        this.currentPage = 0
+        await this.downl_search()
+      }
+      
+      const properties = {
+        page: this.currentPage,
+        limit: this.words_on_page,
+        lang: lang_code,
+      }
       const response = await fetch('/g/lang', {
         method: 'POST',
         credentials: 'include',
@@ -1027,7 +1062,7 @@ export default {
           'Authorization': window.localStorage.getItem('jwt'),
 
         },
-        body: JSON.stringify({ 'lang': lang_code }),
+        body: JSON.stringify(properties),
         "mode":"cors"
 
       })
@@ -1039,10 +1074,11 @@ export default {
       // let items = Object.keys(result).map(function(key) {
       //   return [key, result[key]];
       // });
-
-      this.resu = result
+      console.info(result)
+      this.totalpages = Math.round(result.count / this.words_on_page)
+      this.resu = result.body
       this.resu_backup = this.resu.slice(0)
-      this.dict = result
+      // this.dict = result
 
 
 

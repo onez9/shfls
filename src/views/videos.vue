@@ -4,7 +4,7 @@ import search from '../../Components/search.vue'
 import Swal from 'sweetalert2';
 </script>
 
-<template>
+<template >
   <div class="container-fluid ">
     <div class="row">
       <!-- <div class="form-check form-switch">
@@ -19,6 +19,10 @@ import Swal from 'sweetalert2';
       <div class="col mb-1 mt-1 m-0 p-0 me-sm-2">
         <button class="btn btn-sm btn-outline-danger form-control mt-1" @click="show_poster_func"
           title="Показывает\Скрывает постеры на видео"><i class="bi bi-emoji-heart-eyes"></i></button>
+      </div>
+
+      <div class="col mb-1 mt-1 m-0 p-0 me-sm-2">
+        <button class="btn btn-sm btn-outline-danger form-control mt-1" @click="crypt_mode =! crypt_mode" title="Шифрует\Дешифрует названия">123</button>
       </div>
 
 
@@ -133,6 +137,7 @@ import Swal from 'sweetalert2';
         <div class="col-sm mb-1 mt-1">
           <!-- <input type="number" class="form-control mt-1" min="1" max="4"> -->
           <select v-model="selected" class="form-select mt-1 bg-dark text-white" name="" title="Количество столбцов">
+            <option value="0">List</option>
             <option value="1">One</option>
             <option value="2">Two</option>
             <option value="3">Three</option>
@@ -161,7 +166,7 @@ import Swal from 'sweetalert2';
 
       <div class="col-sm-12 input-group mb-2 mt-2 m-0 p-0">
         <span class="input-group-text" id=""><i class="bi bi-search"></i></span>
-        <input type="text" placeholder="Панель поиска" class="form-control bg-dark text-white" v-on:keyup.enter="template_request" v-on:input="searching(name)" v-model="name">
+        <input type="text" placeholder="Панель поиска" class="form-control bg-dark text-white" v-on:keyup.enter="template_request" v-on:keyup.escape="recent_request=false" v-on:input="searching(name)" v-model="name" @focus="recent_request = true" @blur="" autocomplete="on">
         <button @click="csr" class="input-group-text" id=""><i class="bi bi-backspace"></i></button>
       </div>
 
@@ -170,7 +175,11 @@ import Swal from 'sweetalert2';
           {{ item.name }}
         </div>
       </div>
-
+      <div v-if="recent_request && sampling_by_template.length==0" class="col-sm-12 style_searching">
+        <div class="recent_request_class_css" v-for="(request, index) in recent_request_array" :key="request">
+          <span @click="sel_last_request(request)" >{{ request }}</span>
+        </div>
+      </div> 
 
 
 
@@ -215,41 +224,73 @@ import Swal from 'sweetalert2';
       <!-- отображаемые видео -->
 
       <div v-for="(item, i) in rx_array" :key="item"
-        :class="{ 'p-1 pt-2': true, 'col-1': (selected == 12), 'col-2': (selected == 6), 'col-3': (selected == 4), 'col-sm-4': (selected == 3), 'col-6': (selected == 2), 'col-12': (selected == 1) }">
+        :class="{ 'p-1 pt-2': true, 'col-1': (selected == 12), 'col-2': (selected == 6), 'col-3': (selected == 4), 'col-sm-4': (selected == 3), 'col-6': (selected == 2), 'col-12': (selected == 1), 'col-sm-12': (selected==0) }">
 
         <!-- {{ item }} -->
         <div class="frame-video p-1 rounded">
-          <div class="row p-0 mb-2">
-            <div v-if="current_play_list == 'All' && show_like_button==true" class="col"><button
-                class="btn btn-sm btn-outline-danger form-control" @click="add_to_like(item.name)"><i
-                  class="bi bi-heart"></i> {{ like_button_label }}</button>
+          <div class="row">
+            
+            
+            <div :class="{'col-4': selected==0, 'd-flex': true }">
+              
+              <div class="row p-0 mb-2 d-flex flex-column">
+                <div v-if="current_play_list == 'All' && show_like_button==true" class="">
+                  <button class="btn btn-sm btn-outline-danger form-control" @click="add_to_like(item.name)">
+                    <i class="bi bi-heart"></i> {{ like_button_label }}
+                  </button>
+                </div>
+                <div class="" v-if="current_play_list !== 'All'"><button @click="delete_from_albom(i)" class="btn btn-sm btn-outline-secondary form-control"><i class="bi bi-x"></i></button></div>
+                <div class="mb-1 me-1"><button class="btn btn-sm btn-outline-danger" @click="reset_video(i)"><i class="bi bi-stop-btn"></i></button></div>
+                <div class=""><button class="btn btn-sm btn-outline-success" @click="play_video(i)"><i class="bi bi-play-btn"></i></button></div>
+              </div>
+
+              <div>
+                <figure class="m-0" @mouseover="item.upHere = true" @mouseleave="item.upHere = false" >
+                  <video class="w-100 videos m-0 p-0"
+                    v-bind:poster="(show_poster == true && item.upHere !== true) ? '/images/periodic_table.jpg' : `/gifs/${encodeURIComponent(item.name.replace(/(.webm|.mp4|.mkv|.avi)/gi, '.gif'))}`"
+                    loop preload="none" controls="controls" controlsList="nodownload">
+                    <!-- <source :src="`/g?name=${encodeURIComponent(item.name)}`" type="video/mp4" /> -->
+                    <source :src="`/g?name=${encodeURIComponent(item.name)}`" type='video/mp4' />
+                  </video>
+                  <!-- <figcaption>
+                    <label id="timer" for="progress" role="timer"></label>
+                    <progress id="progress" max="100" value="0">Progress</progress>
+                  </figcaption> -->
+                  <!-- <marquee behavior="scroll" direction="left">{{ item.name }}</marquee> -->
+                    <!-- {{ item.name }} -->
+                    <!-- {{ item.shw_nm_vd }} -->
+                  <figcaption v-if="selected != 0" style="font-size: small" class="text-break ms-auto">
+                    <span v-if="crypt_mode">{{ nameVideo(item) }}</span>
+                    <span v-else>{{ nameVideo(item) }}</span>
+     
+                  </figcaption>
+                </figure>
+                
+              </div>
             </div>
-            <div class="col" v-if="current_play_list !== 'All'"><button @click="delete_from_albom(i)" 
-                class="btn btn-sm btn-outline-secondary form-control"><i class="bi bi-x"></i></button></div>
-            <div class="col"><button class="btn btn-sm btn-outline-danger form-control" @click="reset_video(i)"><i
-                  class="bi bi-stop-btn"></i></button></div>
-            <div class="col"><button class="btn btn-sm btn-outline-danger form-control" @click="play_video(i)"><i
-                  class="bi bi-play-btn"></i></button></div>
+
+            <div v-if="selected == 0" class="col-6 p-0">
+              <p class="p-0 m-0" style="font-size: small; color: #555555">
+                <!-- {{ nameVideo(item, 0) }} -->
+                <span v-if="crypt_mode">{{ nameVideo(item, 0).toString(16) }}</span>
+                <span v-else>{{ nameVideo(item, 0) }}</span>
+              </p>
+              <p class="p-0 m-0" style="font-size: small; color: #555555">
+                atime: {{ new Date(item['info']['atime']).toLocaleDateString() }} {{ new Date(item['info']['atime']).toLocaleTimeString() }}
+              </p>
+              <p class="p-0 m-0" style="font-size: small; color: #555555">
+                ctime: {{ new Date(item['info']['atime']).toLocaleDateString() }} {{ new Date(item['info']['atime']).toLocaleTimeString() }}
+              </p>
+              <p class="p-0 m-0" style="font-size: small; color: #555555">
+                mtime: {{ new Date(item['info']['mtime']).toLocaleDateString() }} {{ new Date(item['info']['mtime']).toLocaleTimeString() }}
+              </p>
+              <p class="p-0 m-0" style="font-size: small; color: #555555">
+                size: {{ Math.round(item['info']['size'] * 100 / 1024 / 1024) / 100 }} Мб
+              </p>
+            </div>
+
           </div>
-          <figure class="m-0" @mouseover="item.upHere = true" @mouseleave="item.upHere = false" >
-            <video class="w-100 videos m-0 p-0"
-              v-bind:poster="(show_poster == true && item.upHere !== true) ? '/images/periodic_table.jpg' : `/gifs/${encodeURIComponent(item.name.replace(/(.webm|.mp4|.mkv|.avi)/gi, '.gif'))}`"
-              loop preload="none" controls="controls">
-              <!-- <source :src="`/g?name=${encodeURIComponent(item.name)}`" type="video/mp4" /> -->
-              <source :src="`/g?name=${encodeURIComponent(item.name)}`" type='video/mp4' />
-            </video>
-            <!-- <figcaption>
-              <label id="timer" for="progress" role="timer"></label>
-              <progress id="progress" max="100" value="0">Progress</progress>
-            </figcaption> -->
-            <figcaption style="font-size: small"
-              class="text-break ms-auto">
-              <!-- <marquee behavior="scroll" direction="left">{{ item.name }}</marquee> -->
-              <!-- {{ item.name }} -->
-              <!-- {{ item.shw_nm_vd }} -->
-              {{ nameVideo(item) }}
-            </figcaption>
-          </figure>
+
         </div>
 
       </div>
@@ -307,10 +348,13 @@ import Swal from 'sweetalert2';
   padding: 5px;
   border-radius: 5px;
   text-decoration: underline;
+  z-index: 3;
   /* box-sizing: border-box;
   -moz-box-sizing: border-box; */
 }
-
+.recent_request_class_css:hover {
+  color: orange;
+}
 .page-link {
   background-color: black;
   border-color: #dc3545;
@@ -416,7 +460,10 @@ export default {
       lst_srch: [],
       sampling_by_template: [],
       playlist_name: "all",
-      recent_arr: []
+      recent_arr: [],
+      crypt_mode: false,
+      recent_request: false,
+      recent_request_array: []
     }
   },
 
@@ -435,7 +482,15 @@ export default {
 
     }
 
+    if (window.localStorage.getItem('recent_request_list') == null) {
+      window.localStorage.setItem('recent_request_list', JSON.stringify([]));
+
+    }
+
     this.batch_list = JSON.parse(window.localStorage.getItem('url_list'))
+    this.recent_request_array = JSON.parse(window.localStorage.getItem('recent_request_list'))
+
+
     console.log(window.localStorage.getItem('url_list'))
     console.log(this.batch_list)
 
@@ -495,6 +550,17 @@ export default {
 
   },
   methods: {
+
+
+    async sel_last_request(req) {
+      console.info(req)
+      this.name = req
+      await this.searching(this.name)
+      await this.template_request()
+
+
+
+    },
     async csr() {
       this.name = ''; 
       this.rx_array = this.array_videos.slice(0)
@@ -522,8 +588,8 @@ export default {
 
     },
     
-    nameVideo(item) {
-      return (!item.upHere && item.name.length > 40) ? item.name.slice(0, 40) + '...' : item.name
+    nameVideo(item, mode=1) {
+      return (!item.upHere && item.name.length > 30) ? item.name.slice(0, (mode==1)? 30 : 120) + '...' : item.name
     },
 
     async delete_from_albom(i) {
@@ -544,6 +610,21 @@ export default {
 
     async template_request() {
       this.rx_array = this.sampling_by_template.slice(0);
+      let tname = this.name.trim()
+
+      if (tname!="" && this.recent_request_array.indexOf(tname) < 0) { 
+
+          this.recent_request_array.push(tname)
+          window.localStorage.setItem('recent_request_list', JSON.stringify(this.recent_request_array))
+
+      }
+
+
+      // await this.csr()
+      this.name = ''; 
+      // this.rx_array = this.array_videos.slice(0)
+      this.sampling_by_template = []
+
       // let properties = {
       //   type: "video",
       //   page: this.currentPage,
@@ -783,7 +864,7 @@ export default {
       } else { // заполняем тем что было до поиска
         this.rx_array = this.array_videos.slice(0)
       }
-
+      // this.name = ""
       // console.log(this.rx_array)
       // console.info(this.array_videos)
       // this.array_videos=[]

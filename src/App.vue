@@ -19,7 +19,7 @@ import { RouterLink, RouterView } from 'vue-router'
     <div class="content-header">
 
       <nav :class="{ 'navbar navbar-expand-lg navbar-light border-bottom': true, 'bg-body-tertiary': (dark) }">
-        <div class="container">
+        <div class="container-fluid">
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -69,7 +69,7 @@ import { RouterLink, RouterView } from 'vue-router'
       </nav>
     </div>
   </header>
-  <main class="container">
+  <main class="container-fluid">
     <RouterView :wait="wait" :theme="dark" @updateParent="someFunc" />
 
   </main>
