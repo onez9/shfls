@@ -47,8 +47,7 @@ import Swal from 'sweetalert2';
           <div class="input-group mb-1">
             <input v-on:keyup.enter="create_new_play_playlist(name_of_play_list)" class="form-control border border-outline-primary" id="name_list" placeholder="Название плейлиста"
               v-model="name_of_play_list">
-            <button @click="name_of_play_list = ''" class="input-group-text" id=""><i
-                class="bi bi-backspace"></i></button>
+            <button @click="name_of_play_list = ''" class="input-group-text" id=""><i class="bi bi-backspace"></i></button>
           </div>
           <button class="btn btn-sm btn-outline-primary form-control"
             @click="create_new_play_playlist(name_of_play_list)">Создать</button>
@@ -235,12 +234,12 @@ import Swal from 'sweetalert2';
             <div :class="{'col-4': selected==0, 'd-flex': true }">
               
               <div class="row p-0 mb-2 d-flex flex-column">
-                <div v-if="current_play_list == 'All' && show_like_button==true" class="">
-                  <button class="btn btn-sm btn-outline-danger form-control" @click="add_to_like(item.name)">
-                    <i class="bi bi-heart"></i> {{ like_button_label }}
+                <div v-if="current_play_list == 'All' && show_like_button==true" class="mb-1 me-1">
+                  <button class="btn btn-sm btn-outline-danger" @click="add_to_like(item.name)" :title="like_button_label">
+                    <i class="bi bi-heart"></i> 
                   </button>
                 </div>
-                <div class="" v-if="current_play_list !== 'All'"><button @click="delete_from_albom(i)" class="btn btn-sm btn-outline-secondary form-control"><i class="bi bi-x"></i></button></div>
+                <div class="mb-1" v-if="current_play_list !== 'All'"><button @click="delete_from_albom(i)" class="btn btn-sm btn-outline-secondary"><i class="bi bi-x"></i></button></div>
                 <div class="mb-1 me-1"><button class="btn btn-sm btn-outline-danger" @click="reset_video(i)"><i class="bi bi-stop-btn"></i></button></div>
                 <div class="mb-1"><button class="btn btn-sm btn-outline-success" @click="play_video(i)"><i class="bi bi-play-btn"></i></button></div>
                 <div class=""><button class="btn btn-sm btn-outline-success" @click="full_video(i)"><i class="bi bi-arrows-fullscreen"></i></button></div>
@@ -873,9 +872,10 @@ export default {
       }
     },
     async searching() {
-      let rx = new RegExp(this.name)
+      let name = this.name.toLowerCase()
+      let rx = new RegExp(name)
       this.sampling_by_template = []
-      if (this.name != "") {
+      if (name != "") {
         //for (let i = 0; i < this.lst_srch.length; i++) {
         this.sampling_by_template = this.lst_srch.filter(item => rx.test(item.name.toLowerCase()))
             // this.sampling_by_template.push(this.lst_srch[i])

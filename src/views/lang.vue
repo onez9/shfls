@@ -138,7 +138,12 @@ import Swal from 'sweetalert2';
               Время модификации
             </label>
           </div>
-
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" v-model="check_date_and_time" id="flexCheck_date_and_time" >
+            <label class="form-check-label" for="flexCheck_date_and_time">
+              Сортировка по дате и времени
+            </label>
+          </div>
 
         </div>
 
@@ -170,7 +175,7 @@ import Swal from 'sweetalert2';
         </div>
       </div>
 
-      <table v-if="resu.length !== 0" class="table table-bordered table-dark mt-1 rounded"  >
+      <table v-if="resu.length !== 0 || true" class="table table-bordered table-dark mt-1 rounded"  >
         <thead class="p-0">
           <tr class="bg-info p-0">
             <td class="p-0 m-0">
@@ -193,14 +198,14 @@ import Swal from 'sweetalert2';
             </td>
             <td v-if="check_date" class="p-0 m-0">
               <div class="d-flex">
-                <button @click="sortArr('date', f4), f4 =! f4" class="btn btn-sm btn-outline-danger"><i :class="{'bi': true,  'bi-sort-alpha-down': (f4==true), 'bi-sort-alpha-up': (f4==false)}"></i></button>
+                <button @click="sortArr('date', date_mode), date_mode =! date_mode" class="btn btn-sm btn-outline-danger"><i :class="{'bi': true,  'bi-sort-alpha-down': (date_mode==true), 'bi-sort-alpha-up': (date_mode==false)}"></i></button>
                 <!-- <button class="btn  btn-sm btn-outline-danger"><i class="bi bi-calendar"></i></button> -->
                 <input type="date" v-model="select_date" class="btn btn-sm btn-outline-danger" @change="get_date(select_date)">
               </div>
             </td>
             <td v-if="check_time" class="p-0 m-0">
               <div class="d-flex">
-                <button  @click="sortArr('time', f5), f5 =! f5" class="btn btn-sm btn-outline-danger"><i :class="{'bi': true,  'bi-sort-alpha-down': (f5==true), 'bi-sort-alpha-up': (f5==false)}"></i></button>
+                <button  @click="sortArr('time', time_mode), time_mode =! time_mode" class="btn btn-sm btn-outline-danger"><i :class="{'bi': true,  'bi-sort-alpha-down': (date_mode==true), 'bi-sort-alpha-up': (date_mode==false)}"></i></button>
                 <!-- <button class="btn  btn-sm btn-outline-danger"><i class="bi bi-clock-history"></i></button> -->
                 <input type="time" v-model="select_time" class="btn btn-sm btn-outline-danger" @change="get_time(select_time)">
               </div>
@@ -246,6 +251,8 @@ import Swal from 'sweetalert2';
               <div class="d-flex justify-content-end">
                 <button v-if="value['edit']" @click="save_value(value)" class="btn btn-sm btn-outline-danger" ><i class="bi bi-save"></i></button>
                 <button v-if="!value['edit']" @click="next1(value)" class="btn btn-sm btn-outline-danger" ><i class="bi bi-pen"></i></button>
+
+                <button v-if="value['edit']" @click="del_value(value)" class="btn btn-sm btn-outline-danger" ><i class="bi bi-trash"></i></button>
                 <button v-if="value['edit']" @click="back(value)" class="btn btn-sm btn-outline-danger" ><i class="bi bi-back"></i></button>
               </div>
             </td>
@@ -415,8 +422,8 @@ export default {
       f1: true,
       f2: true,
       f3: true,
-      f4: true,
-      f5: true,
+      date_mode: true,
+      time_mode: true,
       fi_phrase: '',
       fo_phrase: '',
       name_rule: '',
@@ -439,6 +446,7 @@ export default {
       words_on_page: 30,
       rls: [],
       tablo_result: 0,
+      check_date_and_time: false
 
     }
   },
@@ -486,6 +494,34 @@ export default {
   },
   methods: {
 
+
+    async del_value(value) {
+      console.log(value)
+      const response = await fetch('/g/del_value', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': window.localStorage.getItem('jwt'),
+        },
+        body: JSON.stringify({
+          value: value
+        })
+      })
+
+      let result = await response.json()
+      console.log('del value from word: ', result)
+
+
+      this.resu.splice(this.resu.indexOf(value), 1)
+      this.rls.splice(this.rls.indexOf(value), 1)
+      this.resu_search.splice(this.resu_search.indexOf(value), 1)
+      this.resu_backup.splice(this.resu_backup.indexOf(value), 1)
+
+
+
+
+
+    },
     async downl_search() {
       const properties = {
         lang: this.name_lang,
@@ -1001,7 +1037,7 @@ export default {
 
     },
     async find_func() {
-      if (this.word=="") {
+      if (this.word!=="") {
         let arr = this.resu_search.map(item => item[0])
         console.log(arr)
         this.tablo_result = arr.length
@@ -1043,19 +1079,64 @@ export default {
       this.dict_lang = await response.json()
       //console.log('Это ответ: ', this.dict_lang)
     },
-    async sortArr(mode='one', field) { // сортировка по колонкам
+    async sortArr(column, direction) { // сортировка по колонкам
       // console.log(Object.keys(result).sort())
       // console.info('firts: ', first)
       // console.info('second: ', second)
       // console.log(this.resu)
-      this.resu.sort(function(first, second) {
-        // console.log(`first: ${first['one']}\nsecond: ${second}`)
-        return first[mode].localeCompare(second[mode]);
-      })
-      if (!field) {
-        this.resu.reverse()
-      }
+      // this.resu.sort(function(first, second) {
+      //   // console.log(`first: ${first['one']}\nsecond: ${second}`)
+      //   return first[mode].localeCompare(second[mode]);
+      // })
+      // if (!field) {
+      //   this.resu.reverse()
+      // }
       // console.log(items)
+      let properties;
+      properties = (column == 'time' || column == 'date')? 
+      {
+        page: this.currentPage,
+        limit: this.words_on_page,
+        lang: this.name_lang,
+        column: column,
+        direction: direction,
+        time_mode: this.time_mode,
+        date_mode: this.date_mode,
+        check_date_and_time: this.check_date_and_time,
+
+      } 
+      : 
+      {
+        page: this.currentPage,
+        limit: this.words_on_page,
+        lang: this.name_lang,
+        column: column,
+        direction: direction,
+      }
+
+
+
+
+      const response = await fetch('/g/lang', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': window.localStorage.getItem('jwt'),
+
+        },
+        body: JSON.stringify(properties),
+        "mode":"cors"
+
+      })
+
+      let result = (await response.json())
+      this.resu = result.body
+      console.log(result)
+
+
+
+
 
 
     },

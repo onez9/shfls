@@ -333,32 +333,62 @@ router.post('/lang', (req, res) => {
 		let sql;
 		let count;
 
+		let params;
+		let direction;
+		let column;
 
 		db.serialize(() => {
+
+
 			sql = 'select count(*) as l from words where dictionary_id = ?;'
-	
-			db.get(sql, dict[lang], (err, row) => {
+			let stmt = db.prepare(sql)
+			stmt.get(dict[lang], (err, row) => {
 				if (err) console.log(err)
 				count = row.l;
-				console.log(count);
-
-			
+				console.log(`count: ${count}`);
 
 
 			})
+			stmt.finalize()
 
-			sql = 'select * from words where dictionary_id=? limit ?, ?;';
-			let fromIndex = page * limit     // начальный индекс товара
-			let toIndex = page * limit + limit // конечный индекс товара
-			//console.info('количество: ', count, 'код страны: ', dict[lang])
-			console.log(fromIndex, toIndex)
+
+			let fromIndex = page * limit     
+			let toIndex = page * limit + limit 
+
+			// console.log(`fromIndex: ${fromIndex}, toIndex: ${toIndex}`)
 			
 			if (toIndex > count) {
 				toIndex = count
 			}
 
-			db.all(sql, [dict[lang], fromIndex, limit], (err, rows) => {
-				// console.info('количество: ', count, 'код страны: ', dict[lang])
+
+			if (req.body.column === undefined && req.body.direction === undefined) {
+				sql = 'select * from words where dictionary_id=? limit ?, ?;';
+
+			} else if (req.body.check_date_and_time) {
+				let date_mode = (req.body.date_mode)? 'asc' : 'desc';
+				let time_mode = (req.body.time_mode)? 'asc' : 'desc';
+				sql = `select * from words where dictionary_id=? order by date ${date_mode}, time ${time_mode} limit ?, ?;`
+
+			} else {
+				direction = req.body.direction
+				column = req.body.column
+				sql = 'select * from words where dictionary_id=? order by '+column+' '+(direction? 'asc' : 'desc')+' limit ?, ?;'
+
+			}
+
+
+			params = [dict[lang], fromIndex, limit]
+			// console.log(params)
+
+			console.info('sql: ', sql)
+			console.info('params: ', params)
+
+			let stmt1 = db.prepare(sql)
+			stmt1.all(params, (err, rows) => {
+				// console.info('количество: ', count, 'код страны: ', dict[lang], params, sql)
+				console.info('sql: ', sql)
+				console.info('params: ', params)
 				try {
 					if (err) {
 						throw err;
@@ -376,6 +406,7 @@ router.post('/lang', (req, res) => {
 	
 				}
 			});
+			stmt1.finalize()
 
 
 		})
@@ -788,20 +819,24 @@ router.post('/add_to_group', (req, res) => {
 
 
             db.serialize(() => {
-				let params;
-				const stmt = db.prepare(sql);
-				for (const word_id of items) {
-					params = [word_id, group_id]
+				try {
+					let params;
+					const stmt = db.prepare(sql);
+					for (const word_id of items) {
+						params = [word_id, group_id]
 
-					stmt.run(params);
+						stmt.run(params);
 
-					// console.info(word_id)
+						// console.info(word_id)
+					}
+
+					console.log('Идёт запись данных (Создание группы):')
+					stmt.finalize();
+
+				} catch (e) {
+					console.log(e)
+
 				}
-
-				console.log('Идёт запись данных (Создание группы):')
-
-  
-                stmt.finalize();
             
             });
 
@@ -1715,4 +1750,36 @@ router.post('/write_cash', (req, res) => {
 	}
 })
 
+router.delete('/del_value', (req, res) => {
+	try {
+		console.info(req.body)
+		const db = new sqlite.Database('db.sqlite3')
+		const bd = req.body.value
+		const id = bd.id
+		const one = bd.one
+		const two = bd.two
+		const three = bd.three
+		const dictionary_id = bd.dictionary_id
+		console.log(id, one, two, three, dictionary_id)
+
+		db.serialize(() => {
+			let sql = 'delete from words where id=? or dictionary_id=? and one=? and two=? and three=?;'
+			let stmt = db.prepare(sql)
+			let params = [id, dictionary_id, one, two, three]
+			stmt.run(params, (err) => {
+				if (err) console.error(err)
+				else {
+					res.json({answer: 'success'})
+				}
+			})
+
+			stmt.finalize()
+		})
+
+		db.close()
+
+	} catch (e) {
+		console.error(e)
+	}
+})
 export default router
