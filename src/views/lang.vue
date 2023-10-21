@@ -11,7 +11,19 @@ import Swal from 'sweetalert2';
 
 
   <div class="row">
-    <div class="col-sm-4">
+
+
+    <div class="col-sm-12" v-if="!show_menu">
+      <div class="d-flex p-0 mt-1">
+        <input v-model="one" ref="myinput" type="text" class="form-control p-0 me-1 ps-1" title="Иностранный" placeholder="Иностранный"/>
+        <input v-model="two" type="text" class="form-control p-0 me-1 ps-1" title="Родной" placeholder="Транскрипция"/>
+        <input v-model="three" type="text" class="form-control p-0 me-1 ps-1" title="Родной" placeholder="Родной"/>
+        <button @click="send_new_word(one, two, three)" class="btn btn-sm btn-outline-danger" :disabled="(one=='' || three=='')? true : false"><i class="bi bi-send"></i></button>
+      
+      </div>
+    </div>
+
+    <div class="col-sm-4" v-if="show_menu">
       <div v-if="false" class="border rounded p-1 mt-1 " >
         <input type="search" id="site-search" name="q" />
       </div>
@@ -29,11 +41,11 @@ import Swal from 'sweetalert2';
       </div>
 
 
-      <select @change="selLang(name_lang, 1)" v-model="name_lang" class="form-select mt-1 bg-dark text-white " name="" title="Выберете язык">
+      <!-- <div v-if="show_menu"> -->
+      
+      <select @change="selLang(name_lang, 1)" v-model="name_lang" class="form-select mt-1 bg-dark text-white p-0 ps-1" name="" title="Выберете язык">
         <option  v-for="(value, key) of dict_lang" v-bind:value="key">{{ value }}</option>
       </select>
-
-
       <div v-if="false" class="border rounded p-1 mt-1">
         <label class="d-flex justify-content-start" @click="show_alphavit_mode =! show_alphavit_mode">Показать алфавит</label>
         <div v-if="show_alphavit_mode" class="border rounded p-1 mt-1 " >
@@ -43,69 +55,50 @@ import Swal from 'sweetalert2';
           <img class="w-100" src="/images/katakana.jpeg" alt="">
         </div>
       </div>
-      <div :class="{'border rounded p-1 mt-1': true, 'border-my': new_word_mode}">
+      <div :class="{'border rounded mt-1 p-0 px-1': true, 'border-my': new_word_mode}">
         <label @click="new_word_func" class="d-flex justify-content-start">Слова</label>
-        <input v-if="new_word_mode" v-model="one" ref="myinput" type="text" class="form-control p-1" title="Иностранный" placeholder="Иностранный"/>
-        <input v-if="new_word_mode" v-model="two" type="text" class="form-control mt-1 p-1" title="Родной" placeholder="Транскрипция"/>
-        <input v-if="new_word_mode" v-model="three" type="text" class="form-control mt-1 p-1" title="Родной" placeholder="Родной"/>
+        <input v-if="new_word_mode" v-model="one" ref="myinput" type="text" class="form-control ps-1 p-0" title="Иностранный" placeholder="Иностранный"/>
+        <input v-if="new_word_mode" v-model="two" type="text" class="form-control mt-1 ps-1 p-0" title="Родной" placeholder="Транскрипция"/>
+        <input v-if="new_word_mode" v-model="three" type="text" class="form-control mt-1 ps-1 p-0" title="Родной" placeholder="Родной"/>
         <button v-if="new_word_mode" @click="send_new_word(one, two, three)" class="btn btn-sm btn-outline-danger form-control mb-1 mt-1" :disabled="(one=='' || three=='')? true : false"><i class="bi bi-send"></i></button>
       
-
         <!-- <button v-if="new_word_mode" @click="get_words()" class="btn btn-sm btn-outline-danger form-control mt-1">Показать слова</button> -->
-
       </div>
-
-      <div :class="{'border rounded p-1 mt-1': true, 'border-my': (create_rule_mode)}">
+      <div :class="{'border rounded mt-1 px-1 p-0': true, 'border-my': (create_rule_mode)}">
         <label @click="create_rule_func" class="d-flex justify-content-start">Правила</label>
         <input v-if="create_rule_mode" v-model="name_rule" type="text" class="form-control mb-1" title="Название" placeholder="Название">
         <textarea v-if="create_rule_mode" v-model="description_rule" type="text" class="form-control mb-1" title="Описание" placeholder="Описание"></textarea>
-        <button v-if="create_rule_mode" @click="add_rule(name_rule, description_rule)" class="btn btn-sm btn-outline-danger form-control" :disabled="(name_rule=='' || description_rule=='')? true : false">Создать</button>
-    
+        <button v-if="create_rule_mode" @click="add_rule(name_rule, description_rule)" class="btn btn-sm btn-outline-danger form-control mb-1" :disabled="(name_rule=='' || description_rule=='')? true : false">Создать</button>
         <!-- <button v-if="create_rule_mode" @click="get_rules()" class="btn btn-sm btn-outline-danger form-control mt-1">Показать правила</button> -->
       </div>
-
-      <div :class="{'border rounded p-1 mt-1': true, 'border-my': (add_phrase_mode)}">
+      <div :class="{'border rounded px-1 mt-1 p-0': true, 'border-my': (add_phrase_mode)}">
         <label @click="add_phrase_func" class="d-flex justify-content-start">Фразеологизмы</label>
         <!-- <input type="text" class="form-control mb-1" title="Название" placeholder="Название"> -->
         <textarea v-if="add_phrase_mode" v-model="fi_phrase" type="text" class="form-control mb-1" title="Описание" placeholder="Иностранный"></textarea>
         <textarea v-if="add_phrase_mode" v-model="fo_phrase" type="text" class="form-control mb-1" title="Описание" placeholder="Русский"></textarea>
         <button v-if="add_phrase_mode" @click="phraseological_unit(fi_phrase, fo_phrase)" class="btn btn-sm btn-outline-danger form-control" :disabled="(fi_phrase=='' || fo_phrase=='')? true : false">Создать</button>
-
-        <button v-if="add_phrase_mode" @click="get_phrase()" class="btn btn-sm btn-outline-danger form-control mt-1">Показать фразеологизмы</button>
+        <button v-if="add_phrase_mode" @click="get_phrase()" class="btn btn-sm btn-outline-danger form-control mt-1 mb-1">Показать фразеологизмы</button>
       </div>
-
-
-
       
-
-      <div class="border rounded p-1 mt-1">
+      <div class="border rounded px-1 mt-1 p-0">
         <label @click="show_groups_func" class="d-flex justify-content-start">Группы ({{ current_group }})</label>
-
         <div v-if="new_group_mode">
           <input v-if="true" v-model="name_group" ref="myinput1" v-on:keyup.enter="create_group(name_group)" type="text" class="form-control mb-1" title="Название" placeholder="Название">
           <button v-if="true" @click="create_group(name_group)" class="btn btn-sm btn-outline-danger form-control mb-1">Создать</button>
-          
-          
+      
+      
           <div v-for="(item, index) in groups" :key="item" class="border rounded p-0 mb-1 d-flex align-items-center">
             <!-- <div class="me-auto ps-2"></div> -->
-            
+      
             <button @click="get_values_from_group(item)" class="btn btn-sm btn-outline-danger me-1 w-100">{{ item['name'] }}</button>
             <button @click="add_to_group" class="btn btn-sm btn-outline-danger me-1"><i class="bi bi-save"></i></button>
             <button @click="" class="btn btn-sm btn-outline-danger me-1"><i class="bi bi-pen"></i></button>
             <button @click="selGroup(item)" class="btn btn-sm btn-outline-danger me-1"><i class="bi bi-plus"></i></button>
             <button @click="delGroup(item)" class="btn btn-sm btn-outline-danger"><i class="bi bi-x"></i></button>
           </div>
-
         </div>
-
       </div>
-
-
-
-
-
-   
-      <div class="border rounded p-1 mt-1">
+      <div class="border rounded px-1 mt-1 p-0">
         <label @click="edit_list_mode =! edit_list_mode" class="d-flex justify-content-start">Настроить список</label>
         <div v-if="edit_list_mode" class="border rounded p-1">
           <div class="form-check">
@@ -144,24 +137,21 @@ import Swal from 'sweetalert2';
               Сортировка по дате и времени
             </label>
           </div>
-
         </div>
-
-
       </div>
-
-
-
     </div>
 
 
-    <div class="col-sm-8">
+
+
+    <div :class="{'col-sm-8': show_menu, 'col-sm-12': !show_menu}">
 
       <div class="row">
         <div class="col-sm-12 mt-1">
           <div class="input-group">
             <button class="btn btn-sm btn-outline-danger"><i class="bi bi-search"></i></button>
-            <input v-model="word" @input="word_change" @keyup.enter="find_func" class="form-control p-0 m-0" placeholder="Введите текст" title="Панель для поиска" />
+            <button @click="show_menu =! show_menu" class="btn btn-sm btn-outline-danger"><i class="bi bi-gear"></i></button>
+            <input v-model="word" @input="word_change" @keyup.enter="find_func" class="form-control p-0 m-0 ps-1" placeholder="Введите текст" title="Панель для поиска" />
             <label class="border lc d-flex align-items-center px-2">{{ this.tablo_result }}</label>
             <button @click="downl_search" class="btn btn-sm btn-outline-danger"><i class="bi bi-sliders2-vertical"></i></button>
             <button @click="resu_search = []; word = ''; resu = resu_backup.slice()" class="btn btn-sm btn-outline-danger"><i class="bi bi-backspace"></i></button>
@@ -438,7 +428,7 @@ export default {
       one_mode: 0,
       two_mode: 0, 
       three_mode: 0,
-
+      show_menu: true,
       books: [],
       type: 'file',
       focused: false,
@@ -498,17 +488,122 @@ export default {
     }
   },
   async mounted() {
+
+
+    // настройка сортирови
+    if (window.localStorage.getItem('sort_mode.name') == null) {
+      window.localStorage.setItem('sort_mode.name', JSON.stringify(this.sort_mode.name))
+    } else {
+      this.sort_mode.name = window.localStorage.getItem('sort_mode.name')
+    }
+    if (window.localStorage.getItem('sort_mode.order') == null) {
+      window.localStorage.setItem('sort_mode.order', JSON.stringify(this.sort_mode.order))
+    } else {
+      this.sort_mode.order = JSON.parse(window.localStorage.getItem('sort_mode.order'))
+    }
+    if (window.localStorage.getItem('sort_mode.date_order') == null) {
+      window.localStorage.setItem('sort_mode.date_order', JSON.stringify(this.sort_mode.date_order))
+    } else {
+      this.sort_mode.date_order = JSON.parse(window.localStorage.getItem('sort_mode.date_order'))
+    }
+    if (window.localStorage.getItem('sort_mode.time_order') == null) {
+      window.localStorage.setItem('sort_mode.time_order', JSON.stringify(this.sort_mode.time_order))
+    } else {
+      this.sort_mode.time_order = JSON.parse(window.localStorage.getItem('sort_mode.time_order'))
+    }
+    if (window.localStorage.getItem('sort_mode.m2') == null) {
+      window.localStorage.setItem('sort_mode.m2', JSON.stringify(this.sort_mode.m2))
+    } else {
+      this.sort_mode.m2 = JSON.parse(window.localStorage.getItem('sort_mode.m2'))
+    }
+
+
+
+
+
+
+
+    // настройка списка
+    if (window.localStorage.getItem('check_foreign_word') == null) {
+      window.localStorage.setItem('check_foreign_word', this.check_foreign_word)
+    } else {
+      this.check_foreign_word = JSON.parse(window.localStorage.getItem('check_foreign_word'))
+    }
+    if (window.localStorage.getItem('check_trascription') == null) {
+      window.localStorage.setItem('check_trascription', this.check_trascription)
+    } else {
+      this.check_trascription = JSON.parse(window.localStorage.getItem('check_trascription'))
+    }
+    if (window.localStorage.getItem('check_translate') == null) {
+      window.localStorage.setItem('check_translate', this.check_translate)
+    } else {
+      this.check_translate = JSON.parse(window.localStorage.getItem('check_translate'))
+    }
+    if (window.localStorage.getItem('check_date') == null) {
+      window.localStorage.setItem('check_date', this.check_date)
+    } else {
+      this.check_date = JSON.parse(window.localStorage.getItem('check_date'))
+    }
+    if (window.localStorage.getItem('check_time') == null) {
+      window.localStorage.setItem('check_time', this.check_time)
+    } else {
+      this.check_time = JSON.parse(window.localStorage.getItem('check_time'))
+    }
+    if (window.localStorage.getItem('check_date_and_time') == null) {
+      window.localStorage.setItem('check_date_and_time', this.check_date_and_time)
+    } else {
+      this.check_date_and_time = JSON.parse(window.localStorage.getItem('check_date_and_time'))
+    }
+
+
+    if (window.localStorage.getItem('name_lang') == null) {
+      window.localStorage.setItem('name_lang', this.name_lang)
+    } else {
+      this.name_lang = window.localStorage.getItem('name_lang')
+    }
+
+
+
+
     await this.support_lang()
-    await this.selLang('en')
+    await this.selLang(this.name_lang)
     await this.downl_search()
+
+    
   },
   directives: {
 
   },
   watch: {
+    // check_date_and_time() {
+
+    // },
+    name_lang() {
+      window.localStorage.setItem('name_lang', this.name_lang)
+    },
+    check_foreign_word() {
+      window.localStorage.setItem('check_foreign_word', this.check_foreign_word)
+    },
+    check_trascription() {
+      window.localStorage.setItem('check_trascription', this.check_trascription)
+    },
+    check_translate() {
+      window.localStorage.setItem('check_translate', this.check_translate)
+    },
+    check_date() {
+      window.localStorage.setItem('check_date', this.check_date)
+    },
+    check_time() {
+      window.localStorage.setItem('check_time', this.check_time)
+    },
     check_date_and_time() {
       this.sort_mode.m2 =! this.sort_mode.m2
-    }
+      window.localStorage.setItem('check_date_and_time', this.check_date_and_time)
+    },
+
+
+
+    // sort_mode: { name: 'one', order: true, date_order: true, time_order: true, m2: false}
     /*
     word() {
       let rx = new RegExp(this.word.toLowerCase())
@@ -778,23 +873,26 @@ export default {
     async get_time(value) {
       console.log('типо время: ', value)
 
-      const response = await fetch('/g/time', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: window.localStorage.getItem('jwt'),
+      if (value.split(':').length == 3) {
+        const response = await fetch('/g/time', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: window.localStorage.getItem('jwt'),
 
-        },
-        body: JSON.stringify({
-          lang: this.name_lang,
-          date: value,
-        }),
-        "mode": "cors"
-      })
+          },
+          body: JSON.stringify({
+            lang: this.name_lang,
+            time: value,
+          }),
+          "mode": "cors"
+        })
 
 
-      let result = await response.json()
-      this.resu = result
+        let result = await response.json()
+        this.resu = result
+      }
+
 
     },
     async get_date(value) {
@@ -1174,9 +1272,25 @@ export default {
       this.sort_mode['order'] =! this.sort_mode['order']
 
 
+      window.localStorage.setItem('sort_mode.name', this.sort_mode.name)
+      window.localStorage.setItem('sort_mode.order', this.sort_mode.order)
+
+      // sort_mode.date_order
+      // sort_mode.time_order
+      // 231.m2
+
+
+
       if (this.check_date_and_time) {
-        if (column == 'date') this.sort_mode['date_order'] =! this.sort_mode['date_order']
-        if (column == 'time') this.sort_mode['time_order'] =! this.sort_mode['time_order']
+        if (column == 'date') {
+          this.sort_mode['date_order'] =! this.sort_mode['date_order']
+          window.localStorage.setItem('sort_mode.date_order', this.sort_mode.date_order)
+        }
+
+        if (column == 'time') {
+          this.sort_mode['time_order'] =! this.sort_mode['time_order']
+          window.localStorage.setItem('sort_mode.time_order', this.sort_mode.time_order)
+        }
 
       }
       await this.selLang(this.name_lang)

@@ -48,7 +48,7 @@ import Swal from 'sweetalert2';
       </div>
 
       <!-- <table id="id_table" class="table text-nowrap table-borderless table-hover"> -->
-      <table id="id_table" class="table table-hover">
+      <table id="id_table" class="table table-bordered table-hover">
         <thead v-if="show_info">
           <tr>
             <td>name</td>
@@ -59,26 +59,25 @@ import Swal from 'sweetalert2';
           </tr>
         </thead>
         <tbody>
-          <template @click="activeElem = element" v-for="(item, index) in  array " :key="index">
-            <tr>
-              <td @click="item.showmode = !item.showmode" class="align-middle text-break p-0">{{ item.name }}</td>
-              <td v-if="show_info" class="align-middle text-break p-0">{{ parseInt(item.info.size / 1024) }} Kb</td>
-              <td v-if="show_info" class="align-middle text-break p-0">{{ item.info.mtime.split('T')[0].toString() }}</td>
-              <td v-if="show_info" class="align-middle text-break p-0">{{ item.info.mtime.split('T')[1].toString() }}</td>
+          <template class="p-0 m-0" @click="activeElem = element" v-for="(item, index) in  array " :key="index">
+            <tr class="p-0 m-0">
+              <td @click="item.showmode = !item.showmode" class="align-middle text-break p-0 m-0">{{ item.name.slice(0, 40) }}</td>
+              <td v-if="show_info" class="align-middle text-break p-0 m-0">{{ parseInt(item.info.size / 1024) }} Kb</td>
+              <td v-if="show_info" class="align-middle text-break p-0 m-0">{{ new Date(item.info.mtime).toLocaleDateString() }}</td>
+              <td v-if="show_info" class="align-middle text-break p-0 m-0">{{ new Date(item.info.mtime).toLocaleTimeString() }}</td>
 
               <td class="p-0">
-                <div class="d-flex justify-content-end">
-                  <button @click="delete_file(item)" class="btn btn-sm btn-outline-info mt-1 mb-1 me-1"><i
-                      class="bi bi-recycle"></i></button>
-                  <button @click="download_file(item.name)" class="btn btn-sm btn-outline-danger mt-1 mb-1"><i
-                      class="bi bi-download"></i></button>
+                <div class="d-flex justify-content-end p-0">
+                  <button @click="delete_file(item)" class="btn btn-sm btn-outline-info me-1 m-0"><i class="bi bi-recycle"></i></button>
+                  <button @click="download_file(item.name)" class="btn btn-sm btn-outline-danger m-0"><i class="bi bi-download"></i></button>
+                
                 </div>
 
               </td>
 
 
             </tr>
-            <tr v-if="item.showmode && ['png', 'jpg', 'jpeg', 'gif'].indexOf(item.name.split('.').reverse()[0]) > -1" class="bg-dark">
+            <tr v-if="item.showmode && ['png', 'jpg', 'jpeg', 'gif'].indexOf(item.name.split('.').reverse()[0]) > -1" class="bg-dark p-0">
               <img loading="lazy" style="width: 100%;" class="rounded" :src="`/downloads/${item.name}`" alt="">
             </tr>
           </template>

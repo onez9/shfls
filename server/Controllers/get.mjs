@@ -345,10 +345,13 @@ router.post('/lang', (req, res) => {
 			sql = 'select count(*) as l from words where dictionary_id = ?;'
 			let stmt = db.prepare(sql)
 			stmt.get(dict[lang], (err, row) => {
-				if (err) console.log(err)
-				count = row.l;
-				//console.log(`count: ${count}`);
-
+				try {
+					if (err) console.log(err)
+					count = row.l;
+					//console.log(`count: ${count}`);
+				} catch (e) {
+					console.info(e)
+				}
 
 			})
 			stmt.finalize()
