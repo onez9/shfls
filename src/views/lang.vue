@@ -45,9 +45,9 @@ import Swal from 'sweetalert2';
       </div>
       <div :class="{'border rounded p-1 mt-1': true, 'border-my': new_word_mode}">
         <label @click="new_word_func" class="d-flex justify-content-start">Слова</label>
-        <input v-if="new_word_mode" v-model="one" ref="myinput" type="text" class="form-control" title="Иностранный" placeholder="Иностранный"/>
-        <input v-if="new_word_mode" v-model="two" type="text" class="form-control mt-1" title="Родной" placeholder="Транскрипция"/>
-        <input v-if="new_word_mode" v-model="three" type="text" class="form-control mt-1" title="Родной" placeholder="Родной"/>
+        <input v-if="new_word_mode" v-model="one" ref="myinput" type="text" class="form-control p-1" title="Иностранный" placeholder="Иностранный"/>
+        <input v-if="new_word_mode" v-model="two" type="text" class="form-control mt-1 p-1" title="Родной" placeholder="Транскрипция"/>
+        <input v-if="new_word_mode" v-model="three" type="text" class="form-control mt-1 p-1" title="Родной" placeholder="Родной"/>
         <button v-if="new_word_mode" @click="send_new_word(one, two, three)" class="btn btn-sm btn-outline-danger form-control mb-1 mt-1" :disabled="(one=='' || three=='')? true : false"><i class="bi bi-send"></i></button>
       
 
@@ -183,31 +183,35 @@ import Swal from 'sweetalert2';
             </td>
             <td v-if="check_foreign_word" class="p-0 m-0">
               <div class="d-flex">
-                <button @click="sortArr('one', f1), f1 =! f1" class="btn btn-sm btn-outline-danger"><i :class="{'bi': true,  'bi-sort-alpha-down': (f1==true), 'bi-sort-alpha-up': (f1==false)}"></i></button>
+                <!-- <button @click="requestSortLst('one', f1), f1 =! f1" class="btn btn-sm btn-outline-danger"><i :class="{'bi': true,  'bi-sort-alpha-down': (f1==true), 'bi-sort-alpha-up': (f1==false)}"></i></button> -->
+                <button @click="requestSortLst('one')" class="btn btn-sm btn-outline-danger"><i class="bi bi-filter-square"></i></button>
+
               </div>
             </td>
             <td v-if="check_trascription" class="p-0 m-0">
               <div class="d-flex">
-                <button @click="sortArr('two', f2), f2 =! f2" class="btn btn-sm btn-outline-danger"><i :class="{'bi': true,  'bi-sort-alpha-down': (f2==true), 'bi-sort-alpha-up': (f2==false)}"></i></button>
+                <!-- <button @click="requestSortLst('two', f2), f2 =! f2" class="btn btn-sm btn-outline-danger"><i :class="{'bi': true,  'bi-sort-alpha-down': (f2==true), 'bi-sort-alpha-up': (f2==false)}"></i></button> -->
+                <button @click="requestSortLst('two')" class="btn btn-sm btn-outline-danger"><i class="bi bi-filter-square"></i></button>
               </div>
             </td>
             <td v-if="check_translate" class="p-0 m-0">
               <div class="d-flex">
-                <button @click="sortArr('three', f3), f3 =! f3" class="btn btn-sm btn-outline-danger"><i :class="{'bi': true,  'bi-sort-alpha-down': (f3==true), 'bi-sort-alpha-up': (f3==false)}"></i></button>
+                <button @click="requestSortLst('three')" class="btn btn-sm btn-outline-danger"><i class="bi bi-filter-square"></i></button>
+                <!-- <button @click="requestSortLst('three', f3), f3 =! f3" class="btn btn-sm btn-outline-danger"><i :class="{'bi': true,  'bi-sort-alpha-down': (f3==true), 'bi-sort-alpha-up': (f3==false)}"></i></button> -->
               </div>
             </td>
             <td v-if="check_date" class="p-0 m-0">
               <div class="d-flex">
-                <button @click="sortArr('date', date_mode), date_mode =! date_mode" class="btn btn-sm btn-outline-danger"><i :class="{'bi': true,  'bi-sort-alpha-down': (date_mode==true), 'bi-sort-alpha-up': (date_mode==false)}"></i></button>
+                <button @click="requestSortLst('date')" class="btn btn-sm btn-outline-danger"><i class="bi bi-filter-square"></i></button>
                 <!-- <button class="btn  btn-sm btn-outline-danger"><i class="bi bi-calendar"></i></button> -->
                 <input type="date" v-model="select_date" class="btn btn-sm btn-outline-danger" @change="get_date(select_date)">
               </div>
             </td>
             <td v-if="check_time" class="p-0 m-0">
               <div class="d-flex">
-                <button  @click="sortArr('time', time_mode), time_mode =! time_mode" class="btn btn-sm btn-outline-danger"><i :class="{'bi': true,  'bi-sort-alpha-down': (date_mode==true), 'bi-sort-alpha-up': (date_mode==false)}"></i></button>
+                <button  @click="requestSortLst('time')" class="btn btn-sm btn-outline-danger"><i class="bi bi-filter-square"></i></button>
                 <!-- <button class="btn  btn-sm btn-outline-danger"><i class="bi bi-clock-history"></i></button> -->
-                <input type="time" v-model="select_time" class="btn btn-sm btn-outline-danger" @change="get_time(select_time)">
+                <input type="time" v-model="select_time" step="1" class="btn btn-sm btn-outline-danger" @change="get_time(select_time)">
               </div>
             </td>
             <td class="p-0 m-0">
@@ -269,8 +273,8 @@ import Swal from 'sweetalert2';
         <div class="mt-1 d-flex justify-content-center">
           <nav aria-label="Page navigation mt-1 example">
             <ul class="pagination">
-              <li v-if="currentPage > 0" class="page-item"><a class="page-link" href="#"
-                  @click="checker_page(currentPage - 1)">&laquo;</a></li>
+              <li v-if="currentPage > 0" class="page-item"><a class="page-link extreme_button" href="#"
+                  @click="checker_page(currentPage - 1)">&lt;</a></li>
               <li v-if="currentPage > 2" class="page-item"><a class="page-link" href="#" @click="checker_page(0)">1</a></li>
 
               <template v-for="(page, i) in totalpages">
@@ -288,8 +292,8 @@ import Swal from 'sweetalert2';
                 </a>
               </li>
               <!-- <li v-if="currentPage==totalpages-2" class="page-item"><a class="page-link" href="#" @click="checker_page(currentPage+1)">{{ currentPage }}</a></li> -->
-              <li v-if="currentPage < totalpages - 1" class="page-item"><a class="page-link" href="#"
-                  @click="checker_page(currentPage + 1)">&raquo;</a></li>
+              <li v-if="currentPage < totalpages - 1" class="page-item"><a class="page-link extreme_button" href="#"
+                  @click="checker_page(currentPage + 1)">&gt;</a></li>
             </ul>
           </nav>
         </div>
@@ -303,6 +307,19 @@ import Swal from 'sweetalert2';
 
 
 <style scoped>
+
+.pagination>li:first-child>a, .pagination>li:first-child>span {
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+    
+}
+
+.pagination>li:last-child>a, .pagination>li:last-child>span {
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+
+
 .style_searching {
   background-color: #111111;
   padding: 5px;
@@ -332,8 +349,33 @@ tr, td, tbody {
   background-color: black;
 }
 button:hover {
+
+}
+.extreme_button {
   background-color: #0a4f4f;
 }
+
+.active {
+  background-color: #031313 !important;
+}
+
+.pagination > .active > a
+{
+    color: white;
+    background-color: #5A4181 !Important;
+    border: solid 1px #5A4181 !Important;
+}
+
+.pagination > .active > a:hover
+{
+    background-color: #5A4181 !Important;
+    border: solid 1px #5A4181;
+}
+
+
+
+
+
 .btn-outline-danger {
   border-color: #0a4f4f;
   color: #c3b5b5;
@@ -393,6 +435,10 @@ button:hover {
 export default {
   data() {
     return {
+      one_mode: 0,
+      two_mode: 0, 
+      three_mode: 0,
+
       books: [],
       type: 'file',
       focused: false,
@@ -446,8 +492,9 @@ export default {
       words_on_page: 30,
       rls: [],
       tablo_result: 0,
-      check_date_and_time: false
-
+      check_date_and_time: false,
+      sort_mode: { name: 'one', order: true, date_order: true, time_order: true, m2: false},
+      last_column_sort: '',
     }
   },
   async mounted() {
@@ -459,6 +506,9 @@ export default {
 
   },
   watch: {
+    check_date_and_time() {
+      this.sort_mode.m2 =! this.sort_mode.m2
+    }
     /*
     word() {
       let rx = new RegExp(this.word.toLowerCase())
@@ -545,7 +595,10 @@ export default {
     },
     async checker_page(page) {
       this.currentPage = page
+
       await this.selLang(this.name_lang)
+
+      // await this.requestSortLst()
     },
     async delGroup(item) {
       console.log(item)
@@ -724,17 +777,54 @@ export default {
     },
     async get_time(value) {
       console.log('типо время: ', value)
+
+      const response = await fetch('/g/time', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: window.localStorage.getItem('jwt'),
+
+        },
+        body: JSON.stringify({
+          lang: this.name_lang,
+          date: value,
+        }),
+        "mode": "cors"
+      })
+
+
+      let result = await response.json()
+      this.resu = result
+
     },
     async get_date(value) {
+      const response = await fetch('/g/date', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: window.localStorage.getItem('jwt'),
 
-      this.resu = this.resu_backup.slice(0)
+        },
+        body: JSON.stringify({
+          lang: this.name_lang,
+          date: value,
+        }),
+        "mode": "cors"
+      })
 
-      if (value !== "") {
-        let date = value.split('-')
-        date = `${date[2]}.${date[1]}.${date[0]}`
-        this.resu = this.resu.filter(item => item['date'] == date)
 
-      }
+      let result = await response.json()
+      this.resu = result
+
+
+      // this.resu = this.resu_backup.slice(0)
+
+      // if (value !== "") {
+      //   let date = value.split('-')
+      //   date = `${date[2]}.${date[1]}.${date[0]}`
+      //   this.resu = this.resu.filter(item => item['date'] == date)
+
+      // }
       
     },
     async get_words() {
@@ -1079,65 +1169,19 @@ export default {
       this.dict_lang = await response.json()
       //console.log('Это ответ: ', this.dict_lang)
     },
-    async sortArr(column, direction) { // сортировка по колонкам
-      // console.log(Object.keys(result).sort())
-      // console.info('firts: ', first)
-      // console.info('second: ', second)
-      // console.log(this.resu)
-      // this.resu.sort(function(first, second) {
-      //   // console.log(`first: ${first['one']}\nsecond: ${second}`)
-      //   return first[mode].localeCompare(second[mode]);
-      // })
-      // if (!field) {
-      //   this.resu.reverse()
-      // }
-      // console.log(items)
-      let properties;
-      properties = (column == 'time' || column == 'date')? 
-      {
-        page: this.currentPage,
-        limit: this.words_on_page,
-        lang: this.name_lang,
-        column: column,
-        direction: direction,
-        time_mode: this.time_mode,
-        date_mode: this.date_mode,
-        check_date_and_time: this.check_date_and_time,
+    async requestSortLst(column) { // сортировка по колонкам
+      this.sort_mode['name'] = column
+      this.sort_mode['order'] =! this.sort_mode['order']
 
-      } 
-      : 
-      {
-        page: this.currentPage,
-        limit: this.words_on_page,
-        lang: this.name_lang,
-        column: column,
-        direction: direction,
+
+      if (this.check_date_and_time) {
+        if (column == 'date') this.sort_mode['date_order'] =! this.sort_mode['date_order']
+        if (column == 'time') this.sort_mode['time_order'] =! this.sort_mode['time_order']
+
       }
+      await this.selLang(this.name_lang)
 
-
-
-
-      const response = await fetch('/g/lang', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': window.localStorage.getItem('jwt'),
-
-        },
-        body: JSON.stringify(properties),
-        "mode":"cors"
-
-      })
-
-      let result = (await response.json())
-      this.resu = result.body
-      console.log(result)
-
-
-
-
-
+      
 
     },
     async selLang(lang_code, nlm=0) { // запрашивает словари
@@ -1150,6 +1194,9 @@ export default {
         page: this.currentPage,
         limit: this.words_on_page,
         lang: lang_code,
+        sort_mode: this.sort_mode,
+ 
+
       }
       const response = await fetch('/g/lang', {
         method: 'POST',

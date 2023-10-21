@@ -57,9 +57,9 @@ import { RouterLink, RouterView } from 'vue-router'
                 <!-- <span class="input-group-text" id=""><i class="bi bi-search"></i></span> -->
                 <!-- <input type="text" placeholder="" class="form-control" v-on:input="searching" v-model="name"> -->
                 <!-- <button class="btn btn-sm btn-outline-danger" to="/g/login">Log in</button> -->
-                <router-link to="/g/login" tag="button" class="btn btn-sm btn-outline-danger">Log in</router-link>
-                <button class="btn btn-sm btn-outline-danger" @click="logout1">Log out</button>
-                <router-link to="/g/signup" class="btn btn-sm btn-outline-danger">Sign up</router-link>
+                <router-link to="/g/login" tag="button" class="btn btn-sm">Log in</router-link>
+                <button class="btn btn-sm" @click="logout1">Log out</button>
+                <router-link to="/g/signup" class="btn btn-sm">Sign up</router-link>
               </div>
 
             </div>
@@ -88,7 +88,12 @@ import { RouterLink, RouterView } from 'vue-router'
 
 </template>
 
-<style scoped></style>
+<style scoped>
+.btn-sm:hover {
+  background-color: orange;
+}
+</style>
+
 
 <script>
 export default {

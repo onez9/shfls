@@ -186,10 +186,11 @@ import Swal from 'sweetalert2';
       <div>
         <!-- переключатель страниц -->
         <div v-if="totalpages != 1 && current_play_list == 'All'" class="mt-1 d-flex justify-content-center">
-          <nav aria-label="Page navigation mt-1 example">
+          <nav aria-label="">
             <ul class="pagination">
               <li v-if="currentPage > 0" class="page-item"><a class="page-link" href="#"
-                  @click="crumbs(currentPage - 1)">&laquo;</a></li>
+                  @click="crumbs(currentPage - 1)">  &lt;  </a></li>
+                  <!-- @click="crumbs(currentPage - 1)">&laquo;</a></li> -->
               <li v-if="currentPage > 2" class="page-item"><a class="page-link" href="#" @click="crumbs(0)">1</a></li>
 
               <template v-for="(page, i) in totalpages">
@@ -208,7 +209,8 @@ import Swal from 'sweetalert2';
               </li>
               <!-- <li v-if="currentPage==totalpages-2" class="page-item"><a class="page-link" href="#" @click="crumbs(currentPage+1)">{{ currentPage }}</a></li> -->
               <li v-if="currentPage < totalpages - 1" class="page-item"><a class="page-link" href="#"
-                  @click="crumbs(currentPage + 1)">&raquo;</a></li>
+                  @click="crumbs(currentPage + 1)">&gt;</a></li>
+                  <!-- @click="crumbs(currentPage + 1)">&raquo;</a></li> -->
             </ul>
           </nav>
         </div>
@@ -343,6 +345,30 @@ import Swal from 'sweetalert2';
 
 
 <style scoped>
+
+
+.pagination>li:first-child>a, .pagination>li:first-child>span {
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    
+}
+
+.pagination>li:last-child>a, .pagination>li:last-child>span {
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+/* 
+.pagination {
+  border-radius: 0px !important;;
+}
+
+.page-link {
+  border-radius: 0px !important;;
+}
+.page-item {
+  border-radius: 0px !important;;
+  
+} */
 
 .style_searching {
   background-color: #111111;

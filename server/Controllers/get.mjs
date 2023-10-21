@@ -312,16 +312,18 @@ router.post('/lang', (req, res) => {
 	// }
 
 	try {
+		console.log(req.body)
 		let lang = req.body.lang
 		let page = parseInt(req.body.page, 10)
 		let limit = parseInt(req.body.limit, 10)
+		let column_name = req.body.sort_mode.name
+		let order = (req.body.sort_mode.order? 'asc' : 'desc')
+		let date_order = (req.body.sort_mode.date_order? 'asc' : 'desc')
+		let time_order = (req.body.sort_mode.time_order? 'asc' : 'desc')
+		let m2 = req.body.sort_mode.m2
 
-		console.log(req.body)
 
 
-
-
-		
 		let dict = new Map();
 		dict['en']=1;
 		dict['jp']=2;
@@ -329,13 +331,13 @@ router.post('/lang', (req, res) => {
 		dict['kr']=4;
 		dict['cn']=5;
 		dict['de']=6;
+
+
 		const db = new sqlite.Database('db.sqlite3')
 		let sql;
 		let count;
 
 		let params;
-		let direction;
-		let column;
 
 		db.serialize(() => {
 
@@ -345,7 +347,7 @@ router.post('/lang', (req, res) => {
 			stmt.get(dict[lang], (err, row) => {
 				if (err) console.log(err)
 				count = row.l;
-				console.log(`count: ${count}`);
+				//console.log(`count: ${count}`);
 
 
 			})
@@ -361,34 +363,26 @@ router.post('/lang', (req, res) => {
 				toIndex = count
 			}
 
-
-			if (req.body.column === undefined && req.body.direction === undefined) {
-				sql = 'select * from words where dictionary_id=? limit ?, ?;';
-
-			} else if (req.body.check_date_and_time) {
-				let date_mode = (req.body.date_mode)? 'asc' : 'desc';
-				let time_mode = (req.body.time_mode)? 'asc' : 'desc';
-				sql = `select * from words where dictionary_id=? order by date ${date_mode}, time ${time_mode} limit ?, ?;`
+			if (!m2) {
+				sql = `select * from words where dictionary_id=? order by ${column_name} ${order}, lower(${column_name}) limit ?, ?;`;
 
 			} else {
-				direction = req.body.direction
-				column = req.body.column
-				sql = 'select * from words where dictionary_id=? order by '+column+' '+(direction? 'asc' : 'desc')+' limit ?, ?;'
 
-			}
+				sql = `select * from words where dictionary_id=? order by date ${date_order}, time ${time_order} limit ?, ?;`
 
+			} 
 
 			params = [dict[lang], fromIndex, limit]
 			// console.log(params)
 
-			console.info('sql: ', sql)
-			console.info('params: ', params)
+			//console.info('sql: ', sql)
+			//console.info('params: ', params)
 
 			let stmt1 = db.prepare(sql)
 			stmt1.all(params, (err, rows) => {
 				// console.info('количество: ', count, 'код страны: ', dict[lang], params, sql)
-				console.info('sql: ', sql)
-				console.info('params: ', params)
+				//console.info('sql: ', sql)
+				//console.info('params: ', params)
 				try {
 					if (err) {
 						throw err;
@@ -1749,7 +1743,6 @@ router.post('/write_cash', (req, res) => {
 		console.error(e)
 	}
 })
-
 router.delete('/del_value', (req, res) => {
 	try {
 		console.info(req.body)
@@ -1782,4 +1775,99 @@ router.delete('/del_value', (req, res) => {
 		console.error(e)
 	}
 })
+router.post('/date', (req, res) => {
+	try{
+		console.log(req.body)
+		let lang = req.body.lang
+		let date = req.body.date.split('-')
+		date = date[2]+'.'+date[1]+'.'+date[0]
+
+		
+		let dict = {
+			en: 1,
+			jp: 2,
+			ru: 3,
+			kr: 4,
+			cn: 5,
+			de: 6
+		}
+
+		const db = new sqlite.Database('db.sqlite3')
+		let sql;
+		let count;
+		db.serialize(() => {
+
+			// let placeHolders = new Array(arr.length).fill('?').join(',');
+			sql = `select * from words where dictionary_id=? and date=?;`;
+
+			db.all(sql, [dict[lang], date], (err, rows) => {
+				try {
+					if (err) throw err;
+					res.json(rows)
+	
+				} catch (e) {
+					console.info('Сработал catch (при запросе к /g/date (запрос словарей)) ошибка ниже')
+					console.log(e);
+	
+				}
+			});
+
+
+		})
+
+		db.close();
+
+	}catch(e){
+		console.error(e)
+	}
+})
+router.post('/time', (req, res) => {
+	try{
+		console.log(req.body)
+		let lang = req.body.lang
+		let time = req.body.time
+		// date = time[2]+'.'+time[1]+'.'+time[0]
+
+		
+		let dict = {
+			en: 1,
+			jp: 2,
+			ru: 3,
+			kr: 4,
+			cn: 5,
+			de: 6
+		}
+
+		const db = new sqlite.Database('db.sqlite3')
+		let sql;
+		let count;
+		db.serialize(() => {
+
+			// let placeHolders = new Array(arr.length).fill('?').join(',');
+			sql = `select * from words where dictionary_id=? and time=?;`;
+
+			db.all(sql, [dict[lang], time], (err, rows) => {
+				try {
+					if (err) throw err;
+					res.json(rows)
+	
+				} catch (e) {
+					console.info('Сработал catch (при запросе к /g/date (запрос словарей)) ошибка ниже')
+					console.log(e);
+	
+				}
+			});
+
+
+		})
+
+		db.close();
+
+	}catch(e){
+		console.error(e)
+	}
+})
+
+
+
 export default router
