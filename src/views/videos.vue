@@ -16,84 +16,47 @@ import Swal from 'sweetalert2';
         <button :class="{ 'btn btn-outline-danger form-control mt-1': true }" @click="sendMessage()">WebSocket</button>
       </div> -->
 
-      <div class="col mb-1 mt-1 m-0 p-0 me-sm-2">
-        <button class="btn btn-sm btn-outline-danger form-control mt-1" @click="show_poster_func"
-          title="Показывает\Скрывает постеры на видео"><i class="bi bi-emoji-heart-eyes"></i></button>
-      </div>
-
-      <div class="col mb-1 mt-1 m-0 p-0 me-sm-2">
-        <button class="btn btn-sm btn-outline-danger form-control mt-1" @click="crypt_mode =! crypt_mode" title="Шифрует\Дешифрует названия">123</button>
-      </div>
-
-
-      <div class="col-sm mb-1 mt-2 m-0 p-0">
-        <button @click="open_addvance" class="btn btn-sm btn-outline-danger form-control" title="Дополнительно">
-          <i class="bi bi-list"></i>
-        </button>
-      </div>
+      <!-- <div class="d-flex flex-column">
+        <div class="mb-1">
+          <button class="btn btn-sm btn-outline-danger mt-1" @click="show_poster_func"
+            title="Показывает\Скрывает постеры на видео"><i class="bi bi-emoji-heart-eyes"></i></button>
+        </div>
+        <div class="">
+          <button @click="open_addvance" class="btn btn-sm btn-outline-danger" title="Дополнительно">
+            <i class="bi bi-list"></i>
+          </button>
+        </div>
+      </div> -->
 
     </div>
     <div class="row" @mouseover="">
 
-      <div v-if="show_extra" class="col-sm" style="background-color: #000000; border-radius: 5px; padding: 5px;">
-        <div class="col-sm mb-1">
+      <div v-if="show_extra" class="col-sm-12 mt-1" style="background-color: #000000; border-radius: 5px; padding: 5px;">
+        <!-- <div class="col-sm-4 mb-1">
           <button @click="show_playlist = !show_playlist"
-            :class="{ 'btn btn-sm btn-outline-danger form-control': true, 'btn btn-outline-success': (show_playlist == true) }"
+            :class="{ 'btn btn-sm btn-outline-danger ': true, 'btn btn-outline-success': (show_playlist == true) }"
             title="Создать новый плейлист">
             <i class="bi bi-folder-plus"></i>
           </button>
-        </div>
-        <div v-if="show_playlist == true" class="col-sm mb-2 ">
+        </div> -->
+        <div v-if="show_playlist == true || true" class="col-sm-4 mb-1">
           <div class="input-group mb-1">
-            <input v-on:keyup.enter="create_new_play_playlist(name_of_play_list)" class="form-control border border-outline-primary" id="name_list" placeholder="Название плейлиста"
+            <button @click="show_playlist = !show_playlist" class="btn btn-sm btn-outline-danger" title="Создать новый плейлист"><i class="bi bi-folder-plus"></i></button>
+            
+            <input v-on:keyup.enter="create_new_play_playlist(name_of_play_list)" class="border border-outline-primary p-0 ps-1 form-control" id="name_list" placeholder="Название плейлиста"
               v-model="name_of_play_list">
-            <button @click="name_of_play_list = ''" class="input-group-text" id=""><i class="bi bi-backspace"></i></button>
-          </div>
-          <button class="btn btn-sm btn-outline-primary form-control"
-            @click="create_new_play_playlist(name_of_play_list)">Создать</button>
-        </div>
-
-
-        <!-- панель загрузки -->
-        <div class="col-sm mb-1">
-          <button @click="sdp" class="btn btn-sm form-control btn-outline-danger" title="youtube-dl/search">
-            <i class="bi bi-download"></i>
-          </button>
-        </div>
-        <div v-if="show_download_panel == true" class="col-sm-12 mb-2">
-          <div class="input-group mb-1">
-            <input v-on:keyup.enter="run_download(url)" type="text" class="form-control bg-dark text-white" :disabled="false" v-model="url"
-              placeholder="Панель загрузки видео">
-            <button class="btn btn-sm btn-secondary" @click="run_download(url)">
-              <i class="bi bi-download"></i>
+            <button @click="show_pen = !show_pen" class="btn btn-sm btn-outline-danger" title="Редактировать play list">
+              <i class="bi bi-pen"></i>
             </button>
+            <button @click="name_of_play_list = ''" class="btn btn-sm btn-outline-danger" id=""><i class="bi bi-backspace"></i></button>
+            <!-- <button class="btn btn-sm btn-outline-primary "
+            @click="create_new_play_playlist(name_of_play_list)">Создать</button> -->
+
           </div>
-          <!-- стек загрузжаемых видео -->
-          <div class="col-12">
-            <div v-for="(item, i) in batch_list" :key="item"
-              class="alert alert-info text-primary d-flex align-items-center mb-1 ps-2" role="alert">
-              <div>{{ item }}</div>
-              <button class="btn btn-sm btn-outline-info ms-auto me-1">Отменить</button>
-              <button class="btn btn-sm btn-outline-danger">
-                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>%
-              </button>
-              <!-- <i class="bi bi-x-diamond"></i> -->
-            </div>
-          </div>
-          <!-- очистить стек загружаемых видео -->
-          <div class="col-sm-12 mb-1 mt-1">
-            <button class="btn btn-sm btn-outline-danger form-control" @click="clean"
-              title="Очистить буффер от загружаемых видео">clean</button>
-          </div>
+
         </div>
 
-        <div class="col-sm mb-1">
-          <button @click="show_pen = !show_pen" class="btn btn-sm form-control btn-outline-danger" title="Редактировать play list">
-            <i class="bi bi-pen"></i>
-          </button>
-        </div>
-
-        <div v-if="show_pen" class="col-sm">
+        <div v-if="show_pen" class="col-sm-4">
 
           <div v-for="(item, index) in play_list_array" :key="item" class="bg-outline-danger my-1">
 
@@ -109,20 +72,65 @@ import Swal from 'sweetalert2';
             
           </div>
 
-          <p v-if="play_list_array.size == 0" class="text-center p-0">Тут пока ничего нет {{ play_list_array.size }}</p>
+          <p v-if="play_list_array.size == 0" class="text-center p-0 ps-1">Тут пока ничего нет {{ play_list_array.size }}</p>
         </div>
+
+
+
+        <!-- панель загрузки -->
+        <!-- <div class="col-sm-4 mb-1">
+          <button @click="sdp" class="btn btn-sm btn-outline-danger" title="youtube-dl/search">
+            <i class="bi bi-download"></i>
+          </button>
+        </div> -->
+        <div v-if="show_download_panel == true || true" class="col-sm-4 mb-1">
+          <div class="input-group">
+            <input v-on:keyup.enter="run_download(url)" type="text" class="bg-dark text-white form-control p-0 m-0 ps-1" :disabled="false" v-model="url"
+              placeholder="Панель загрузки видео">
+            <button class="btn btn-sm btn-secondary" @click="run_download(url)">
+              <i class="bi bi-download"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-danger" @click="clean" title="Очистить буффер от загружаемых видео"><i class="bi bi-trash"></i></button>
+          </div>
+          <!-- стек загрузжаемых видео -->
+          <div class="col-sm">
+            <div v-for="(item, i) in batch_list" :key="item"
+              class="alert alert-info text-primary d-flex align-items-center mb-1 ps-22" role="alert">
+              <div class="">{{ item }}</div>
+              <button class="btn btn-sm btn-outline-info ms-auto me-1 form-control">Отменить</button>
+              <button class="btn btn-sm btn-outline-danger form-control">
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>%
+              </button>
+              
+              <!-- <i class="bi bi-x-diamond"></i> -->
+            </div>
+          </div>
+          <!-- очистить стек загружаемых видео -->
+          <!-- <div class="col-sm-4 mb-1 mt-1">
+            <button class="btn btn-sm btn-outline-danger" @click="clean"
+              title="Очистить буффер от загружаемых видео">clean</button>
+          </div> -->
+        </div>
+
+        <!-- <div class="col-sm-4 mb-1">
+          <button @click="show_pen = !show_pen" class="btn btn-sm btn-outline-danger" title="Редактировать play list">
+            <i class="bi bi-pen"></i>
+          </button>
+        </div> -->
+
+
 
 
 
         <!-- v-shortkey="['ctrl', 'p']" @shortkey="alert(123)" -->
-        <div class="col mb-1">
+        <!-- <div class="col-sm-4 mb-1">
           <button @click="lock = !lock" class="btn btn-sm btn-outline-danger form-control" 
             title="Зашифровать/Расшифровать"><i :class="{ 'bi bi-lock': true, 'bi bi-unlock': (lock) }"></i></button>
-        </div>
+        </div> -->
 
         <!-- количество видео на одной странице -->
-        <div class="col-sm mb-1 mt-1">
-          <select @change="change_count" v-model="video_values" class="form-select mt-1 bg-dark text-white" name=""
+        <div class="col-sm-4 mb-1 mt-1">
+          <select @change="change_count" v-model="video_values" class="form-select mt-1 bg-dark text-white p-0 ps-1" name=""
             title="Количество видео на одной странице">
             <option value="5">5</option>
             <option value="10">10</option>
@@ -133,9 +141,9 @@ import Swal from 'sweetalert2';
         </div>
 
         <!-- количество столбцов -->
-        <div class="col-sm mb-1 mt-1">
+        <div class="col-sm-4 mb-1 mt-1">
           <!-- <input type="number" class="form-control mt-1" min="1" max="4"> -->
-          <select v-model="selected" class="form-select mt-1 bg-dark text-white" name="" title="Количество столбцов">
+          <select v-model="selected" class="form-select mt-1 bg-dark text-white p-0 ps-1" name="" title="Количество столбцов">
             <option value="0">List</option>
             <option value="1">One</option>
             <option value="2">Two</option>
@@ -147,9 +155,9 @@ import Swal from 'sweetalert2';
         </div>
 
 
-        <div class="col-sm mb-1 mt-1">
+        <div class="col-sm-4 mb-1 mt-1">
           <!-- <input type="number" class="form-control mt-1" min="1" max="4"> -->
-          <select @change="select_play(playlist_name)" v-model="playlist_name" class="form-select mt-1 bg-dark text-white" name="" title="Выбор плейлиста">
+          <select @change="select_play(playlist_name)" v-model="playlist_name" class="form-select mt-1 bg-dark text-white p-0 ps-1" name="" title="Выбор плейлиста">
             <option value="all">All</option>
             <option value="recent">Recent</option>
             <option  v-for="(item, index) in play_list_array" v-bind:value="item">{{ item[0] }}</option>
@@ -165,7 +173,14 @@ import Swal from 'sweetalert2';
 
       <div class="col-sm-12 input-group mb-2 mt-2 m-0 p-0">
         <span class="input-group-text p-0 m-0 px-2" id=""><i class="bi bi-search"></i></span>
-        <input type="text" placeholder="Панель поиска" class="form-control bg-dark text-white p-0 m-0" v-on:keyup.enter="template_request" @mouseover="recent_request=true" v-on:input="searching(name)" v-model="name" @focus="recent_request = true" @mouseleave="" @blur="" autocomplete="on">
+        <input type="text" placeholder="Панель поиска" class="form-control bg-dark text-white p-0 m-0 ps-1" v-on:keyup.enter="template_request" @mouseover="recent_request=true" v-on:input="searching(name)" v-model="name" @focus="recent_request = true" @mouseleave="" @blur="" autocomplete="on">
+      
+      
+        <button class="btn btn-sm btn-outline-danger" @click="show_poster_func"
+          title="Показывает\Скрывает постеры на видео"><i class="bi bi-emoji-heart-eyes"></i></button>
+        <button @click="open_addvance" class="btn btn-sm btn-outline-danger" title="Дополнительно">
+          <i class="bi bi-list"></i>
+        </button>
         <button @click="clear_history_search" class="btn btn-sm btn-outline-danger" id=""><i class="bi bi-radioactive"></i></button>
         <button @click="csr" class="btn btn-sm btn-outline-danger" id=""><i class="bi bi-backspace"></i></button>
       </div>
@@ -208,7 +223,7 @@ import Swal from 'sweetalert2';
                 </a>
               </li>
               <!-- <li v-if="currentPage==totalpages-2" class="page-item"><a class="page-link" href="#" @click="crumbs(currentPage+1)">{{ currentPage }}</a></li> -->
-              <li v-if="currentPage < totalpages - 1" class="page-item"><a class="page-link" href="#"
+              <li v-if="currentPage < totalpages - 1" class="page-item"><a class="page-link" href="#" style=""
                   @click="crumbs(currentPage + 1)">&gt;</a></li>
                   <!-- @click="crumbs(currentPage + 1)">&raquo;</a></li> -->
             </ul>

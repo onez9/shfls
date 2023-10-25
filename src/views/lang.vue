@@ -42,7 +42,55 @@ import Swal from 'sweetalert2';
 
 
       <!-- <div v-if="show_menu"> -->
-      
+      <div class="border rounded mt-1 p-1">
+        <label>Создать новый словарь</label>
+        <input class="form-control p-0 ps-1" title="Название словаря" placeholder="Название словаря">
+        <button class="btn btn-sm form-control btn-outline-danger mt-1">Создать</button>
+      </div>
+
+
+      <div class="border rounded mt-1 p-1" v-if="mode_filter">
+        <!-- <input type="radio" id="one" value="one" v-model="mode_request">
+        <label for="one"> Период</label>
+        <br>
+        <input type="radio" id="two" value="two" v-model="mode_request">
+        <label for="two"> Конкретная дата</label>
+        <br> -->
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="exampleRadios" id="specific_date" value="specific_date" v-model="mode_request">
+          <label class="form-check-label" for="specific_date">
+            Конкретная дата
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="exampleRadios" id="specific_period" value="specific_period" v-model="mode_request">
+          <label class="form-check-label" for="specific_period">
+            Период
+          </label>
+        </div>
+
+
+
+
+        <label for="made1">Начало:</label>
+        <div id="made1" class="mb-1">
+          <input type="date" class="btn btn-sm btn-outline-danger me-1 form-control" v-model="select_date_from">
+          <!-- <input type="time" step="1" class="btn btn-sm btn-outline-danger" v-model="select_time_from"> -->
+        </div>
+
+        <template v-if="mode_request == 'specific_period'">
+          <label for="made2">Конец:</label>
+          <div id="made2" class="mb-1">
+            <input type="date" class="btn btn-sm btn-outline-danger me-1 form-control" v-model="select_date_to">
+            <!-- <input type="time" step="1" class="btn btn-sm btn-outline-danger" v-model="select_time_to"> -->
+          </div>
+
+        </template>
+        <button @click="requestFiltrLst" class="btn btn-sm btn-outline-danger form-control">Отправить</button>
+      </div>
+
+
+
       <select @change="selLang(name_lang, 1)" v-model="name_lang" class="form-select mt-1 bg-dark text-white p-0 ps-1" name="" title="Выберете язык">
         <option  v-for="(value, key) of dict_lang" v-bind:value="key">{{ value }}</option>
       </select>
@@ -153,6 +201,8 @@ import Swal from 'sweetalert2';
             <button @click="show_menu =! show_menu" class="btn btn-sm btn-outline-danger"><i class="bi bi-gear"></i></button>
             <input v-model="word" @input="word_change" @keyup.enter="find_func" class="form-control p-0 m-0 ps-1" placeholder="Введите текст" title="Панель для поиска" />
             <label class="border lc d-flex align-items-center px-2">{{ this.tablo_result }}</label>
+            
+            <button @click="mode_filter =! mode_filter" class="btn btn-sm btn-outline-danger"><i class="bi bi-funnel"></i></button>
             <button @click="downl_search" class="btn btn-sm btn-outline-danger"><i class="bi bi-sliders2-vertical"></i></button>
             <button @click="resu_search = []; word = ''; resu = resu_backup.slice()" class="btn btn-sm btn-outline-danger"><i class="bi bi-backspace"></i></button>
           </div>
@@ -160,7 +210,7 @@ import Swal from 'sweetalert2';
       </div>
 
       <div class="col-sm-12 rounded p-1 mt-1 style_searching" v-if="resu_search.length!==0">
-        <div class="" v-for="(item, index) in resu_search" :key="item">
+        <div class="" v-for="(item, index) in resu_search.slice(0, 12)" :key="item">
           {{ item[1] }}
         </div>
       </div>
@@ -194,14 +244,14 @@ import Swal from 'sweetalert2';
               <div class="d-flex">
                 <button @click="requestSortLst('date')" class="btn btn-sm btn-outline-danger"><i class="bi bi-filter-square"></i></button>
                 <!-- <button class="btn  btn-sm btn-outline-danger"><i class="bi bi-calendar"></i></button> -->
-                <input type="date" v-model="select_date" class="btn btn-sm btn-outline-danger" @change="get_date(select_date)">
+                <!-- <input type="date" v-model="select_date" class="btn btn-sm btn-outline-danger" @change="get_date(select_date)"> -->
               </div>
             </td>
             <td v-if="check_time" class="p-0 m-0">
               <div class="d-flex">
                 <button  @click="requestSortLst('time')" class="btn btn-sm btn-outline-danger"><i class="bi bi-filter-square"></i></button>
                 <!-- <button class="btn  btn-sm btn-outline-danger"><i class="bi bi-clock-history"></i></button> -->
-                <input type="time" v-model="select_time" step="1" class="btn btn-sm btn-outline-danger" @change="get_time(select_time)">
+                <!-- <input type="time" v-model="select_time" step="1" class="btn btn-sm btn-outline-danger" @change="get_time(select_time)"> -->
               </div>
             </td>
             <td class="p-0 m-0">
@@ -474,8 +524,10 @@ export default {
       phraseologicals: [],
       rules: [],
       groups: [],
-      select_date: '',
-      select_time: '',
+      select_date_from: '',
+      select_time_from: '',
+      select_date_to: '',
+      select_time_to: '',
       name_group: '',
       current_group: {},
       currentPage: 0,
@@ -484,7 +536,11 @@ export default {
       tablo_result: 0,
       check_date_and_time: false,
       sort_mode: { name: 'one', order: true, date_order: true, time_order: true, m2: false},
+      filter_mode: {},
       last_column_sort: '',
+      mode_request: 'specific_date',
+      mode_filter: false,
+
     }
   },
   async mounted() {
@@ -556,6 +612,14 @@ export default {
     }
 
 
+    // настройка страницы запрашиваемой при открытии
+    if (window.localStorage.getItem('currentPage') == null) {
+      window.localStorage.setItem('currentPage', this.currentPage)
+    } else {
+      this.currentPage = Number(window.localStorage.getItem('currentPage'))
+    }
+
+    // настройка языка при открытии
     if (window.localStorage.getItem('name_lang') == null) {
       window.localStorage.setItem('name_lang', this.name_lang)
     } else {
@@ -575,9 +639,9 @@ export default {
 
   },
   watch: {
-    // check_date_and_time() {
-
-    // },
+    currentPage() {
+      window.localStorage.setItem('currentPage', this.currentPage)
+    },
     name_lang() {
       window.localStorage.setItem('name_lang', this.name_lang)
     },
@@ -601,7 +665,22 @@ export default {
       window.localStorage.setItem('check_date_and_time', this.check_date_and_time)
     },
 
+    mode_filter() {
+      if (!this.mode_filter){
+        this.select_date_from=""
+        this.select_date_to=""
+        this.select_time_from=""
+        this.select_time_to=""
+      }
+    },
 
+    mode_request() {
+      if (this.mode_request == 'specific_date') {
+        this.select_date_to = ""
+        this.select_time_to = ""
+        this.currentPage = 0
+      }
+    }
 
     // sort_mode: { name: 'one', order: true, date_order: true, time_order: true, m2: false}
     /*
@@ -638,8 +717,57 @@ export default {
   components: {
   },
   methods: {
+    async create_new_dict() {
 
 
+    },
+    async request_by_date() {
+      console.info(this.select_date_from)
+      console.info(this.select_time_from)
+      console.info(this.select_date_to)
+      console.info(this.select_time_to)
+      
+      let properties;
+
+
+      if (this.select_date_to == '') {
+        properties = {
+          lang: this.name_lang,
+          date_from: this.select_date_from,
+          time_from: this.select_time_from,
+        }
+      } else {
+        properties = {
+          lang: this.name_lang,
+          date_from: this.select_date_from,
+          time_from: this.select_time_from,
+          date_to: this.select_date_to,
+          time_to: this.select_time_to
+        }
+      }
+      
+      // this.resu = []
+     
+
+
+      const response = await fetch('/g/period', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: window.localStorage.getItem('jwt'),
+
+        },
+        body: JSON.stringify(properties),
+        "mode": "cors"
+      })
+
+
+      let result = await response.json()
+      this.resu = result
+
+
+
+    },
     async del_value(value) {
       console.log(value)
       const response = await fetch('/g/del_value', {
@@ -690,8 +818,8 @@ export default {
     },
     async checker_page(page) {
       this.currentPage = page
-
-      await this.selLang(this.name_lang)
+      if (this.mode_filter) await this.requestFiltrLst()
+      else await this.selLang(this.name_lang)
 
       // await this.requestSortLst()
     },
@@ -1242,6 +1370,8 @@ export default {
         })
 
         this.resu = await response.json()
+        this.resu_search = []
+        
       } else {
         console.info('435 3485 3485 3458 34 53845 3458')
         this.tablo_result = this.rls.length
@@ -1298,20 +1428,50 @@ export default {
       
 
     },
-    async selLang(lang_code, nlm=0) { // запрашивает словари
+
+    async requestFiltrLst() {
+      if (this.mode_filter) {
+        if (this.select_date_to == '') {
+          this.filter_mode['date_from'] = this.select_date_from
+          this.filter_mode['time_from'] = this.select_time_from
+
+        } else {
+          this.filter_mode['date_from'] = this.select_date_from
+          this.filter_mode['time_from'] = this.select_time_from
+          this.filter_mode['date_to'] = this.select_date_to
+          this.filter_mode['time_to'] = this.select_time_to
+        }
+
+
+      } else {
+        console.log('i\'m running!')
+      }
+
+
+      // this.currentPage = 0;
+      await this.selLang(this.name_lang)
+
+    },
+
+    async selLang(lang_code, nlm=0) { // запрашивает слова из указанного словаря
       if (nlm==1) {
         this.currentPage = 0
         await this.downl_search()
       }
       
+
+
       const properties = {
         page: this.currentPage,
         limit: this.words_on_page,
         lang: lang_code,
         sort_mode: this.sort_mode,
+        filter_mode: this.filter_mode,
  
 
       }
+
+
       const response = await fetch('/g/lang', {
         method: 'POST',
         credentials: 'include',
@@ -1332,14 +1492,13 @@ export default {
       // let items = Object.keys(result).map(function(key) {
       //   return [key, result[key]];
       // });
-      console.info(result)
-      this.totalpages = Math.round(result.count / this.words_on_page)
-      this.resu = result.body
+      console.info('это результат: ', result)
+      this.totalpages = Math.ceil(result.count123 / this.words_on_page)
+      this.resu = result.body123
       this.resu_backup = this.resu.slice(0)
       // this.dict = result
-
-
-
+      this.tablo_result = result.count123
+      this.filter_mode = {}
       this.current_group = {}
       await this.get_groups()
 

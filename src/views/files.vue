@@ -160,6 +160,7 @@ export default {
 
   },
   async mounted() {
+    console.log(this.color_header)
     await this.g()
   },
   methods: {

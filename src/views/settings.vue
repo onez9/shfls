@@ -16,6 +16,12 @@ import HighLight from "vue3-highlight-component";
   <div class="container-fluid">
     <div class="row">
       <div class="col-sm-6">
+        
+        <div class="d-flex align-items-center border bordered">
+          <label class="" for="color_header">Выберете цвет header: </label>
+          <input v-model="color_header" id="color_header" type="color" class="">
+          
+        </div>
         <div class="form-check form-switch mt-2">
           <input @click="change_theme" v-model="theme_current" class="form-check-input form-control" type="checkbox" role="switch"
             id="flexSwitchCheckDefault">
@@ -141,12 +147,26 @@ export default {
       show_path: false,
       answer: '',
       sourcecode: 'const str = "This sourcecode will update dynamically"',
-      code: `const hello = 'world'`
+      code: `const hello = 'world'`,
+      color_header: '#ffffff'
 
     }
   },
-
+  watch: {
+    color_header() {
+      window.localStorage.setItem('color_header', this.color_header)
+    }
+  },
   async mounted() {
+
+
+    if (window.localStorage.getItem('color_header') == null) {
+      window.localStorage.setItem('color_header', this.color_header)
+    } else {
+      this.color_header = window.localStorage.getItem('color_header')
+    }
+
+
     console.log('this func: mounted', this.theme)
     this.theme_current = this.theme
     this.user = {
@@ -167,6 +187,8 @@ export default {
   },
 
   methods: {
+
+
     async run(namec) {
       const properties = {
         name: namec

@@ -34,20 +34,40 @@ import { RouterLink, RouterView } from 'vue-router'
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Основные разделы</a>
                 <ul class="dropdown-menu dropdown-menu-dark">
-                  <li><router-link class="dropdown-item" to="/g/images">Картинки</router-link></li>
-                  <li><router-link class="dropdown-item" to="/g/videos">Видео</router-link></li>
-                  <li><router-link class="dropdown-item" to="/g/musics">Музыка</router-link></li>
-                  <li><router-link class="dropdown-item" to="/g/books">Книги</router-link></li>
-                  <li><router-link class="dropdown-item" to="/g/works">Работа</router-link></li>
-                  <li><router-link class="dropdown-item" to="/g/lang">Учебники</router-link></li>
+                  <!-- <li><router-link class="dropdown-item" to="/g/images">Картинки</router-link></li> -->
+                  <!-- <li><router-link class="dropdown-item" to="/g/videos">Видео</router-link></li> -->
+                  <!-- <li><router-link class="dropdown-item" to="/g/musics">Музыка</router-link></li> -->
+                  <!-- <li><router-link class="dropdown-item" to="/g/books">Книги</router-link></li> -->
+                  <!-- <li><router-link class="dropdown-item" to="/g/works">Работа</router-link></li> -->
+                  <!-- <li><router-link class="dropdown-item" to="/g/lang">Учебники</router-link></li> -->
                   <li><router-link class="dropdown-item" to="/g/crypt">Шифрование</router-link></li>
-                  <li><router-link class="dropdown-item" to="/g/code">Программирование</router-link></li>
-                  <li><router-link class="dropdown-item" to="/g/poligon">Полигон</router-link></li>
+                  <!-- <li><router-link class="dropdown-item" to="/g/code">Программирование</router-link></li> -->
+                  <!-- <li><router-link class="dropdown-item" to="/g/poligon">Полигон</router-link></li> -->
                   <li><router-link class="dropdown-item" to="/g/chat">Чат</router-link></li>
                   <li><router-link class="dropdown-item" to="/g/chemistry">Химия</router-link></li>
                   <li><router-link class="dropdown-item" to="/g/settings">Настройки</router-link></li>
+
                 </ul>
               </li>
+
+
+              <li class="nav-item">
+                <router-link class="nav-link" to="/g/lang">Учебники</router-link>
+              </li>
+              <li class="nav-item">
+                <!-- <router-link class="nav-link" to="/g/lang">Учебники</router-link> -->
+                <li><router-link class="nav-link" to="/g/videos">Видео</router-link></li>
+              </li>
+  
+              <li>
+                <router-link to="/g/login" tag="button" class="nav-link">Войти</router-link>
+              </li>
+              <li class=""><button class="nav-link" @click="logout1">Выйти</button></li>
+              <li class="bg-info">
+                <router-link to="/g/signup" class="nav-link">Создать аккаунт</router-link>
+              </li>
+
+
             </ul>
 
 
@@ -57,9 +77,7 @@ import { RouterLink, RouterView } from 'vue-router'
                 <!-- <span class="input-group-text" id=""><i class="bi bi-search"></i></span> -->
                 <!-- <input type="text" placeholder="" class="form-control" v-on:input="searching" v-model="name"> -->
                 <!-- <button class="btn btn-sm btn-outline-danger" to="/g/login">Log in</button> -->
-                <router-link to="/g/login" tag="button" class="btn btn-sm">Log in</router-link>
-                <button class="btn btn-sm" @click="logout1">Log out</button>
-                <router-link to="/g/signup" class="btn btn-sm">Sign up</router-link>
+
               </div>
 
             </div>
@@ -102,7 +120,8 @@ export default {
       wait: false,
       dark: false,
       current_version: '3.0.1',
-      logout: false
+      logout: false,
+      color_header: '#ffffff',
     }
   },
   watch: {
@@ -113,6 +132,13 @@ export default {
 
   async mounted() {
     // console.log(process.env)
+
+    if (window.localStorage.getItem('color_header') == null) {
+      window.localStorage.setItem('color_header', this.color_header)
+    } else {
+      this.color_header = window.localStorage.getItem('color_header')
+    }
+
     console.log(this.dark)
     console.log(import.meta.env.VITE_TEST_VAR)
     console.log(import.meta.env.VITE_APP_F23)

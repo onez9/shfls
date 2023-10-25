@@ -26,6 +26,7 @@ const db_path = "./db.sqlite3"
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 import jwt from 'jsonwebtoken'
+import { unescape } from 'querystring';
 
 
 
@@ -312,7 +313,7 @@ router.post('/lang', (req, res) => {
 	// }
 
 	try {
-		console.log(req.body)
+		// console.log(req.body) 
 		let lang = req.body.lang
 		let page = parseInt(req.body.page, 10)
 		let limit = parseInt(req.body.limit, 10)
@@ -322,7 +323,21 @@ router.post('/lang', (req, res) => {
 		let time_order = (req.body.sort_mode.time_order? 'asc' : 'desc')
 		let m2 = req.body.sort_mode.m2
 
+		let date_from = req.body.filter_mode.date_from
+		if (date_from !== undefined) {
+			date_from = date_from.split('-')
+			date_from = date_from[2]+'.'+date_from[1]+'.'+date_from[0]
+		}
 
+		let time_from = req.body.filter_mode.time_from
+
+		let date_to = req.body.filter_mode.date_to
+		if (date_to !== undefined) {
+			date_to = date_to.split('-')
+			date_to = date_to[2]+'.'+date_to[1]+'.'+date_to[0]
+		}
+
+		let time_to = req.body.filter_mode.time_to
 
 		let dict = new Map();
 		dict['en']=1;
@@ -336,65 +351,120 @@ router.post('/lang', (req, res) => {
 		const db = new sqlite.Database('db.sqlite3')
 		let sql;
 		let count;
-
 		let params;
 
+
 		db.serialize(() => {
+			if (date_from == undefined && date_to ==undefined) {
+				sql = 'select count(*) as l from words where dictionary_id = ?;'
+				params = [dict[lang]]
+			} else if (date_from != undefined && date_to == undefined)  {
+				sql = 'select count(*) as l from words where dictionary_id = ? and date=?;'
+				params = [dict[lang], date_from]
+			} else if (date_from != undefined && date_to != undefined) {
+				sql = 'select count(*) as l from words where dictionary_id = ? and date between ? and ?;'
+				params = [dict[lang], date_from, date_to]
+			}
 
-
-			sql = 'select count(*) as l from words where dictionary_id = ?;'
-			let stmt = db.prepare(sql)
-			stmt.get(dict[lang], (err, row) => {
+			let stmt = db.prepare(sql, err => console.log(err))
+			stmt.get(params, (err, row) => {
 				try {
-					if (err) console.log(err)
+					if (err) console.log('stmt.get: ', err)
 					count = row.l;
-					//console.log(`count: ${count}`);
+					console.log(`count: ${count}`);
 				} catch (e) {
 					console.info(e)
 				}
 
 			})
-			stmt.finalize()
+			stmt.finalize((err) => console.error('stmt.finalize: ', err))
 
 
 			let fromIndex = page * limit     
 			let toIndex = page * limit + limit 
 
 			// console.log(`fromIndex: ${fromIndex}, toIndex: ${toIndex}`)
-			
-			if (toIndex > count) {
-				toIndex = count
-			}
+			if (toIndex > count) toIndex = count
 
 			if (!m2) {
-				sql = `select * from words where dictionary_id=? order by ${column_name} ${order}, lower(${column_name}) limit ?, ?;`;
+				if (date_from == undefined && date_to==undefined) {
+					console.log('выполняется дефолтный сценарий')
+					sql = `select * from words where dictionary_id=? order by ${column_name} ${order}, lower(${column_name}) limit ?, ?;`;
+					params = [dict[lang], fromIndex, limit]
+
+				} else if (date_from != undefined && date_to == undefined) {
+					sql = `select * from words where dictionary_id=? and date=? order by ${column_name} ${order}, lower(${column_name}) limit ?, ?;`;
+					// console.info('выполнилось с одной датой')
+					console.log('выполняется 2 сценарий')
+					params = [dict[lang], date_from, fromIndex, limit];
+				
+				} else if (date_from != undefined && date_to != undefined)  {
+					console.info(req.body)
+					sql = `select * from words where dictionary_id=? and date between ? and ? order by ${column_name} ${order} limit ?, ?;`;
+					// sql = 'select * from words;';
+					// console.info('выполнилось с двумя датами')
+					console.log('Выполняется 3 сценарий, 57964560;')
+					params = [dict[lang], date_from, date_to, fromIndex, limit]
+					// params = []
+					console.log(params)
+					console.log(sql)
+
+				
+				}
 
 			} else {
+				if (date_from == undefined && date_to==undefined) {
+					console.log('выполняется дефолтный сценарий*')
+					sql = `select * from words where dictionary_id=? order by date ${date_order}, time ${time_order} limit ?, ?;`
+					params = [dict[lang], fromIndex, limit]
+				} else if (date_from != undefined && date_to == undefined) {
+					sql = `select * from words where dictionary_id=? and date=? order by date ${date_order}, time ${time_order} limit ?, ?;`;
+					// console.info('выполнилось с одной датой')
+					console.log('выполняется 2 сценарий*')
+					params = [dict[lang], date_from, fromIndex, limit];
+				
+				} else if (date_from != undefined && date_to != undefined) {
+					sql = `select * from words where dictionary_id=? and date between ? and ? order by ${column_name} ${order}, lower(${column_name}) limit ?, ?;`;
+					// console.info('выполнилось с двумя датами')
+					console.log('выполняется 3 сценарий*')
+					params = [dict[lang], date_from, date_to, fromIndex, limit]
+				
+				}
 
-				sql = `select * from words where dictionary_id=? order by date ${date_order}, time ${time_order} limit ?, ?;`
+
 
 			} 
 
-			params = [dict[lang], fromIndex, limit]
+
+
+
+
+
+
+
 			// console.log(params)
 
-			//console.info('sql: ', sql)
-			//console.info('params: ', params)
+			// console.info('sql: ', sql)
+			// console.info('params: ', params)
 
-			let stmt1 = db.prepare(sql)
+			let stmt1 = db.prepare(sql, err => {
+				console.error('db.prepare: ', err)
+			})
 			stmt1.all(params, (err, rows) => {
 				// console.info('количество: ', count, 'код страны: ', dict[lang], params, sql)
-				//console.info('sql: ', sql)
-				//console.info('params: ', params)
+				console.info('sql: ', sql)
+				console.info('params: ', params)
+				// console.log(err)
 				try {
 					if (err) {
-						throw err;
+						console.log('stmt1.all: ', err)
+						// throw err;
 					}
 					
 					// console.log(rows)
 					res.json({
-						body: rows,
-						count: count,
+						body123: rows,
+						count123: count,
 					})
 	
 				} catch (e) {
@@ -403,107 +473,16 @@ router.post('/lang', (req, res) => {
 	
 				}
 			});
-			stmt1.finalize()
+			stmt1.finalize((err) => {
+				console.error('stmt1.finalize: ', err)
+			})
 
 
 		})
 
-		db.close();
-
-
-		// console.info(`left: ${Object.keys(left).length}`)
-		// console.info(`right: ${Object.keys(right).length}`)
-		// for (let i=0; i<res_except.length; i++) {
-		// 	// res_except[i] = left[res_except[i]];
-		// 	// console.log()
-		// 	res_except[i] = {
-		// 		name: res_except[i]+left[res_except[i]]
-		// 	}
-		// 	console.info(res_except[i])
-		// }
-		// // console.warn(right);
-		// // console.error(left)
-
-
-		// let productsPage = (req.body.flag)? result : result.slice(fromIndex, toIndex)
-		// console.log(page, limit)
-		// console.log(`fromindex: ${fromIndex}`)
-		// console.log(`toIndex: ${toIndex}`)
-		// // return c.JSON(http.StatusOK, productsPage)
-		// console.log(productsPage)
-
-
-		// res.json({ "items": productsPage, "route": route, "count_videos": result.length, "recent": res_except })
-
-		// if (fs.existsSync(dir)) {
-		// 	console.log('Директория существует!')
-			
-		// } else {
-		// 	console.log('Директория не найдена')
-		// 	dir = 'Share/video2'
-		// }
-
-		// fs.readdir(dir, (err, items) => {
-			// try {
-				// if (err) { 
-				// 	console.log(err);
-					
-				// }
-
-				// let result = Array()
-				// let left = {};
-				// let right = {};
-				// items.forEach(item => {
-				// 	try {
-				// 		const ext = path.parse(item).ext.toLowerCase()
-						
-				// 		if (['.webm', '.avi', '.mp4', '.mkv'].indexOf(ext) > -1) {
-				// 			result.push({
-				// 				name: item
-				// 			})
-				// 			let name = item.split(/.webm|.avi|.mp4|.mkv/)[0]
-				// 			// console.warn(name + ext)
-				// 			left[name] = ext
-				// 		}
-
-				// 		if (ext == '.gif') {
-				// 			let name = item.split(/.gif/)[0]
-				// 			// console.warn('i\m home', name + ext)
-				// 			right[name] = ext
-				// 		}
-
-				// 	} catch (e) {
-				// 		console.log('Вот из-за этой ошибки крашится!')
-				// 		console.log(e)
-
-				// 	}
-
-				// })
-
-
-
-			
-			// } catch (e) {
-			// 	console.log('Ошибка тут ошибка: ', e)
-			// 	res.json({ "items": [], "route": route, "count_videos": 0 })
-
-			// }
-		// })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+		db.close(err => {
+			console.error('db.close: ', err)
+		});
 
 
 
@@ -1824,13 +1803,29 @@ router.post('/date', (req, res) => {
 		console.error(e)
 	}
 })
-router.post('/time', (req, res) => {
+router.post('/period', (req, res) => {
 	try{
 		console.log(req.body)
 		let lang = req.body.lang
-		let time = req.body.time
-		// date = time[2]+'.'+time[1]+'.'+time[0]
 
+		let date_from = req.body.date_from
+		if (date_from !== undefined) {
+			date_from = date_from.split('-')
+			date_from = date_from[2]+'.'+date_from[1]+'.'+date_from[0]
+		}
+
+		let time_from = req.body.time_from
+
+		let date_to = req.body.date_to
+		if (date_to !== undefined) {
+			date_to = date_to.split('-')
+			date_to = date_to[2]+'.'+date_to[1]+'.'+date_to[0]
+		}
+
+		let time_to = req.body.time_to
+
+		// date = time[2]+'.'+time[1]+'.'+time[0]
+		// console.info(req)
 		
 		let dict = {
 			en: 1,
@@ -1844,14 +1839,26 @@ router.post('/time', (req, res) => {
 		const db = new sqlite.Database('db.sqlite3')
 		let sql;
 		let count;
+		let params;
+
 		db.serialize(() => {
 
 			// let placeHolders = new Array(arr.length).fill('?').join(',');
-			sql = `select * from words where dictionary_id=? and time=?;`;
+			if (date_to == undefined) {
+				sql = `select * from words where dictionary_id=? and date=?;`;
+				console.info('выполнилось с одной датой')
+				params = [dict[lang], date_from];
+			} else {
+				sql = `select * from words where dictionary_id=? and date between ? and ?;`;
+				console.info('выполнилось с двумя датами')
+				params = [dict[lang], date_from, date_to]
+			}
 
-			db.all(sql, [dict[lang], time], (err, rows) => {
+			console.log(params)
+			db.all(sql, params, (err, rows) => {
 				try {
 					if (err) throw err;
+					// console.log(rows)
 					res.json(rows)
 	
 				} catch (e) {
