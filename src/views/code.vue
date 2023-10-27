@@ -150,12 +150,12 @@ export default {
       return true;
     },
     async searching() {
-      const response = await fetch('/g/all_files', {
+      const response = await fetch('/files/all_files', {
         method: 'POST',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
-          'authorization': window.localStorage.getItem('jwt'),
+          'Authorization': window.localStorage.getItem('jwt'),
         },
         // body: JSON.stringify(properties)
       })
@@ -177,7 +177,7 @@ export default {
       await this.get_code()
     },
     async open_file(file) {
-      const response = await fetch('/g/f_file', {
+      const response = await fetch('/files/f_file', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -194,7 +194,7 @@ export default {
         page: this.currentPage,
         limit: 20,
       }
-      const response = await fetch('/g/code', {
+      const response = await fetch('/files/code', {
         method: 'POST',
         credentials: 'include',
         headers: {

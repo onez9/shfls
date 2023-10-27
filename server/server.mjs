@@ -253,6 +253,10 @@ import qrCode from './Controllers/qrcode.mjs'
 // import { create } from 'domain'
 import deleteFile from './Controllers/delete.mjs'
 import control from './Controllers/control.mjs'
+import books from './Controllers/books.mjs'
+import users from './Controllers/users.mjs'
+import files from './Controllers/files.mjs'
+import message from './Controllers/message.mjs'
 import { fstat } from 'fs'
 
 
@@ -348,6 +352,12 @@ app.use(fileUpload({
 
 app.use(express.static(__dirname + '/dist'));
 app.use('/g', get);
+
+app.use('/books', books)
+app.use('/users', users)
+app.use('/files', files)
+app.use('/message', message)
+
 app.use('/upload', uploadFile);
 app.use('/download', downloadFile);
 app.use('/del', deleteFile);

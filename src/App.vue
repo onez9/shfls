@@ -63,7 +63,7 @@ import { RouterLink, RouterView } from 'vue-router'
                 <router-link to="/g/login" tag="button" class="nav-link">Войти</router-link>
               </li>
               <li class=""><button class="nav-link" @click="logout1">Выйти</button></li>
-              <li class="bg-info">
+              <li class="">
                 <router-link to="/g/signup" class="nav-link">Создать аккаунт</router-link>
               </li>
 
@@ -159,7 +159,7 @@ export default {
       this.logout = false
       window.localStorage.clear()
       // const response = await fetch(`${this.url}/logout`)
-      const response = await fetch('/g/log1', {
+      const response = await fetch('/users/log1', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

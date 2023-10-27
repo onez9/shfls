@@ -23,7 +23,7 @@ import {sha224, sha256} from 'js-sha256';
             <input name="pass1" v-model="pass1" id="pass1" type="password" class="form-control" placeholder="password">
             <label for="pass2">Повторите пароль: <span v-if="!pass2 && flag" class="text-danger">Это поле обязательно для заполнения</span></label>
             <input name="pass2" v-model="pass2" id="pass2" type="password" class="form-control" placeholder="passwrod">
-            <button class="btn btn-sm btn-outline-danger form-control mt-1" type="button" @click="createAccount()" disabled>Зарегистрироваться</button>
+            <button class="btn btn-sm btn-outline-danger form-control mt-1" type="button" @click="createAccount()">Зарегистрироваться</button>
             <button class="btn btn-sm btn-outline-danger form-control mt-1" type="button" @click="clear()">Отмена</button>
             <!-- </form> -->
 
@@ -102,7 +102,7 @@ export default {
                 
                 
                     //this.$emit('submit', this.login, this.email, this.age, this.pass1, this.phone)
-                    const response = await fetch('/g/create_account', {
+                    const response = await fetch('/users/create_account', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

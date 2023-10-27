@@ -190,7 +190,7 @@ import Swal from 'sweetalert2';
           {{ item.name }}
         </div>
       </div>
-      <div v-if="recent_request_array.length!=0 && recent_request && sampling_by_template.length==0" class="col-sm-12 style_searching" @mouseleave="recent_request = false">
+      <div v-if="recent_request_array.length!=0 && recent_request && sampling_by_template.length==0 && false" class="col-sm-12 style_searching" @mouseleave="recent_request = false">
         <div class="recent_request_class_css" v-for="(request, index) in recent_request_array" :key="request">
           <span @click="sel_last_request(request)" >{{ request }}</span>
         </div>
@@ -200,7 +200,7 @@ import Swal from 'sweetalert2';
 
       <div>
         <!-- переключатель страниц -->
-        <div v-if="totalpages != 1 && current_play_list == 'All'" class="mt-1 d-flex justify-content-center">
+        <div v-if="totalpages != 1 && current_play_list == 'All' && video_values!==5" class="mt-1 d-flex justify-content-center">
           <nav aria-label="">
             <ul class="pagination">
               <li v-if="currentPage > 0" class="page-item"><a class="page-link" href="#"
@@ -268,7 +268,7 @@ import Swal from 'sweetalert2';
                     v-bind:poster="(show_poster == true && item.upHere !== true) ? '/images/periodic_table.jpg' : `/gifs/${encodeURIComponent(item.name.replace(/(.webm|.mp4|.mkv|.avi)/gi, '.gif'))}`"
                     loop preload="none" controls="controls" controlsList="nodownload">
                     <!-- <source :src="`/g?name=${encodeURIComponent(item.name)}`" type="video/mp4" /> -->
-                    <source :src="`/g?name=${encodeURIComponent(item.name)}`" type='video/mp4' />
+                    <source :src="`/files/g?name=${encodeURIComponent(item.name)}`" type='video/mp4' />
                   </video>
                   <!-- <figcaption>
                     <label id="timer" for="progress" role="timer"></label>
@@ -949,7 +949,7 @@ export default {
       }
 
       console.info(this.selected_part)
-      const response = await fetch('/g', {
+      const response = await fetch('/files/g', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -987,7 +987,7 @@ export default {
       window.localStorage.setItem('url_list', JSON.stringify(this.batch_list));
       // console.log(123123, window.localStorage.getItem('url_list'))
       // this.$emit('wait', true)
-      const response = await fetch(`/g/s?url=${url}`, {
+      const response = await fetch(`/files/download/video?url=${url}`, {
         method: "GET",
         credentials: 'include',
         headers: {

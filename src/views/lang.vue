@@ -42,11 +42,14 @@ import Swal from 'sweetalert2';
 
 
       <!-- <div v-if="show_menu"> -->
-      <div class="border rounded mt-1 p-1">
-        <label>Создать новый словарь</label>
-        <input class="form-control p-0 ps-1" title="Название словаря" placeholder="Название словаря">
-        <button class="btn btn-sm form-control btn-outline-danger mt-1">Создать</button>
+      <div class="border rounded mt-1 p-0 px-1">
+        <label @click="create_mode_dictionary =! create_mode_dictionary" class="w-100">Создать новый словарь</label>
+        <template v-if="create_mode_dictionary">
+          <input class="form-control p-0 ps-1" title="Название словаря" placeholder="Название словаря" v-model="name_dictionary">
+          <button class="btn btn-sm form-control btn-outline-danger my-1">Создать</button>
+        </template>
       </div>
+
 
 
       <div class="border rounded mt-1 p-1" v-if="mode_filter">
@@ -56,6 +59,10 @@ import Swal from 'sweetalert2';
         <input type="radio" id="two" value="two" v-model="mode_request">
         <label for="two"> Конкретная дата</label>
         <br> -->
+        <label>Дни активности:</label>
+        <!-- <input class="form-control p-0 ps-1" title="Название словаря" placeholder="Название словаря"> -->
+        <button @click="set_date(date['date'])" class="btn btn-sm form-control btn-outline-danger mt-1" v-for="(date, key) in action_days">{{ date['date'] }}</button>
+
         <div class="form-check">
           <input class="form-check-input" type="radio" name="exampleRadios" id="specific_date" value="specific_date" v-model="mode_request">
           <label class="form-check-label" for="specific_date">
@@ -202,6 +209,7 @@ import Swal from 'sweetalert2';
             <input v-model="word" @input="word_change" @keyup.enter="find_func" class="form-control p-0 m-0 ps-1" placeholder="Введите текст" title="Панель для поиска" />
             <label class="border lc d-flex align-items-center px-2">{{ this.tablo_result }}</label>
             
+            <button @click="collection" class="btn btn-sm btn-outline-danger"><i class="bi bi-collection"></i></button>
             <button @click="mode_filter =! mode_filter" class="btn btn-sm btn-outline-danger"><i class="bi bi-funnel"></i></button>
             <button @click="downl_search" class="btn btn-sm btn-outline-danger"><i class="bi bi-sliders2-vertical"></i></button>
             <button @click="resu_search = []; word = ''; resu = resu_backup.slice()" class="btn btn-sm btn-outline-danger"><i class="bi bi-backspace"></i></button>
@@ -540,6 +548,10 @@ export default {
       last_column_sort: '',
       mode_request: 'specific_date',
       mode_filter: false,
+      mode_collection: false,
+      action_days: [],
+      name_dictionary: '',
+      create_mode_dictionary: false,
 
     }
   },
@@ -632,6 +644,7 @@ export default {
     await this.support_lang()
     await this.selLang(this.name_lang)
     await this.downl_search()
+    // await this.get_collection()
 
     
   },
@@ -717,8 +730,46 @@ export default {
   components: {
   },
   methods: {
-    async create_new_dict() {
+    async set_date(date) {
+      console.info(date)
+      this.select_date_from = date.split(".").reverse().join("-");
+    },
+    async get_collection() {
+      const response = await fetch('/books/g/collection', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': window.localStorage.getItem('jwt'),
+        },
+        body: JSON.stringify({
+          lang: this.name_lang
+        })
+      })
 
+      let result = await response.json()
+      this.action_days = result
+      console.log(result)
+
+    },
+    async collection() {
+      this.mode_collection =! this.mode_collection
+
+
+    },
+    async create_new_dict() {
+      const response = await fetch('/books/c/dictionary', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': window.localStorage.getItem('jwt'),
+        },
+        body: JSON.stringify({
+          name: name_dictionary
+        })
+      })
+
+      let result = await response.json()
+      console.log(result)
 
     },
     async request_by_date() {
@@ -770,7 +821,7 @@ export default {
     },
     async del_value(value) {
       console.log(value)
-      const response = await fetch('/g/del_value', {
+      const response = await fetch('/books/d/word', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -799,7 +850,7 @@ export default {
       const properties = {
         lang: this.name_lang,
       }
-      const response = await fetch('/g/glw', {
+      const response = await fetch('/books/g/all_words', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -827,9 +878,10 @@ export default {
       console.log(item)
       axios({
         method: 'DELETE',
-        url: '/del/group',
+        url: '/books/d/group',
         headers: {
-          authorization: window.localStorage.getItem('jwt'),
+          'Content-Type': 'application/json',
+          'Authorization': window.localStorage.getItem('jwt'),
         },
         //responseType: 'stream'
         data: item,
@@ -850,26 +902,23 @@ export default {
     },
     async get_values_from_group(item) {
       this.current_group = item
-      if (this.current_group['id'] != null) {
-        const response = await fetch('/g/from_group', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            authorization: window.localStorage.getItem('jwt'),
-          },
-          body: JSON.stringify({
-            group_id: this.current_group['id']
-          }),
-          "mode":"cors"
-        })
+      const response = await fetch('/books/g/w/group', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': window.localStorage.getItem('jwt'),
+        },
+        body: JSON.stringify({
+          group_id: this.current_group['id'],
+          lang: this.name_lang
+        }),
+        "mode":"cors"
+      })
 
-        let result = await response.json()
-        console.log('Arrive a result: ', result)
+      let result = await response.json()
+      console.log('Arrive a result: ', result)
 
-        this.resu = result
-      } else {
-        await alert(54353454, this.current_group)
-      }
+      this.resu = result
     },
     async add_to_group() {
       this.check_edit_record = true
@@ -886,7 +935,7 @@ export default {
 
 
       if (selected_group.length != 0) {
-        const response = await fetch('/g/add_to_group', {
+        const response = await fetch('/books/a/w/group', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -901,7 +950,7 @@ export default {
 
         let result = await response.json()
         //console.log(result)
-        await alert('Данные добавленны!', result)
+        alert('Данные добавленны!', result)
       } else {
         console.info('Список пуст не каких запросов не будет!')
         alert('Список пуст не каких запросов не будет!')
@@ -926,7 +975,7 @@ export default {
           lang: this.name_lang
         }
         
-        const response = await fetch('/g/set_group', {
+        const response = await fetch('/books/c/group', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1058,7 +1107,7 @@ export default {
       this.tablo_result = this.resu.length
     },
     async get_groups() {
-      const response = await fetch('/g/get_groups', {
+      const response = await fetch('/books/g/group', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1078,7 +1127,7 @@ export default {
     async get_phrase() {
       // this.show_words_mode = false
       if (this.phraseologicals.length==0) {
-        const response = await fetch('/g/phrase', {
+        const response = await fetch('/books/g/phrase', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1100,7 +1149,7 @@ export default {
 
     },
     async get_rules() {
-      const response = await fetch('/g/rule', {
+      const response = await fetch('/books/g/rule', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1121,7 +1170,7 @@ export default {
     async phraseological_unit(fi, fo) {
       const time = new Date().toLocaleTimeString()
       const date = new Date().toLocaleDateString()
-      const response = await fetch('/g/add_phrase', {
+      const response = await fetch('/books/c/phrase', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1154,7 +1203,7 @@ export default {
       const date = date_time.toLocaleDateString()
       
       //console.info(name, description)
-      const response = await fetch('/g/add_rule', {
+      const response = await fetch('/books/c/rule', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1220,7 +1269,7 @@ export default {
       value['time'] = new Date().toLocaleTimeString()
 
       if (true) {
-        const response = await fetch('/g/upd', {
+        const response = await fetch('/books/u/word', {
           method: 'POST',
           headers: {
             'Content-Type': 'Application/json',
@@ -1279,11 +1328,11 @@ export default {
       //console.info('Это то что нужно удалить: ', send_on_del)
 
       if (true) {
-        const response = await fetch('/g/del', {
+        const response = await fetch('/d/word', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            authorization: window.localStorage.getItem('jwt'),
+            'Authorization': window.localStorage.getItem('jwt'),
 
           },
           body: JSON.stringify(send_on_del),
@@ -1325,11 +1374,11 @@ export default {
         time: send_date.toLocaleTimeString()
       }
 
-      const responce = await fetch('/upload/dict', {
+      const responce = await fetch('/books/c/word', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          authorization: window.localStorage.getItem('jwt'),
+          'Authorization': window.localStorage.getItem('jwt'),
 
         },
         body: JSON.stringify(words),
@@ -1358,7 +1407,7 @@ export default {
         console.log(arr)
         this.tablo_result = arr.length
 
-        const response = await fetch('/g/search_by_id', {
+        const response = await fetch('/books/s/word', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -1383,7 +1432,7 @@ export default {
       //this.dict_lang = ls;
 
 
-      const response = await fetch('/upload/lang', {
+      const response = await fetch('/books/g/name-book', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -1428,7 +1477,6 @@ export default {
       
 
     },
-
     async requestFiltrLst() {
       if (this.mode_filter) {
         if (this.select_date_to == '') {
@@ -1452,7 +1500,6 @@ export default {
       await this.selLang(this.name_lang)
 
     },
-
     async selLang(lang_code, nlm=0) { // запрашивает слова из указанного словаря
       if (nlm==1) {
         this.currentPage = 0
@@ -1472,7 +1519,7 @@ export default {
       }
 
 
-      const response = await fetch('/g/lang', {
+      const response = await fetch('/books/g/words', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -1501,7 +1548,7 @@ export default {
       this.filter_mode = {}
       this.current_group = {}
       await this.get_groups()
-
+      await this.get_collection()
 
 
 

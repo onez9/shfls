@@ -8,7 +8,7 @@ import Swal from 'sweetalert2';
       <!-- <div class="row"> -->
       <!-- <label for="id_upload">Загрузить новый файл</label> -->
       <input id="id_upload" title="это подсказка для тебя" name="file" type="file"
-        class="form-control my-2 bg-dark text-white" multiple>
+        class="form-control my-2 bg-dark text-white p-0 ps-1" multiple>
       <!-- <progress id="progressBar" value="0" max="100" class="form-control mt-2"></progress> -->
 
       <div class="progress my-2" v-if="this.proccess_value !== 0">
@@ -20,26 +20,24 @@ import Swal from 'sweetalert2';
       </div>
       <div class="row">
         <div class="col-sm">
-          <button class="btn btn-outline-danger mb-1 w-100" @click="upload_file">
+          <!-- <button type="button" class="btn btn-primary btn-sm">Small button</button> -->
+          <button class="btn btn-sm btn-outline-danger mb-1 me-1" @click="upload_file">
             <i class="bi bi-upload"></i>
           </button>
-        </div>
-        <div class="col-sm">
-          <button class="btn btn-outline-danger mb-1 w-100" @click="show_qr">
+
+          <button class="btn btn-sm btn-outline-danger mb-1 me-1" @click="show_qr">
             <i class="bi bi-qr-code"></i>
           </button>
           <!-- <button @click="send_on_download" class="btn btn-info mb-3">Стандартная папка</button> -->
-        </div>
-        <div class="col-sm">
-          <button v-if="item1 == true" class="btn btn-outline-danger mb-1 w-100" @click="show_all_pic">
+
+          <button v-if="item1 == true" class="btn btn-sm btn-outline-danger mb-1 me-1" @click="show_all_pic">
             Развернуть
           </button>
-          <button v-else class="btn btn-outline-danger mb-1 w-100" @click="show_all_pic">
+          <button v-else class="btn btn-sm btn-outline-danger mb-1 me-1" @click="show_all_pic">
             Скрыть
           </button>
-        </div>
-        <div class="col-sm">
-          <button class="btn btn-outline-danger mb-1 w-100" @click="show_info = !show_info">
+
+          <button class="btn btn-sm btn-outline-danger mb-1 me-1" @click="show_info = !show_info">
             <i class="bi bi-list"></i>
           </button>
           <!-- <button @click="send_on_download" class="btn btn-info mb-3">Стандартная папка</button> -->
@@ -162,8 +160,18 @@ export default {
   async mounted() {
     console.log(this.color_header)
     await this.g()
+    await this.start()
   },
   methods: {
+    async start() {
+      document.addEventListener('scroll', (event) => {
+        if (window.scrollY ) {
+          console.log(window.scrollY)
+          window.scrollY %= 768
+
+        }
+      })
+    },
     async show_all_pic() {
       // console.log(item)
       for (let i = 0; i < this.array.length; i++) {
@@ -214,7 +222,7 @@ export default {
       let properties = {
         type: "file",
       }
-      const response = await fetch('/g', {
+      const response = await fetch('/files/g', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -263,7 +271,7 @@ export default {
       if (index > -1) {
         this.array.splice(index, 1)
       
-        const response = await fetch(`/del?name=${item.name}`, {
+        const response = await fetch(`/files/d/file?name=${item.name}`, {
           method: 'DELETE',
           heaaders: {
             'authorization': window.localStorage.getItem('jwt'),
@@ -385,7 +393,7 @@ export default {
           xhr.send(formData);
           document.querySelector('input[type=file]').value = "";
         })
-      })('POST', '/upload')
+      })('POST', '/files/u/files')
 
 
       await this.g()

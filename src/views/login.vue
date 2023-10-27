@@ -46,7 +46,7 @@ export default {
             this.flag = true
             if (this.login && this.password) {
                 
-                let response = await fetch('/g/login', {
+                let response = await fetch('/users/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

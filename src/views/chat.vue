@@ -17,7 +17,7 @@ import Swal from 'sweetalert2';
                     A simple secondary alert—check it out!
                 </div> -->
                 <div v-for="(item, i) in messages" :key="i" 
-                    :class="{'alert alert-info myclass my-1 py-1': (true), 'alert alert-primary': (item['name']!=name)}" role="alert">
+                    :class="{'alert alert-info myclass my-1 py-1': (true), 'alert alert-danger': (item['name']!=name)}" role="alert">
                     <div class="d-flex justify-content-end border rounded mb-1">
                         <span class="me-auto ms-3">{{ item['name'] }}</span>
                         <!-- {{ item['sinf']?.type }} -->
@@ -30,7 +30,7 @@ import Swal from 'sweetalert2';
                     <!-- {{ item['name'] }} -->
                     <div class="flex-grow-1 mb-1"></div>
                     <div id="time_id" class="d-flex justify-content-end">
-                        {{ item['time'] }}
+                        {{ new Date(item['time']).toLocaleDateString() }} {{ new Date(item['time']).toLocaleTimeString() }}
                     </div>
                    
                 </div>
@@ -166,7 +166,7 @@ export default {
         },
 
         async get_message() { // запрашивает все сообщения при старте 
-            const response = await fetch('/g/message', {
+            const response = await fetch('/message/g', {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
