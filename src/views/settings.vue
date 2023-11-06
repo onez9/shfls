@@ -83,14 +83,16 @@ import HighLight from "vue3-highlight-component";
           <input type="password" placeholder="password" name="" id="pass_id" class="form-control">
         </template>
 
+        <label>About client: </label>
+        <p></p>
+        <button class="btn btn-sm btn-outline-danger" @click="get_test">Пример запроса</button>
 
-
-        <button @click="run('off')" class="btn btn-outline-primary form-control mt-2 style_button">Выключить сервер</button>
-        <button @click="run('reboot')" class="btn btn-outline-primary form-control mt-2 style_button">Перезагрузить сервер</button>
-        <button @click="run('redis')" class="btn btn-outline-primary form-control mt-2 style_button">Запустить redis</button>
-        <button @click="run('mongo')" class="btn btn-outline-primary form-control mt-2 style_button">Запустить mongo</button>
-        <button @click="run('off_db')" class="btn btn-outline-primary form-control mt-2 style_button">Выключить базу данных</button>
-        <button @click="save_set" class="btn btn-outline-danger mt-2 form-control style_button"><i class=""></i> Сохранить</button>
+        <!-- <button @click="run('off')" class="btn btn-outline-primary form-control mt-2 style_button">Выключить сервер</button> -->
+        <!-- <button @click="run('reboot')" class="btn btn-outline-primary form-control mt-2 style_button">Перезагрузить сервер</button> -->
+        <!-- <button @click="run('redis')" class="btn btn-outline-primary form-control mt-2 style_button">Запустить redis</button> -->
+        <!-- <button @click="run('mongo')" class="btn btn-outline-primary form-control mt-2 style_button">Запустить mongo</button> -->
+        <!-- <button @click="run('off_db')" class="btn btn-outline-primary form-control mt-2 style_button">Выключить базу данных</button> -->
+        <!-- <button @click="save_set" class="btn btn-outline-danger mt-2 form-control style_button"><i class=""></i> Сохранить</button> -->
 
 
         <!-- <HighLight  :with-header="true" language="js" header-language="JavaScript"  :code="code"/> -->
@@ -174,9 +176,13 @@ export default {
         mode: false
       }
     }
+    // await this.get_test()
     // Then register the languages you need
     // hljs.registerLanguage('javascript', javascript);
     // hljs.highlightAll()
+
+
+
   },
   created() {
     this.user = {
@@ -187,7 +193,17 @@ export default {
   },
 
   methods: {
-
+    async get_test() {
+      // await fetch('/control/ip', {
+      //   headers: {
+      //     'method': 'GET',
+      //     'Content-Type': 'application/json',
+      //   }
+      // })
+      window.location.replace("/control/ip");
+      // window.location.href = '/control/ip'
+      // console.info('Я тут: ', await response.json())
+    },
 
     async run(namec) {
       const properties = {

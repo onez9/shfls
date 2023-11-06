@@ -266,6 +266,16 @@ app.use(function (req, res, next) {
 });
 
 
+app.use((req, res, next) => {
+    // console.log('headers: ', req.headers);
+    // console.log('header: ', req.header.toString());
+    console.log('req.socket: ', req.socket.remoteAddress)
+    console.log('req.socket: ', req.socket.remotePort)
+    req.headers['remoteFamily'] = req.socket.remoteFamily;
+	req.headers['remoteAddress'] = req.socket.remoteAddress;
+	req.headers['remotePort'] = req.socket.remotePort;
+    next();
+})
 // CORS middleware
 // const allowCrossDomain = function(req, res, next) {
 // 	res.header('Access-Control-Allow-Methods', '*');
@@ -408,7 +418,7 @@ app.use(config.routes.musics, express.static(path.join(__dirname, config.folders
 
 
 app.get('*', (req, res) => {
-    console.log('отправка стандартного файла')
+    console.log('Sending default file.')
     // res.setHeader('Content-Type', 'text/html');
     console.log(path.resolve('index.html'))
     res.sendFile(path.resolve('index.html'))
@@ -420,11 +430,11 @@ app.get('*', (req, res) => {
 
 
 
-http.listen(config.wlan0.port, config.wlan0.host, () => {
+http.listen(config.wlan0.port, config.wlan0.host4, () => {
 
-    console.log('А тут мы читаем переменные среды окружения: ', process.env.VITE_TEST_VAR)
-    console.log(`Сервер запущен - http://${config.wlan0.host}:${config.wlan0.port}/`);
-    console.log('Остановить сервер - Ctrl+C');
+    console.log('Environment variables: ', process.env.VITE_TEST_VAR)
+    console.log(`Address: http://${config.wlan0.host}:${config.wlan0.port}`);
+    // console.log('Остановить сервер - Ctrl+C');
 
 });
 

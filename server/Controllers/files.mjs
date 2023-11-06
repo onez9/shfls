@@ -215,9 +215,13 @@ router.post('/g', async (req, res) => {
 		console.log('nsdlfnsdflsf23449fs')
 		console.log(req.body.type)
 		if (req.body.type == 'file') {
-			console.log('nsdlfnsdflsf23449fs')
-			let dir = config.folders.files
-			let route = config.routes.files
+			console.log('Выполняется запрос к /g file')
+			let dir = config.folders.files;
+			let route = config.routes.files;
+			let currentPage = req.body.currentPage;
+			let countItems = req.body.count;
+			console.log('currentPage: ', currentPage);
+			console.log('countPage: ', countItems);
 
 			function convert(item) {
 				return {
@@ -232,7 +236,14 @@ router.post('/g', async (req, res) => {
                     if (err) console.log(err);
 					for (let i=0;i<items.length;i++) items[i]=convert(items[i])
                     //console.log(items)
-                    res.json({ "items": items, "route": route })
+					let fromIndex = currentPage*countItems;
+					let toIndex = currentPage*countItems + countItems;
+
+					if (toIndex > items.length) {
+						toIndex = items.length;
+					}
+					console.log(fromIndex, toIndex);
+                    res.json({ "items": items.slice(fromIndex, toIndex), "route": route, total_files: items.length })
                 } catch (e) {
                     console.log(e)
                     res.json({ "items": [], "route": route})
@@ -272,7 +283,7 @@ router.post('/g', async (req, res) => {
 		else if (req.body.type == 'video') {
 			let dir = config.folders.videos
             let route = config.routes.videos
-			let page = parseInt(req.body.page, 10)
+			let currentPage = parseInt(req.body.page, 10)
 			let limit = parseInt(req.body.limit, 10)
 
 			console.log('route: ', route)
@@ -355,8 +366,8 @@ router.post('/g', async (req, res) => {
 					// console.warn(right);
 					// console.error(left)
 
-					let fromIndex = page * limit     // начальный индекс 
-					let toIndex = page * limit + limit // конечный индекс 
+					let fromIndex = currentPage * limit     // начальный индекс 
+					let toIndex = currentPage * limit + limit // конечный индекс 
 					//console.log(page*limit + limit)
 					if (toIndex > result.length) {
 						toIndex = result.length

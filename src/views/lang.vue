@@ -23,7 +23,7 @@ import Swal from 'sweetalert2';
       </div>
     </div>
 
-    <div class="col-sm-4" v-if="show_menu">
+    <div class="col-sm-4 rounded m-0 p-1" style="background-color: rgb(8, 9, 17);" v-if="show_menu">
       <div v-if="false" class="border rounded p-1 mt-1 " >
         <input type="search" id="site-search" name="q" />
       </div>
@@ -46,7 +46,7 @@ import Swal from 'sweetalert2';
         <label @click="create_mode_dictionary =! create_mode_dictionary" class="w-100">Создать новый словарь</label>
         <template v-if="create_mode_dictionary">
           <input class="form-control p-0 ps-1" title="Название словаря" placeholder="Название словаря" v-model="name_dictionary">
-          <button class="btn btn-sm form-control btn-outline-danger my-1">Создать</button>
+          <button @click="create_new_dict" class="btn btn-sm form-control btn-outline-danger my-1">Создать</button>
         </template>
       </div>
 
@@ -59,9 +59,9 @@ import Swal from 'sweetalert2';
         <input type="radio" id="two" value="two" v-model="mode_request">
         <label for="two"> Конкретная дата</label>
         <br> -->
-        <label>Дни активности:</label>
+        <label @click="mode_filter=false" class="w-100">Дни активности:</label>
         <!-- <input class="form-control p-0 ps-1" title="Название словаря" placeholder="Название словаря"> -->
-        <button @click="set_date(date['date'])" class="btn btn-sm form-control btn-outline-danger mt-1" v-for="(date, key) in action_days">{{ date['date'] }}</button>
+        <button @click="set_date(date['date'])" class="btn btn-sm form-control btn-outline-danger d-flex justify-content-left mt-1 " v-for="(date, key) in action_days">{{ date['date'] }} ({{ date['count'] }})</button>
 
         <div class="form-check">
           <input class="form-check-input" type="radio" name="exampleRadios" id="specific_date" value="specific_date" v-model="mode_request">
@@ -82,6 +82,7 @@ import Swal from 'sweetalert2';
         <label for="made1">Начало:</label>
         <div id="made1" class="mb-1">
           <input type="date" class="btn btn-sm btn-outline-danger me-1 form-control" v-model="select_date_from">
+          <!-- {{select_date_from}} -->
           <!-- <input type="time" step="1" class="btn btn-sm btn-outline-danger" v-model="select_time_from"> -->
         </div>
 
@@ -99,7 +100,7 @@ import Swal from 'sweetalert2';
 
 
       <select @change="selLang(name_lang, 1)" v-model="name_lang" class="form-select mt-1 bg-dark text-white p-0 ps-1" name="" title="Выберете язык">
-        <option  v-for="(value, key) of dict_lang" v-bind:value="key">{{ value }}</option>
+        <option  v-for="(value, key) in dict_lang" v-bind:value="value['id']">{{ value['name'] }}</option>
       </select>
       <div v-if="false" class="border rounded p-1 mt-1">
         <label class="d-flex justify-content-start" @click="show_alphavit_mode =! show_alphavit_mode">Показать алфавит</label>
@@ -119,13 +120,7 @@ import Swal from 'sweetalert2';
       
         <!-- <button v-if="new_word_mode" @click="get_words()" class="btn btn-sm btn-outline-danger form-control mt-1">Показать слова</button> -->
       </div>
-      <div :class="{'border rounded mt-1 px-1 p-0': true, 'border-my': (create_rule_mode)}">
-        <label @click="create_rule_func" class="d-flex justify-content-start">Правила</label>
-        <input v-if="create_rule_mode" v-model="name_rule" type="text" class="form-control mb-1" title="Название" placeholder="Название">
-        <textarea v-if="create_rule_mode" v-model="description_rule" type="text" class="form-control mb-1" title="Описание" placeholder="Описание"></textarea>
-        <button v-if="create_rule_mode" @click="add_rule(name_rule, description_rule)" class="btn btn-sm btn-outline-danger form-control mb-1" :disabled="(name_rule=='' || description_rule=='')? true : false">Создать</button>
-        <!-- <button v-if="create_rule_mode" @click="get_rules()" class="btn btn-sm btn-outline-danger form-control mt-1">Показать правила</button> -->
-      </div>
+
       <div :class="{'border rounded px-1 mt-1 p-0': true, 'border-my': (add_phrase_mode)}">
         <label @click="add_phrase_func" class="d-flex justify-content-start">Фразеологизмы</label>
         <!-- <input type="text" class="form-control mb-1" title="Название" placeholder="Название"> -->
@@ -134,7 +129,10 @@ import Swal from 'sweetalert2';
         <button v-if="add_phrase_mode" @click="phraseological_unit(fi_phrase, fo_phrase)" class="btn btn-sm btn-outline-danger form-control" :disabled="(fi_phrase=='' || fo_phrase=='')? true : false">Создать</button>
         <button v-if="add_phrase_mode" @click="get_phrase()" class="btn btn-sm btn-outline-danger form-control mt-1 mb-1">Показать фразеологизмы</button>
       </div>
-      
+
+      <button @click="create_rule_func" class="btn btn-sm btn-outline-danger mt-1 form-control d-flex justify-conten-start">Грамматика</button>
+
+
       <div class="border rounded px-1 mt-1 p-0">
         <label @click="show_groups_func" class="d-flex justify-content-start">Группы ({{ current_group }})</label>
         <div v-if="new_group_mode">
@@ -153,7 +151,7 @@ import Swal from 'sweetalert2';
           </div>
         </div>
       </div>
-      <div class="border rounded px-1 mt-1 p-0">
+      <div class="border rounded px-1 mt-1 p-0 mb-1">
         <label @click="edit_list_mode =! edit_list_mode" class="d-flex justify-content-start">Настроить список</label>
         <div v-if="edit_list_mode" class="border rounded p-1">
           <div class="form-check">
@@ -206,13 +204,23 @@ import Swal from 'sweetalert2';
           <div class="input-group">
             <button class="btn btn-sm btn-outline-danger"><i class="bi bi-search"></i></button>
             <button @click="show_menu =! show_menu" class="btn btn-sm btn-outline-danger"><i class="bi bi-gear"></i></button>
-            <input v-model="word" @input="word_change" @keyup.enter="find_func" class="form-control p-0 m-0 ps-1" placeholder="Введите текст" title="Панель для поиска" />
+            <input v-model="word" @input="word_change" @keyup.enter="find_func" class="form-control p-0 m-0 ps-1 _edit_mode" placeholder="Введите текст" title="Панель для поиска" />
             <label class="border lc d-flex align-items-center px-2">{{ this.tablo_result }}</label>
             
-            <button @click="collection" class="btn btn-sm btn-outline-danger"><i class="bi bi-collection"></i></button>
+            <!-- <button @click="collection" class="btn btn-sm btn-outline-danger"><i class="bi bi-collection"></i></button> -->
             <button @click="mode_filter =! mode_filter" class="btn btn-sm btn-outline-danger"><i class="bi bi-funnel"></i></button>
-            <button @click="downl_search" class="btn btn-sm btn-outline-danger"><i class="bi bi-sliders2-vertical"></i></button>
+            <!-- <button @click="downl_search" class="btn btn-sm btn-outline-danger"><i class="bi bi-sliders2-vertical"></i></button> -->
+            <button @click="downl_search" class="btn btn-sm btn-outline-danger"><i class="bi bi-arrow-clockwise"></i></button>
             <button @click="resu_search = []; word = ''; resu = resu_backup.slice()" class="btn btn-sm btn-outline-danger"><i class="bi bi-backspace"></i></button>
+          </div>
+        </div>
+        <div class="col-sm-12" v-if="create_rule_mode">
+          <div :class="{'border rounded mt-1 px-1 p-0': true, 'border-my': (create_rule_mode)}">
+            <label @click="" class="d-flex justify-content-start">Правила</label>
+            <input v-model="name_rule" type="text" class="form-control mb-1" title="Название" placeholder="Название">
+            <textarea v-model="description_rule" type="text" class="form-control mb-1" title="Описание" placeholder="Описание"></textarea>
+            <button @click="add_rule(name_rule, description_rule)" class="btn btn-sm btn-outline-danger form-control mb-1" :disabled="(name_rule=='' || description_rule=='')? true : false">Создать</button>
+            <!-- <button v-if="create_rule_mode" @click="get_rules()" class="btn btn-sm btn-outline-danger form-control mt-1">Показать правила</button> -->
           </div>
         </div>
       </div>
@@ -223,7 +231,7 @@ import Swal from 'sweetalert2';
         </div>
       </div>
 
-      <table v-if="resu.length !== 0 || true" class="table table-bordered table-dark mt-1 rounded"  >
+      <table v-if="resu.length !== 0 && !create_rule_mode" class="table table-bordered table-dark mt-1 rounded"  >
         <thead class="p-0">
           <tr class="bg-info p-0">
             <td class="p-0 m-0">
@@ -292,7 +300,7 @@ import Swal from 'sweetalert2';
               <input v-if="value['edit']" class="form-control border-0 rounded-0 p-0 align-middle bg-selected" v-model="value['three']">
             </td>
             <td v-if="check_date" class="p-0 px-1 align-middle col">
-              <label>{{ value['date'] }}</label>
+              <label class="text-nowrap">{{ value['date'] }}</label>
               <!-- <input type="date" v-if="value['select']" class="form-control" v-model="value['date']"> -->
             </td>
             <td v-if="check_time" class="p-0 px-1 align-middle col">
@@ -313,10 +321,31 @@ import Swal from 'sweetalert2';
 
       </table>
 
-      <label v-else class="d-flex justify-content-center mt-5">Тут ничего нет</label>
+      <label v-if="resu.length == 0 && rules.length == 0" class="d-flex justify-content-center mt-5">Тут ничего нет</label>
+
+      <template v-if="create_rule_mode">
+        <div v-for="(item, index) in rules" class="border rounded mt-1 p-1">
+          <div class="input-group mb-1">
+            <button @click="item['edit_mode'] =! item['edit_mode']" class="btn btn-sm btn-outline-danger"><i class="bi bi-pencil-square"></i></button>
+            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-x-lg"></i></button>
+            <button @click="item['edit_mode'] = false" class="btn btn-sm btn-outline-danger"><i class="bi bi-save"></i></button>
+          </div>
+          <div class="border rounded mb-1 d-flex p-0">
+            <p v-if="!item['edit_mode']" style="color: #7b7b7b" class="ps-1 p-0 m-0 edit_font">{{ item['one'] }}</p>
+            <input v-else class="form-control p-0 m-0 ps-1 border-0 edit_font" v-model="item['one']">
+            <p style="color: #7b7b7b" class="ms-auto m-0 mx-1 edit_font">{{ item['date'] }}</p>
+            <p style="color: #7b7b7b" class="m-0 me-1 edit_font">{{ item['time'] }}</p>
+          </div>
+          <p style="color: #7b7b7b" class="border rounded mb-1 ps-1 p-0 edit_font" v-html="item['three']"></p>
+          <div  v-if="item['edit_mode']">
+            <textarea class="form-control ps-1 p-0 edit_font" v-model="item['three']"></textarea>
+          </div>
+        </div>
+      </template>
+
 
       
-      <div>
+      <div v-if="rules.length==0">
         <!-- переключатель страниц -->
         <div class="mt-1 d-flex justify-content-center">
           <nav aria-label="Page navigation mt-1 example">
@@ -356,6 +385,10 @@ import Swal from 'sweetalert2';
 
 <style scoped>
 
+
+.edit_font {
+  font-size: 13px;
+}
 .pagination>li:first-child>a, .pagination>li:first-child>span {
   border-top-left-radius: 3px;
   border-bottom-left-radius: 3px;
@@ -373,6 +406,8 @@ import Swal from 'sweetalert2';
   padding: 5px;
   border-radius: 5px;
   text-decoration: underline;
+  /* z-index: 1000; */
+  position: absolute;
   /* box-sizing: border-box;
   -moz-box-sizing: border-box; */
 }
@@ -444,23 +479,23 @@ button:hover {
 
 
 .bootstrap-select .form-control:focus {
-    outline: 0px none #fff !important;
+  outline: 0px none #fff !important;
 }
 
 .bootstrap-select .form-control > div.filter-option:focus {
-    outline: 0px none #fff !important;
+  outline: 0px none #fff !important;
 }
 
 .bootstrap-select .form-control > div.filter-option > div.filter-option-inner:focus {
-    outline: 0px none #fff !important;
+  outline: 0px none #fff !important;
 }
 
 .bootstrap-select .form-control > div.filter-option > div.filter-option-inner > div.filter-option-inner-inner:focus {
-    outline: 0px none #fff !important;
+  outline: 0px none #fff !important;
 }
 
 *:focus {
-    box-shadow: none !important;
+  box-shadow: none !important;
 }
 
 .custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {
@@ -476,6 +511,8 @@ button:hover {
 .form-check-input .custom-checkbox .custom-control-input:active ~ .custom-control-label::before {
   background-color: #C8FFC8; 
 }
+
+
 
 
 </style>
@@ -552,12 +589,21 @@ export default {
       action_days: [],
       name_dictionary: '',
       create_mode_dictionary: false,
+      rule_array: [],
+      scroll: 0,
+      html_text: '',
+      edit_rule_mode: false,
+      
 
     }
   },
+  props: {
+    search: String,
+    // word: String
+  },
   async mounted() {
 
-
+    this.html_text = '<h1>hello world</h1>'
     // настройка сортирови
     if (window.localStorage.getItem('sort_mode.name') == null) {
       window.localStorage.setItem('sort_mode.name', JSON.stringify(this.sort_mode.name))
@@ -643,7 +689,7 @@ export default {
 
     await this.support_lang()
     await this.selLang(this.name_lang)
-    await this.downl_search()
+    // await this.downl_search()
     // await this.get_collection()
 
     
@@ -693,7 +739,11 @@ export default {
         this.select_time_to = ""
         this.currentPage = 0
       }
-    }
+    },
+
+    // search() {
+    //   this.word = this.search
+    // },
 
     // sort_mode: { name: 'one', order: true, date_order: true, time_order: true, m2: false}
     /*
@@ -730,6 +780,16 @@ export default {
   components: {
   },
   methods: {
+    async start() {
+      document.addEventListener('scroll', (event) => {
+        // if (window.scrollY ) {
+        console.log(window.scrollY)
+        this.scroll = window.scrollY
+        // window.scrollY %= 768
+
+        // }
+      })
+    },
     async set_date(date) {
       console.info(date)
       this.select_date_from = date.split(".").reverse().join("-");
@@ -764,11 +824,17 @@ export default {
           'Authorization': window.localStorage.getItem('jwt'),
         },
         body: JSON.stringify({
-          name: name_dictionary
+          name: this.name_dictionary
         })
       })
 
       let result = await response.json()
+      if (result.answer == 'ok') {
+        this.dict_lang.push(this.name_dictionary)
+        this.name_dictionary = ""
+      } else {
+        console.info('answer: ', result)
+      }
       console.log(result)
 
     },
@@ -1032,9 +1098,15 @@ export default {
       this.add_phrase_mode = false
       this.new_word_mode = false
       this.new_group_mode = false
+      
 
-      if (this.create_rule_mode==true) {
-        await this.get_rules()
+      if (this.create_rule_mode==true) { // загружаем правила
+        await this.get_rules() 
+      } else { // возвращаем всё как было
+        this.rules = []
+        await this.support_lang() 
+        await this.selLang(this.name_lang)
+
       }
     },
     async new_word_func() {
@@ -1045,6 +1117,7 @@ export default {
 
       if (this.new_word_mode==true) {
         await this.get_words()
+        this.rules = []
       }
     },
     async get_time(value) {
@@ -1131,7 +1204,7 @@ export default {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            authorization: window.localStorage.getItem('jwt'),
+            'Authorization': window.localStorage.getItem('jwt'),
 
           },
           body: JSON.stringify({
@@ -1145,7 +1218,8 @@ export default {
         this.phraseologicals = result
 
       } 
-      this.resu = this.phraseologicals.slice(0)
+      this.rule_array = this.phraseologicals.slice(0)
+      this.resu = []
 
     },
     async get_rules() {
@@ -1153,7 +1227,7 @@ export default {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          authorization: window.localStorage.getItem('jwt'),
+          'Authorization': window.localStorage.getItem('jwt'),
 
         },
         body: JSON.stringify({
@@ -1164,12 +1238,14 @@ export default {
 
 
       let result = await response.json()
-      this.resu = result
+      console.log('rules: ', result)
+      this.rules = result
+      this.resu = []
 
     },
     async phraseological_unit(fi, fo) {
       const time = new Date().toLocaleTimeString()
-      const date = new Date().toLocaleDateString()
+      const date = new Date().toLocaleDateString('en-CA')
       const response = await fetch('/books/c/phrase', {
         method: 'POST',
         headers: {
@@ -1200,7 +1276,7 @@ export default {
     async add_rule(name, description) {
       const date_time = new Date()
       const time = date_time.toLocaleTimeString()
-      const date = date_time.toLocaleDateString()
+      const date = date_time.toLocaleDateString('en-CA')
       
       //console.info(name, description)
       const response = await fetch('/books/c/rule', {
@@ -1221,7 +1297,7 @@ export default {
       })
 
       this.rules.unshift({one: name, three: description, time: time, date: date})
-      this.resu = this.rules.slice(0)
+      // this.resu = this.rules.slice(0)
 
       this.name_rule = ""
       this.description_rule = ""
@@ -1265,7 +1341,7 @@ export default {
       //modify_lst = this.resu.filter(item => item['edit'] === true)
       console.info('Это список который отправится в БД для обновления: ', value)
 
-      value['date'] = new Date().toLocaleDateString()
+      value['date'] = new Date().toLocaleDateString('en-CA')
       value['time'] = new Date().toLocaleTimeString()
 
       if (true) {
@@ -1359,7 +1435,7 @@ export default {
         one: one, 
         two: two, 
         three: three, 
-        date: send_date.toLocaleDateString(), 
+        date: send_date.toLocaleDateString('en-CA'), 
         time: send_date.toLocaleTimeString()
       })
       this.resu_backup = this.resu.slice(0)
@@ -1370,7 +1446,7 @@ export default {
         two: this.two, 
         three: this.three, 
         name_lang: this.name_lang, 
-        date: send_date.toLocaleDateString(),
+        date: send_date.toLocaleDateString('en-CA'),
         time: send_date.toLocaleTimeString()
       }
 
@@ -1457,7 +1533,9 @@ export default {
       // sort_mode.date_order
       // sort_mode.time_order
       // 231.m2
-
+      if (['one', 'two', 'three'].indexOf(column) > -1) {
+        this.check_date_and_time = false;
+      }
 
 
       if (this.check_date_and_time) {
@@ -1480,6 +1558,8 @@ export default {
     async requestFiltrLst() {
       if (this.mode_filter) {
         if (this.select_date_to == '') {
+          console.info(this.select_date_from)
+          console.info(this.select_date_to)
           this.filter_mode['date_from'] = this.select_date_from
           this.filter_mode['time_from'] = this.select_time_from
 
@@ -1503,9 +1583,10 @@ export default {
     async selLang(lang_code, nlm=0) { // запрашивает слова из указанного словаря
       if (nlm==1) {
         this.currentPage = 0
+        this.create_rule_mode = false
         await this.downl_search()
       }
-      
+      console.info('lang_code: ', lang_code)
 
 
       const properties = {
@@ -1523,7 +1604,7 @@ export default {
         method: 'POST',
         credentials: 'include',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'Application/json',
           'Authorization': window.localStorage.getItem('jwt'),
 
         },
@@ -1548,6 +1629,7 @@ export default {
       this.filter_mode = {}
       this.current_group = {}
       await this.get_groups()
+      // await this.get_rules()
       await this.get_collection()
 
 

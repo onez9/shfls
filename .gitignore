@@ -22,6 +22,7 @@ coverage
 *.jpeg
 *.gif
 *.part
+*.apk
 
 # Editor directories and files
 .vscode/*

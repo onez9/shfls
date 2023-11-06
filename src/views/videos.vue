@@ -39,7 +39,7 @@ import Swal from 'sweetalert2';
             <i class="bi bi-folder-plus"></i>
           </button>
         </div> -->
-        <div v-if="show_playlist == true || true" class="col-sm-4 mb-1">
+        <div v-if="show_playlist == true || true" class="col-sm-12 mb-1">
           <div class="input-group mb-1">
             <button @click="show_playlist = !show_playlist" class="btn btn-sm btn-outline-danger" title="Создать новый плейлист"><i class="bi bi-folder-plus"></i></button>
             
@@ -56,7 +56,7 @@ import Swal from 'sweetalert2';
 
         </div>
 
-        <div v-if="show_pen" class="col-sm-4">
+        <div v-if="show_pen" class="col-sm-12">
 
           <div v-for="(item, index) in play_list_array" :key="item" class="bg-outline-danger my-1">
 
@@ -83,8 +83,9 @@ import Swal from 'sweetalert2';
             <i class="bi bi-download"></i>
           </button>
         </div> -->
-        <div v-if="show_download_panel == true || true" class="col-sm-4 mb-1">
-          <div class="input-group">
+        <div v-if="show_download_panel == true || true" class="col-sm-12 mb-1">
+          <div class="input-group mb-1">
+            <button class="btn btn-sm btn-outline-danger" @click="url = ''" title="Очистить буффер от загружаемых видео"><i class="bi bi-trash"></i></button>
             <input v-on:keyup.enter="run_download(url)" type="text" class="bg-dark text-white form-control p-0 m-0 ps-1" :disabled="false" v-model="url"
               placeholder="Панель загрузки видео">
             <button class="btn btn-sm btn-secondary" @click="run_download(url)">
@@ -97,8 +98,8 @@ import Swal from 'sweetalert2';
             <div v-for="(item, i) in batch_list" :key="item"
               class="alert alert-info text-primary d-flex align-items-center mb-1 ps-22" role="alert">
               <div class="">{{ item }}</div>
-              <button class="btn btn-sm btn-outline-info ms-auto me-1 form-control">Отменить</button>
-              <button class="btn btn-sm btn-outline-danger form-control">
+              <button @click="" class="btn btn-sm btn-outline-info ms-auto me-1">Отменить</button>
+              <button class="btn btn-sm btn-outline-danger">
                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>%
               </button>
               
@@ -129,7 +130,7 @@ import Swal from 'sweetalert2';
         </div> -->
 
         <!-- количество видео на одной странице -->
-        <div class="col-sm-4 mb-1 mt-1">
+        <div class="col-sm-12 mb-1 mt-1">
           <select @change="change_count" v-model="video_values" class="form-select mt-1 bg-dark text-white p-0 ps-1" name=""
             title="Количество видео на одной странице">
             <option value="5">5</option>
@@ -141,7 +142,7 @@ import Swal from 'sweetalert2';
         </div>
 
         <!-- количество столбцов -->
-        <div class="col-sm-4 mb-1 mt-1">
+        <div class="col-sm-12 mb-1 mt-1">
           <!-- <input type="number" class="form-control mt-1" min="1" max="4"> -->
           <select v-model="selected" class="form-select mt-1 bg-dark text-white p-0 ps-1" name="" title="Количество столбцов">
             <option value="0">List</option>
@@ -155,7 +156,7 @@ import Swal from 'sweetalert2';
         </div>
 
 
-        <div class="col-sm-4 mb-1 mt-1">
+        <div class="col-sm-12 mb-1 mt-1">
           <!-- <input type="number" class="form-control mt-1" min="1" max="4"> -->
           <select @change="select_play(playlist_name)" v-model="playlist_name" class="form-select mt-1 bg-dark text-white p-0 ps-1" name="" title="Выбор плейлиста">
             <option value="all">All</option>
@@ -185,13 +186,13 @@ import Swal from 'sweetalert2';
         <button @click="csr" class="btn btn-sm btn-outline-danger" id=""><i class="bi bi-backspace"></i></button>
       </div>
 
-      <div class="col-sm-12 style_searching" style="" v-if="sampling_by_template.length !== 0">
-        <div class="" v-for="(item, index) in sampling_by_template.slice(0, 20)" :key="item">
+      <div class="col-sm-8 style_searching rounded p-1 ms-4 mt-5" style="" v-if="sampling_by_template.length !== 0">
+        <div class="" v-for="(item, index) in sampling_by_template" :key="item">
           {{ item.name }}
         </div>
       </div>
-      <div v-if="recent_request_array.length!=0 && recent_request && sampling_by_template.length==0 && false" class="col-sm-12 style_searching" @mouseleave="recent_request = false">
-        <div class="recent_request_class_css" v-for="(request, index) in recent_request_array" :key="request">
+      <div v-if="recent_request_array.length!=0 && recent_request && sampling_by_template.length==0" class="col-sm-8 mt-5 style_searching" @mouseleave="recent_request = false">
+        <div class="" v-for="(request, index) in recent_request_array" :key="request">
           <span @click="sel_last_request(request)" >{{ request }}</span>
         </div>
       </div> 
@@ -390,7 +391,10 @@ import Swal from 'sweetalert2';
   padding: 5px;
   border-radius: 5px;
   text-decoration: underline;
-  z-index: 3;
+  z-index: 1000;
+  position: absolute;
+  font-size: 13px;
+  opacity: .8;
   /* box-sizing: border-box;
   -moz-box-sizing: border-box; */
 }

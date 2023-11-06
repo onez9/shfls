@@ -40,47 +40,44 @@ import { RouterLink, RouterView } from 'vue-router'
                   <!-- <li><router-link class="dropdown-item" to="/g/books">Книги</router-link></li> -->
                   <!-- <li><router-link class="dropdown-item" to="/g/works">Работа</router-link></li> -->
                   <!-- <li><router-link class="dropdown-item" to="/g/lang">Учебники</router-link></li> -->
-                  <li><router-link class="dropdown-item" to="/g/crypt">Шифрование</router-link></li>
+                  <li class=""><router-link class="dropdown-item" to="/g/crypt">Шифрование</router-link></li>
                   <!-- <li><router-link class="dropdown-item" to="/g/code">Программирование</router-link></li> -->
                   <!-- <li><router-link class="dropdown-item" to="/g/poligon">Полигон</router-link></li> -->
-                  <li><router-link class="dropdown-item" to="/g/chat">Чат</router-link></li>
-                  <li><router-link class="dropdown-item" to="/g/chemistry">Химия</router-link></li>
-                  <li><router-link class="dropdown-item" to="/g/settings">Настройки</router-link></li>
+                  <li class=""><router-link class="dropdown-item" to="/g/chat">Чат</router-link></li>
+                  <li class=""><router-link class="dropdown-item" to="/g/chemistry">Химия</router-link></li>
+                  <li class=""><router-link class="dropdown-item" to="/g/settings">Настройки</router-link></li>
 
                 </ul>
               </li>
 
 
-              <li class="nav-item">
+              <li class="nav-item" >
                 <router-link class="nav-link" to="/g/lang">Учебники</router-link>
               </li>
               <li class="nav-item">
                 <!-- <router-link class="nav-link" to="/g/lang">Учебники</router-link> -->
-                <li><router-link class="nav-link" to="/g/videos">Видео</router-link></li>
+                <router-link class="nav-link" to="/g/videos">Видео</router-link>
               </li>
   
-              <li>
+              <li class="nav-item">
                 <router-link to="/g/login" tag="button" class="nav-link">Войти</router-link>
               </li>
-              <li class=""><button class="nav-link" @click="logout1">Выйти</button></li>
-              <li class="">
+              <li class="nav-item">
+                <button class="nav-link" @click="logout1">Выйти</button>
+              </li>
+              
+              <li class="nav-item">
                 <router-link to="/g/signup" class="nav-link">Создать аккаунт</router-link>
               </li>
 
 
             </ul>
 
-
-
-            <div class="d-flex ">
-              <div class="input-group input-group-sm me-1">
-                <!-- <span class="input-group-text" id=""><i class="bi bi-search"></i></span> -->
-                <!-- <input type="text" placeholder="" class="form-control" v-on:input="searching" v-model="name"> -->
-                <!-- <button class="btn btn-sm btn-outline-danger" to="/g/login">Log in</button> -->
-
-              </div>
-
+            <div class="d-flex">
+              <input class="form-control me-2 p-0 ps-1 bg-selected" type="search" placeholder="Search" aria-label="Search" v-model="word">
+              <button class="btn btn-sm btn-outline-danger" type="submit">Search</button>
             </div>
+
 
           </div>
         </div>
@@ -88,16 +85,22 @@ import { RouterLink, RouterView } from 'vue-router'
     </div>
   </header>
   <main class="container-fluid">
-    <RouterView :wait="wait" :theme="dark" @updateParent="someFunc" />
+    <RouterView :wait="wait" :theme="dark" :word="word" @updateParent="someFunc" />
 
   </main>
 
   <footer class="mt-auto border-top ">
-    <div class="container">
+    <div class="container-fluid">
       <div class="row">
-        <div class="col">
-          <p class="text-center p-0 m-0">Version: {{ current_version }}</p>
+        <div class="col my-footer">
+          <div class="d-flex flex-column ">
+            <div class=""><u>Version:</u> {{ current_version }}</div>
+            <div class=""><u>Authors:</u> {{ authors }}</div>
+            <div class=""><u>Stackoverflow:</u> <a :href="stackoverflow">{{ stackoverflow }}</a></div>
+            <div class=""><u>Gitlab:</u> {{ gitlab }}</div>
+          </div>
         </div>
+        <div class="col"></div>
 
       </div>
 
@@ -107,9 +110,62 @@ import { RouterLink, RouterView } from 'vue-router'
 </template>
 
 <style scoped>
-.btn-sm:hover {
-  background-color: orange;
+
+main{
+  /* min-height: 1000px; */
 }
+.bg-selected {
+  background-color: black;
+}
+.bg-selected:focus {
+  background-color: black;
+}
+.my-footer {
+  font-size: 15px;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  color: rgb(131, 131, 131);
+}
+.names_services {
+  text-decoration: underline;
+}
+.btn-sm:hover {
+  background-color: rgb(67, 63, 56);
+}
+.btn-outline-danger {
+  border-color: rgb(0, 0, 0);
+}
+
+
+.navbr {
+  padding: 0 !important; 
+  height: 25px;
+  align-items: center;
+  align-content: center;
+}
+
+
+
+*:focus {
+  box-shadow: none !important;
+}
+
+.custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {
+  background-color: green!important;
+}
+
+
+/* .form-check-input .custom-checkbox .custom-control-input:checked:focus ~ .custom-control-label::before {
+  box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(0, 255, 0, 0.25)
+}
+.form-check-input .custom-checkbox .custom-control-input:focus ~ .custom-control-label::before {
+  box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(0, 0, 0, 0.25)
+}
+.form-check-input .custom-checkbox .custom-control-input:active ~ .custom-control-label::before {
+  background-color: #C8FFC8; 
+} */
+
+
+
 </style>
 
 
@@ -119,9 +175,14 @@ export default {
     return {
       wait: false,
       dark: false,
-      current_version: '3.0.1',
+      current_version: '3.4.5',
+      authors: 'Арамилев Захар',
+      stackoverflow: 'https://ru.stackoverflow.com/users/486286/onez9',
+      gitlab: 'https://gitlab.com/onez9',
       logout: false,
       color_header: '#ffffff',
+      scroll: 0,
+      word: '',
     }
   },
   watch: {
@@ -147,6 +208,16 @@ export default {
   },
 
   methods: {
+    async start() {
+      document.addEventListener('scroll', (event) => {
+        // if (window.scrollY ) {
+        console.log(window.scrollY)
+        this.scroll = window.scrollY
+        // window.scrollY %= 768
+
+        // }
+      })
+    },
     async someFunc(isDark) {
       this.dark = isDark
       console.log(isDark)

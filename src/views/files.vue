@@ -40,34 +40,49 @@ import Swal from 'sweetalert2';
           <button class="btn btn-sm btn-outline-danger mb-1 me-1" @click="show_info = !show_info">
             <i class="bi bi-list"></i>
           </button>
+          <button class="btn btn-sm btn-outline-danger mb-1 me-1" @click="show_debug_info =! show_debug_info">
+            <i class="bi bi-asterisk"></i>
+          </button>
           <!-- <button @click="send_on_download" class="btn btn-info mb-3">Стандартная папка</button> -->
         </div>
 
       </div>
 
       <!-- <table id="id_table" class="table text-nowrap table-borderless table-hover"> -->
+      <div v-if="show_debug_info" class="d-flex flex-column fixed-bottom" style="background-color: #111111; opacity: .9; font-size: 10px;">
+        <div>document.documentElement.scrollHeight: {{ scrollHeight }}</div>
+        <div>window.scrollY: {{ scrollY }}</div>
+        <div>document.documentElement.scrollTop: {{ scrollTop }}</div>
+        <div>window.innerHeight: {{ innerHeight }}</div>
+        <div>document.documentElement.clientHeight: {{ clientHeight }}</div>
+        <div>document.documentElement.clientWidth: {{ clientWidth }}</div>
+        <div>scrollHeight - scrollTop: {{ left }}</div>
+        <div>search: {{ search }}</div>
+      </div>
       <table id="id_table" class="table table-bordered table-hover">
         <thead v-if="show_info">
           <tr>
-            <td>name</td>
-            <td>size</td>
-            <td>mdate</td>
-            <td>mtime</td>
-            <td>options</td>
+            <td class="p-0"><button class="btn btn-outline-warning btn-sm"><i class="bi bi-filter-square"></i></button></td>
+            <td class="p-0"><button class="btn btn-outline-warning btn-sm"><i class="bi bi-filter-square"></i></button></td>
+            <td class="p-0"><button class="btn btn-outline-warning btn-sm"><i class="bi bi-filter-square"></i></button></td>
+            <td class="p-0"><button class="btn btn-outline-warning btn-sm"><i class="bi bi-filter-square"></i></button></td>
+            <td class="p-0"></td>
           </tr>
         </thead>
         <tbody>
           <template class="p-0 m-0" @click="activeElem = element" v-for="(item, index) in  array " :key="index">
+            
             <tr class="p-0 m-0">
-              <td @click="item.showmode = !item.showmode" class="align-middle text-break p-0 m-0">{{ item.name.slice(0, 40) }}</td>
-              <td v-if="show_info" class="align-middle text-break p-0 m-0">{{ parseInt(item.info.size / 1024) }} Kb</td>
-              <td v-if="show_info" class="align-middle text-break p-0 m-0">{{ new Date(item.info.mtime).toLocaleDateString() }}</td>
-              <td v-if="show_info" class="align-middle text-break p-0 m-0">{{ new Date(item.info.mtime).toLocaleTimeString() }}</td>
+              <td @click="item.showmode = !item.showmode" class="align-middle text-break p-0 m-0">{{ item.name }}</td>
+              <td v-if="show_info" class="align-middle px-1 p-0 m-0">{{ parseInt(item.info.size / 1024) }}Kb</td>
+              <td v-if="show_info" class="align-middle px-1 p-0 m-0">{{ new Date(item.info.mtime).toLocaleDateString() }}</td>
+              <td v-if="show_info" class="align-middle px-1 p-0 m-0">{{ new Date(item.info.mtime).toLocaleTimeString() }}</td>
 
               <td class="p-0">
                 <div class="d-flex justify-content-end p-0">
-                  <button @click="delete_file(item)" class="btn btn-sm btn-outline-info me-1 m-0"><i class="bi bi-recycle"></i></button>
-                  <button @click="download_file(item.name)" class="btn btn-sm btn-outline-danger m-0"><i class="bi bi-download"></i></button>
+                  <!-- <button @click="delete_file(item)" class="btn btn-sm btn-outline-info me-1 m-0"><i class="bi bi-recycle"></i></button> -->
+                  <button @click="delete_file(item)" class="btn btn-sm btn-outline-danger me-1 m-0"><i class="bi bi-trash"></i></button>
+                  <button @click="download_file(item.name)" class="btn btn-sm btn-outline-warning m-0"><i class="bi bi-download"></i></button>
                 
                 </div>
 
@@ -76,14 +91,16 @@ import Swal from 'sweetalert2';
 
             </tr>
             <tr v-if="item.showmode && ['png', 'jpg', 'jpeg', 'gif'].indexOf(item.name.split('.').reverse()[0]) > -1" class="bg-dark p-0">
-              <img loading="lazy" style="width: 100%;" class="rounded" :src="`/downloads/${item.name}`" alt="">
+              <img loading="lazy" style="width: 100%;" class="rounded blur" :src="`/downloads/${item.name}`" alt="">
             </tr>
           </template>
         </tbody>
       </table>
       <div class="d-flex justify-content-center">
         <p v-if=" array.length == 0 ">Файлов не обнаружено</p>
+
       </div>
+
 
 
     </div>
@@ -103,6 +120,22 @@ import Swal from 'sweetalert2';
   /* ackground-color:rgb(255, 0, 0); */
   color: #3b31c2;
 }
+
+
+.blur{
+  filter: blur(20px);
+  -webkit-filter: blur(30px);
+
+  /* Full height */
+  height: 100%;
+
+  /* Center and scale the image nicely */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+
 </style>
 
 <script>
@@ -120,7 +153,22 @@ export default {
       item1: true,
       proccess_value: 0,
       value: 1,
-      show_info: false
+      show_info: false,
+      num: 0,
+      count: 0,
+      currentPage: 0,
+      lastScrollTop: 0,
+      countItems: 20,
+      countPage: 0,
+      scrollHeight: 0,
+      scrollTop: 0,
+      scrollY: 0,
+      clientHeight: 0,
+      left: 0,
+      clientHeight: 0,
+      clientWidth: 0,
+      innerHeight: 0,
+      show_debug_info: false
     }
   },
   created() {
@@ -152,24 +200,78 @@ export default {
 
   },
   props: {
-
+    search: String
   },
   computed: {
 
   },
   async mounted() {
     console.log(this.color_header)
+
     await this.g()
     await this.start()
   },
   methods: {
     async start() {
       document.addEventListener('scroll', (event) => {
-        if (window.scrollY ) {
-          console.log(window.scrollY)
-          window.scrollY %= 768
+        // console.log(parseInt(window.scrollY))
+        // let pos1 = Math.ceil(window.scrollY)
+        // // console.log(pos1, this.num)
+        // if (window.scrollY>=this.num) {
+        //   // window.scrollY %= 768
+        //   // console.log('hello ', window.scrollY)
+        //   this.num += 668
+        //   this.count += 1
+
+        // } else if (this.num - window.scrollY >= 668) {
+        //   this.num -= 668
+        //   this.count -= 1
+        // }
+
+
+
+        // let st = window.scrollY || document.documentElement.scrollTop
+        // if (this.currentPage > 0) {
+        //   if (st > this.lastScrollTop) {
+        //     // if (event.originalEvent.wheelDelta >= 0) {
+        //     console.log('вниз');
+        //   } else {
+        //     console.log('вверх');
+        //   }
+        // }
+        // console.log(parseInt(this.lastScrollTop + document.documentElement.clientHeight))
+        // this.lastScrollTop = (st <= 0)? 0 : st;
+
+
+        this.scrollHeight = document.documentElement.scrollHeight;
+        
+        this.scrollTop = document.documentElement.scrollTop;
+        this.scrollY = window.scrollY;
+
+        this.clientHeight = document.documentElement.clientHeight;
+        this.innerHeight = window.innerHeight;
+        this.left = this.scrollHeight - Math.ceil(this.scrollTop);
+        this.clientWidth = document.documentElement.clientWidth;
+        // если конец страницы
+        // if(parseInt(document.documentElement.scrollHeight - document.documentElement.scrollTop) == document.documentElement.clientHeight) 
+        //   alert(parseInt(document.documentElement.scrollHeight - document.documentElement.scrollTop) == document.documentElement.clientHeight)
+        if (this.currentPage < this.countPage-1 && Math.abs(this.left - this.innerHeight) <= 1) {
+          this.currentPage +=1;
+          console.log('new page end: ', this.currentPage)
+          this.g(this.currentPage)
+
+
 
         }
+        // если начало
+        // if (this.currentPage>0 && document.documentElement.scrollTop == 0) {
+        //   this.currentPage--;
+        //   console.log('new page start: ', this.currentPage)
+        //   this.g(this.currentPage)
+        // }
+
+
+
       })
     },
     async show_all_pic() {
@@ -218,9 +320,11 @@ export default {
       console.log(reader.readAsArrayBuffer(file));
 
     },
-    async g() {
+    async g(currentPage=0, countItems=this.countItems) {
       let properties = {
         type: "file",
+        currentPage: currentPage,
+        count: countItems,
       }
       const response = await fetch('/files/g', {
         method: 'POST',
@@ -234,8 +338,10 @@ export default {
         // "mode": "cors"
       })
       this.result = await response.json()
-      this.array = this.result['items']
-
+      
+      this.array.push(...this.result['items'])
+      this.countPage = Math.ceil(this.result['total_files'] / countItems)
+      console.log('this.countPage: ', this.countPage)
       this.route = this.result['route']
     },
 

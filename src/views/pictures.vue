@@ -178,7 +178,7 @@ export default {
       let properties = {
         type: "image"
       }
-      const response = await fetch('/g', {
+      const response = await fetch('/files/g', {
         method: 'POST',
         credentials: 'include',
         headers: {

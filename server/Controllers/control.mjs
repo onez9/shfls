@@ -88,7 +88,13 @@ router.post('/', (req, res) => {
 
 
 
-
+router.get('/ip', (req, res) => {
+	console.log(req.headers);
+	// req.headers['remoteFamily'] = req.socket.remoteFamily;
+	// req.headers['remoteAddress'] = req.socket.remoteAddress;
+	// req.headers['remotePort'] = req.socket.remotePort;
+	res.json(req.headers)
+})
 
 
 export default router

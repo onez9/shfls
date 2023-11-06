@@ -38,6 +38,7 @@
     "iconv": "^3.0.1",
     "js-sha256": "^0.10.1",
     "jsdom": "^22.0.0",
+    "mathjax": "^3.2.2",
     "node-rsa": "^1.1.1",
     "nodemon": "^2.0.22",
     "progress-estimator": "^0.3.1",

@@ -42,28 +42,28 @@ router.post('/g/words', (req, res) => {
 		let m2 = req.body.sort_mode.m2
 
 		let date_from = req.body.filter_mode.date_from
-		if (date_from !== undefined) {
-			date_from = date_from.split('-')
-			date_from = date_from[2]+'.'+date_from[1]+'.'+date_from[0]
-		}
+		// if (date_from !== undefined) {
+		// 	date_from = date_from.split('-')
+		// 	date_from = date_from[2]+'.'+date_from[1]+'.'+date_from[0]
+		// }
 
 		let time_from = req.body.filter_mode.time_from
 
 		let date_to = req.body.filter_mode.date_to
-		if (date_to !== undefined) {
-			date_to = date_to.split('-')
-			date_to = date_to[2]+'.'+date_to[1]+'.'+date_to[0]
-		}
+		// if (date_to !== undefined) {
+		// 	date_to = date_to.split('-')
+		// 	date_to = date_to[2]+'.'+date_to[1]+'.'+date_to[0]
+		// }
 
 		let time_to = req.body.filter_mode.time_to
 
-		let dict = new Map();
-		dict['en']=1;
-		dict['jp']=2;
-		dict['ru']=3;
-		dict['kr']=4;
-		dict['cn']=5;
-		dict['de']=6;
+		// let dict = new Map();
+		// dict['en']=1;
+		// dict['jp']=2;
+		// dict['ru']=3;
+		// dict['kr']=4;
+		// dict['cn']=5;
+		// dict['de']=6;
 
 
 		const db = new sqlite.Database('db.sqlite3')
@@ -74,14 +74,14 @@ router.post('/g/words', (req, res) => {
 
 		db.serialize(() => {
 			if (date_from == undefined && date_to ==undefined) {
-				sql = 'select count(*) as l from words where dictionary_id = ?;'
-				params = [dict[lang]]
+				sql = 'select count(*) as l from words where language_id = ?;'
+				params = [lang]
 			} else if (date_from != undefined && date_to == undefined)  {
-				sql = 'select count(*) as l from words where dictionary_id = ? and date=?;'
-				params = [dict[lang], date_from]
+				sql = 'select count(*) as l from words where language_id = ? and date=?;'
+				params = [lang, date_from]
 			} else if (date_from != undefined && date_to != undefined) {
-				sql = 'select count(*) as l from words where dictionary_id = ? and date between ? and ?;'
-				params = [dict[lang], date_from, date_to]
+				sql = 'select count(*) as l from words where language_id = ? and date between ? and ?;'
+				params = [lang, date_from, date_to]
 			}
 
 			let stmt = db.prepare(sql, err => console.log(err))
@@ -107,22 +107,22 @@ router.post('/g/words', (req, res) => {
 			if (!m2) {
 				if (date_from == undefined && date_to==undefined) {
 					console.log('выполняется дефолтный сценарий')
-					sql = `select * from words where dictionary_id=? order by ${column_name} ${order}, lower(${column_name}) limit ?, ?;`;
-					params = [dict[lang], fromIndex, limit]
+					sql = `select * from words where language_id=? order by ${column_name} ${order}, lower(${column_name}) limit ?, ?;`;
+					params = [lang, fromIndex, limit]
 
 				} else if (date_from != undefined && date_to == undefined) {
-					sql = `select * from words where dictionary_id=? and date=? order by ${column_name} ${order}, lower(${column_name}) limit ?, ?;`;
+					sql = `select * from words where language_id=? and date=? order by ${column_name} ${order}, lower(${column_name}) limit ?, ?;`;
 					// console.info('выполнилось с одной датой')
 					console.log('выполняется 2 сценарий')
-					params = [dict[lang], date_from, fromIndex, limit];
+					params = [lang, date_from, fromIndex, limit];
 				
 				} else if (date_from != undefined && date_to != undefined)  {
 					console.info(req.body)
-					sql = `select * from words where dictionary_id=? and date between ? and ? order by ${column_name} ${order} limit ?, ?;`;
+					sql = `select * from words where language_id=? and date between ? and ? order by ${column_name} ${order} limit ?, ?;`;
 					// sql = 'select * from words;';
 					// console.info('выполнилось с двумя датами')
 					console.log('Выполняется 3 сценарий, 57964560;')
-					params = [dict[lang], date_from, date_to, fromIndex, limit]
+					params = [lang, date_from, date_to, fromIndex, limit]
 					// params = []
 					console.log(params)
 					console.log(sql)
@@ -133,19 +133,19 @@ router.post('/g/words', (req, res) => {
 			} else {
 				if (date_from == undefined && date_to==undefined) {
 					console.log('выполняется дефолтный сценарий*')
-					sql = `select * from words where dictionary_id=? order by date ${date_order}, time ${time_order} limit ?, ?;`
-					params = [dict[lang], fromIndex, limit]
+					sql = `select * from words where language_id=? order by date ${date_order}, time ${time_order} limit ?, ?;`
+					params = [lang, fromIndex, limit]
 				} else if (date_from != undefined && date_to == undefined) {
-					sql = `select * from words where dictionary_id=? and date=? order by date ${date_order}, time ${time_order} limit ?, ?;`;
+					sql = `select * from words where language_id=? and date=? order by date ${date_order}, time ${time_order} limit ?, ?;`;
 					// console.info('выполнилось с одной датой')
 					console.log('выполняется 2 сценарий*')
-					params = [dict[lang], date_from, fromIndex, limit];
+					params = [lang, date_from, fromIndex, limit];
 				
 				} else if (date_from != undefined && date_to != undefined) {
-					sql = `select * from words where dictionary_id=? and date between ? and ? order by ${column_name} ${order}, lower(${column_name}) limit ?, ?;`;
+					sql = `select * from words where language_id=? and date between ? and ? order by ${column_name} ${order}, lower(${column_name}) limit ?, ?;`;
 					// console.info('выполнилось с двумя датами')
 					console.log('выполняется 3 сценарий*')
-					params = [dict[lang], date_from, date_to, fromIndex, limit]
+					params = [lang, date_from, date_to, fromIndex, limit]
 				
 				}
 
@@ -211,9 +211,9 @@ router.post('/g/words', (req, res) => {
 router.post('/g/name-book', (req, res) => {
     const db = new sqlite.Database('db.sqlite3')
 
-    let dict = {}
-    let sql = "SELECT name, code FROM languages"
-
+    // let dict = {}
+    let sql = "SELECT * FROM languages"
+	console.log('/g/name-book')
     //db.serialize(() => {
     db.all(sql, [], (err, rows) => {
         try {
@@ -222,11 +222,11 @@ router.post('/g/name-book', (req, res) => {
             }
             
             console.log(rows)
-            rows.forEach( row => {
-                dict[row.code] = row.name
-            })
+            // rows.forEach( row => {
+            //     dict[row.code] = row.name
+            // })
 
-            res.json(dict)
+            res.json(rows)
 
         } catch (e) {
             console.info('Сработал catch (при запросе к /books/g/name-book) ошибка ниже')
@@ -249,40 +249,40 @@ router.post('/c/word', (req, res) => {
     const db = new sqlite.Database('db.sqlite3')
     console.info('received data: ', recieved_data)
 
-    let dictionary_id;
-    switch (recieved_data['name_lang']) {
-        case 'en':
-            dictionary_id = 1;
-            break;
-        case 'jp':
-            dictionary_id = 2;
-            break;
+    // let dictionary_id;
+    // switch (recieved_data['name_lang']) {
+    //     case 'en':
+    //         dictionary_id = 1;
+    //         break;
+    //     case 'jp':
+    //         dictionary_id = 2;
+    //         break;
     
-        case 'ru':
-            dictionary_id = 3;
-            break;
+    //     case 'ru':
+    //         dictionary_id = 3;
+    //         break;
     
-        case 'kr':
-            dictionary_id = 4;
-            break;
+    //     case 'kr':
+    //         dictionary_id = 4;
+    //         break;
     
-        case 'cn':
-            dictionary_id = 5;
-            break;
-        case 'de':
-            dictionary_id = 6;
-            break;
-        default:
-            break;
-    }
+    //     case 'cn':
+    //         dictionary_id = 5;
+    //         break;
+    //     case 'de':
+    //         dictionary_id = 6;
+    //         break;
+    //     default:
+    //         break;
+    // }
 
     try {
 
 
         if (true) {
 
-            let sql = "insert into words ('dictionary_id', 'one', 'two', 'three', 'date', 'time') VALUES (?, ?, ?, ?, ?, ?)"
-            let params = [dictionary_id, recieved_data['one'], recieved_data['two'], recieved_data['three'], recieved_data['date'], recieved_data['time']]
+            let sql = "insert into words ('language_id', 'one', 'two', 'three', 'date', 'time') VALUES (?, ?, ?, ?, ?, ?)"
+            let params = [recieved_data['name_lang'], recieved_data['one'], recieved_data['two'], recieved_data['three'], recieved_data['date'], recieved_data['time']]
             db.serialize(() => {
                 const stmt = db.prepare(sql);
                 stmt.run(params);
@@ -335,26 +335,26 @@ router.post('/g/all_words', (req, res) => {
 	try {
 		let lang = req.body.lang
 		console.log(req.body)
-		let dict = new Map();
-		dict['en']=1;
-		dict['jp']=2;
-		dict['ru']=3;
-		dict['kr']=4;
-		dict['cn']=5;
-		dict['de']=6;
+		// let dict = new Map();
+		// dict['en']=1;
+		// dict['jp']=2;
+		// dict['ru']=3;
+		// dict['kr']=4;
+		// dict['cn']=5;
+		// dict['de']=6;
 		const db = new sqlite.Database('db.sqlite3')
 		let sql;
 		let count;
 		db.serialize(() => {
-			sql = 'select id, one||" "||two||" "||three as word from words where dictionary_id=?';
+			sql = 'select id, one||" "||two||" "||three as word from words where language_id=?';
 
-			db.all(sql, [dict[lang]], (err, rows) => {
+			db.all(sql, [lang], (err, rows) => {
 				try {
 					if (err) throw err;
 					res.json(rows.map(item => [item['id'], item['word']]))
 	
 				} catch (e) {
-					console.info('Сработал catch (при запросе к /books/s/all_words (запрос словарей)) ошибка ниже')
+					console.info('Сработал catch (при запросе к /books/g/all_words (запрос словарей)) ошибка ниже')
 					console.log(e);
 	
 				}
@@ -374,15 +374,15 @@ router.post('/u/word', (req, res) => {
 		const db = new sqlite.Database('db.sqlite3')
 		const data = req.body // хранит обновляемый объект
 		console.log('Тут что надо обновить в бд: ', req.body)
-		let sql = "update words set one=?, two=?, three=?, date=?, time=? where one=? and two=? and three=? and date=? and time=? and dictionary_id=?"
+		let sql = "update words set one=?, two=?, three=?, date=?, time=? where one=? and two=? and three=? and date=? and time=? and language_id=?"
 		
-		let dict = new Map();
-		dict['en']=1;
-		dict['jp']=2;
-		dict['ru']=3;
-		dict['kr']=4;
-		dict['cn']=5;
-		dict['de']=6;
+		// let dict = new Map();
+		// dict['en']=1;
+		// dict['jp']=2;
+		// dict['ru']=3;
+		// dict['kr']=4;
+		// dict['cn']=5;
+		// dict['de']=6;
 		
 		
 		
@@ -400,7 +400,7 @@ router.post('/u/word', (req, res) => {
 				data['three_bak'], 
 				data['date_bak'],
 				data['time_bak'],
-				dict[data['lang']]
+				data['lang']
 			]
 			stmt.run(params);
 			//}
@@ -425,13 +425,13 @@ router.post('/s/word', (req, res) => {
 
 		console.log(req.body)
 		
-		let dict = new Map();
-		dict['en']=1;
-		dict['jp']=2;
-		dict['ru']=3;
-		dict['kr']=4;
-		dict['cn']=5;
-		dict['de']=6;
+		// let dict = new Map();
+		// dict['en']=1;
+		// dict['jp']=2;
+		// dict['ru']=3;
+		// dict['kr']=4;
+		// dict['cn']=5;
+		// dict['de']=6;
 
 		const db = new sqlite.Database('db.sqlite3')
 		let sql;
@@ -439,9 +439,9 @@ router.post('/s/word', (req, res) => {
 		db.serialize(() => {
 
 			let placeHolders = new Array(arr.length).fill('?').join(',');
-			sql = `select * from words where dictionary_id=? and id in (${placeHolders})`;
+			sql = `select * from words where language_id=? and id in (${placeHolders})`;
 
-			db.all(sql, [dict[lang], ...arr], (err, rows) => {
+			db.all(sql, [lang, ...arr], (err, rows) => {
 				try {
 					if (err) throw err;
 					res.json(rows)
@@ -465,6 +465,7 @@ router.post('/s/word', (req, res) => {
 })
 router.delete('/d/word', (req, res) => {
 	try {
+		console.log('Выполняю /d/word')
 		console.info(req.body)
 		const db = new sqlite.Database('db.sqlite3')
 		const bd = req.body.value
@@ -472,16 +473,18 @@ router.delete('/d/word', (req, res) => {
 		const one = bd.one
 		const two = bd.two
 		const three = bd.three
-		const dictionary_id = bd.dictionary_id
-		console.log(id, one, two, three, dictionary_id)
+		const language_id = bd.language_id || bd.lang
+		console.log(id, one, two, three, language_id)
 
 		db.serialize(() => {
-			let sql = 'delete from words where id=? or dictionary_id=? and one=? and two=? and three=?;'
+			let sql = 'delete from words where id=? or language_id=? and one=? and two=? and three=?;'
 			let stmt = db.prepare(sql)
-			let params = [id, dictionary_id, one, two, three]
+			let params = [id, language_id, one, two, three]
 			stmt.run(params, (err) => {
-				if (err) console.error(err)
-				else {
+				if (err) {
+					console.error(err)
+				
+				} else {
 					res.json({answer: 'success'})
 				}
 			})
@@ -505,16 +508,16 @@ router.post('/c/rule', (req, res) => {
 		let lang = req.body.lang
 		let time = req.body.time
 		let date = req.body.date
-		let dict = new Map();
+		// let dict = new Map();
 
-		dict['en']=1;
-		dict['jp']=2;
-		dict['ru']=3;
-		dict['kr']=4;
-		dict['cn']=5;
-		dict['de']=6;
+		// dict['en']=1;
+		// dict['jp']=2;
+		// dict['ru']=3;
+		// dict['kr']=4;
+		// dict['cn']=5;
+		// dict['de']=6;
 
-		let language_id = dict[lang]
+		let language_id = lang
 
         if (true) {
 			const db = new sqlite.Database('db.sqlite3')
@@ -550,16 +553,16 @@ router.post('/c/phrase', (req, res) => {
 		let lang = req.body.lang
 		let time = req.body.time
 		let date = req.body.date
-		let dict = new Map();
+		// let dict = new Map();
 
-		dict['en']=1;
-		dict['jp']=2;
-		dict['ru']=3;
-		dict['kr']=4;
-		dict['cn']=5;
-		dict['de']=6;
+		// dict['en']=1;
+		// dict['jp']=2;
+		// dict['ru']=3;
+		// dict['kr']=4;
+		// dict['cn']=5;
+		// dict['de']=6;
 
-		let language_id = dict[lang]
+		let language_id = lang
 
         if (true) {
 			const db = new sqlite.Database('db.sqlite3')
@@ -588,19 +591,19 @@ router.post('/g/phrase', (req, res) => {
 		let lang = req.body.lang
 		console.log('это язык: ', req.body.lang)
 
-		let dict = new Map();
-		dict['en']=1;
-		dict['jp']=2;
-		dict['ru']=3;
-		dict['kr']=4;
-		dict['cn']=5;
-		dict['de']=6;
+		// let dict = new Map();
+		// dict['en']=1;
+		// dict['jp']=2;
+		// dict['ru']=3;
+		// dict['kr']=4;
+		// dict['cn']=5;
+		// dict['de']=6;
 
 		const db = new sqlite.Database('db.sqlite3')
 		let sql;
 
 		sql = 'select one, three, time, date from phraseological_unit where language_id=?';
-		db.all(sql, [dict[lang]], (err, rows) => {
+		db.all(sql, [lang], (err, rows) => {
 			try {
 				if (err) {
 					throw err;
@@ -635,16 +638,16 @@ router.post('/c/group', (req, res) => {
 		let lang = req.body.lang
 		let time = req.body.time
 		let date = req.body.date
-		let dict = new Map();
+		// let dict = new Map();
 
-		dict['en']=1;
-		dict['jp']=2;
-		dict['ru']=3;
-		dict['kr']=4;
-		dict['cn']=5;
-		dict['de']=6;
+		// dict['en']=1;
+		// dict['jp']=2;
+		// dict['ru']=3;
+		// dict['kr']=4;
+		// dict['cn']=5;
+		// dict['de']=6;
 
-		let language_id = dict[lang]
+		let language_id = lang
 
         if (true) {
 			const db = new sqlite.Database('db.sqlite3')
@@ -802,19 +805,19 @@ router.post('/g/rule', (req, res) => {
 		let lang = req.body.lang
 		console.log('это язык: ', req.body.lang)
 
-		let dict = new Map();
-		dict['en']=1;
-		dict['jp']=2;
-		dict['ru']=3;
-		dict['kr']=4;
-		dict['cn']=5;
-		dict['de']=6;
+		// let dict = new Map();
+		// dict['en']=1;
+		// dict['jp']=2;
+		// dict['ru']=3;
+		// dict['kr']=4;
+		// dict['cn']=5;
+		// dict['de']=6;
 
 		const db = new sqlite.Database('db.sqlite3')
 		let sql;
 
 		sql = 'select one, three, time, date from grammar where language_id=?';
-		db.all(sql, [dict[lang]], (err, rows) => {
+		db.all(sql, [lang], (err, rows) => {
 			try {
 				if (err) {
 					throw err;
@@ -883,9 +886,6 @@ router.post('/g/w/group', (req, res) => {
 		console.info('I\'m running eneway')
 	}
 })
-
-
-
 router.delete('/d/group', (req, res) => {
     try {
         console.log('/group', req.body)
@@ -927,16 +927,14 @@ router.delete('/d/group', (req, res) => {
 
 
 })
-
 router.post('/g/collection', (req, res) => {
 	try {
 		const db = new sqlite.Database('db.sqlite3')
 		console.info(req.body)
 		db.serialize(()=>{
 			try {
-				let sql = `select w.date from languages l 
-				inner join dictionary d on l.id=d.dictionary_id 
-				inner join words w on w.dictionary_id=d.dictionary_id where code=? group by w.date;`
+				let sql = `select date, count(date) as count from words
+				where language_id = ? group by date;`
 
 				db.all(sql, [req.body.lang], (err, rows) => {
 					try {
@@ -956,18 +954,23 @@ router.post('/g/collection', (req, res) => {
 
 	}
 })
-router.post('/c/dictionry', (req, res) => {
+router.post('/c/dictionary', (req, res) => {
 	try {
+
 		const db = new sqlite.Database('db.sqlite3')
 		console.info(req.body)
 		db.serialize(() => {
 			try {
-				let sql = `insert into`
+				let sql = `insert into languages (name) values (?);`
 
-				db.all(sql, [req.body.lang], (err, rows) => {
+				db.run(sql, [req.body.name], (err) => {
 					try {
-						console.log(rows)
-						res.json(rows)
+						if (err) {
+							console.log(err)
+							res.json({answer: 'err'})
+						}
+						else res.json({answer: 'ok'})
+
 					} catch (e) {
 						console.log(err)
 						console.log(e)
