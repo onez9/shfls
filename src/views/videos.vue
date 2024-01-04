@@ -258,21 +258,21 @@ import Swal from 'sweetalert2';
         <!-- <button class="btn btn-sm btn-outline-info mt-1">Добавить</button> -->
 
         <button 
-          class="btn btn-sm btn-info form-control mt-1" 
+          class="btn btn-sm btn-info form-control mt-1 d-flex justify-content-start" 
           @click="show_poster_func"
           title="Показывает\Скрывает постеры на видео">
           <i class="bi bi-emoji-heart-eyes"></i>Показать/Скрыть постеры к видео
         </button>
         <button 
           @click="clear_history_search" 
-          class="btn btn-sm btn-info form-control mt-1" 
+          class="btn btn-sm btn-info form-control mt-1 d-flex justify-content-start" 
           id=""
           title="Очистить историю поиска">
           <i class="bi bi-radioactive"></i>Очистить историю поиска
         </button>
         <button 
           @click="show_hide_tags" 
-          class="btn btn-sm btn-info form-control mt-1" 
+          class="btn btn-sm btn-info form-control mt-1 d-flex justify-content-start" 
           id=""
           title="Скрыть/показать теги">
           <i class="bi bi-radioactive"></i> Показать/Скрыть теги
