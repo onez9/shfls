@@ -9,7 +9,7 @@ import Swal from 'sweetalert2';
 </script>
 <template>
 
-
+  <!-- {{ selected_id }} -->
   <div class="row">
 
 
@@ -123,7 +123,7 @@ import Swal from 'sweetalert2';
         <label 
           @click="new_word_func" 
           class="d-flex justify-content-start">
-            Слова
+            Открыть слова
 
         </label>
 
@@ -136,7 +136,7 @@ import Swal from 'sweetalert2';
       </div>
 
       <div :class="{'border rounded px-1 mt-1 p-0': true, 'border-my': (add_phrase_mode)}">
-        <label @click="add_phrase_func" class="d-flex justify-content-start">Фразеологизмы</label>
+        <label @click="add_phrase_func" class="d-flex justify-content-start">Открыть фразеологизмы</label>
         <!-- <input type="text" class="form-control mb-1" title="Название" placeholder="Название"> -->
         <textarea v-if="add_phrase_mode" v-model="fi_phrase" type="text" class="form-control mb-1" title="Описание" placeholder="Иностранный"></textarea>
         <textarea v-if="add_phrase_mode" v-model="fo_phrase" type="text" class="form-control mb-1" title="Описание" placeholder="Русский"></textarea>
@@ -156,10 +156,10 @@ import Swal from 'sweetalert2';
       
           <div v-for="(item, index) in groups" :key="item" class="border rounded p-0 mb-1 d-flex align-items-center">
             <!-- <div class="me-auto ps-2"></div> -->
-      
+            <!-- {{ item }} -->
             <button @click="get_values_from_group(item)" class="btn btn-sm btn-outline-danger me-1 w-100">{{ item['name'] }}</button>
             <button @click="add_to_group" class="btn btn-sm btn-outline-danger me-1"><i class="bi bi-save"></i></button>
-            <button @click="" class="btn btn-sm btn-outline-danger me-1"><i class="bi bi-pen"></i></button>
+            <!-- <button @click="" class="btn btn-sm btn-outline-danger me-1"><i class="bi bi-pen"></i></button> -->
             <button @click="selGroup(item)" class="btn btn-sm btn-outline-danger me-1"><i class="bi bi-plus"></i></button>
             <button @click="delGroup(item)" class="btn btn-sm btn-outline-danger"><i class="bi bi-x"></i></button>
           </div>
@@ -206,7 +206,7 @@ import Swal from 'sweetalert2';
           </div>
         </div>
       </div>
-      <div class="border rounded px-1 mt-1 p-0 mb-1">
+      <div class="border rounded px-1 mt-1 p-0 mb-1" v-if="click_one_tmp[0] || click_one_tmp[1] || click_one_tmp[2]">
         <p class="my-0 py-0" style="font-size: 30px;">{{ click_one_tmp[0] }}</p>
         <p class="my-0 py-0">{{ click_one_tmp[1] }}</p>
         <p class="my-0 py-0"
@@ -309,11 +309,11 @@ import Swal from 'sweetalert2';
         </thead>
         <tbody class="">
           <tr v-for="(value, index) of resu">
-
+            <!-- {{ value }} -->
             <td :class="{'p-0 align-middle': true, 'bg-selected': value['edit']}" style="width: 1%;">
               <div class="d-flex justify-content-center">
                 <div v-if="check_edit_record"  class="form-check ">
-                  <input class="form-check-input " type="checkbox" v-model="value['select']" >
+                  <input class="form-check-input " type="checkbox" v-model="value['select']" @change="add_selected(value.id)">
                 </div>
                 <label v-else class="badge w-100"> {{ index + 1 }} </label>
               </div>
@@ -565,6 +565,7 @@ tr, td, tbody {
 export default {
   data() {
     return {
+      selected_id: [],
       one_mode: 0,
       two_mode: 0, 
       three_mode: 0,
@@ -825,6 +826,9 @@ export default {
   components: {
   },
   methods: {
+    async add_selected(id) {
+      this.selected_id.push(id)
+    },
     async click_one(value) {
       value.color =! value.color;
       if (value.color) {
@@ -1000,7 +1004,9 @@ export default {
       // await this.requestSortLst()
     },
     async delGroup(item) {
+      console.log('Удаляю группу 23482347823849234')
       console.log(item)
+      // item.index_lang=this.name_lang
       axios({
         method: 'DELETE',
         url: '/books/d/group',
@@ -1110,9 +1116,17 @@ export default {
           "mode":"cors"
         })
 
-        this.groups.unshift(obj)
+
         let result = await response.json()
+        if(result.answer=='success'){
+          this.groups.unshift(obj)
+        }else if(result.answer=='fall'){
+          alert('Имя занято')
+        }
+
+
         this.name_group = ""
+
         console.log(`Result creating group: ${JSON.stringify(result)}`)
         
         await this.submitData1() // смена фокуса
@@ -1239,6 +1253,7 @@ export default {
       this.tablo_result = this.resu.length
     },
     async get_groups() {
+      console.log('Загрузка всех всех всех групп')
       const response = await fetch('/books/g/group', {
         method: 'POST',
         headers: {
@@ -1254,6 +1269,7 @@ export default {
       let result = await response.json()
       //console.log(result)
       this.groups = result
+      console.log('Список загруженных групп: ', this.groups)
 
     },
     async get_phrase() {
@@ -1643,6 +1659,7 @@ export default {
       if (nlm==1) {
         this.currentPage = 0
         this.create_rule_mode = false
+        this.click_one_tmp={}
         await this.downl_search()
       }
       console.info('lang_code: ', lang_code)

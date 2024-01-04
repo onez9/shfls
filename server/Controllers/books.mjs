@@ -653,26 +653,43 @@ router.post('/c/group', (req, res) => {
 			const db = new sqlite.Database('db.sqlite3')
             let sql = "insert into groups ('language_id', 'name', 'date', 'time') VALUES (?, ?, ?, ?);"
             let params = [language_id, name, date, time]
-            db.serialize(() => {
-				console.log('Идёт запись данных (Создание группы):')
-                const stmt = db.prepare(sql);
-                stmt.run(params);
-                stmt.finalize();
-            
-            });
+
+			db.serialize(() => {
+				try {
+					console.log('Идёт запись данных (Создание группы):')
+					const stmt = db.prepare(sql);
+					stmt.run(params, err=>{
+						if(err){
+							console.log(err)
+							res.json({answer: 'fall'})
+						}else{
+							console.log('запись выполнена успешно')
+							res.json({answer: 'success'})
+						}
+					});
+					// stmt.run(params, err=>console.log(err)); // some work success
+					stmt.finalize();
+				} catch (e) {
+					// 
+					console.info('Такое имя уже есть. Измени имя.')
+					console.error(e)
+				}
+			
+			});
 			db.close()
-			res.json({answer: 'success'})
+			// res.json({answer: 'success'})
+
 		} else {
 			res.json({answer: 'failed проводится тестирование'})
 		}
-
+		console.log('882342348923423423423428325483495')
 	} catch (e) {
 		console.error('Произошла предвиденная ошибка (её описание ниже): ')
 		console.log(e)
 	}
 })
 router.post('/g/group', (req, res) => {
-	//console.log('Создание группы')
+	console.log('Идёт получение групп. Проявите терпение')
 	try {
 		//console.log('Привет Здаров! я тут /get_group')
 		//console.info(req.body)
@@ -680,16 +697,16 @@ router.post('/g/group', (req, res) => {
 		let lang = req.body.lang
 		// let time = req.body.time
 		// let date = req.body.date
-		let dict = new Map();
+		// let dict = new Map();
+		console.log('req.body: ', req.body)
+		// dict['en']=1;
+		// dict['jp']=2;
+		// dict['ru']=3;
+		// dict['kr']=4;
+		// dict['cn']=5;
+		// dict['de']=6;
 
-		dict['en']=1;
-		dict['jp']=2;
-		dict['ru']=3;
-		dict['kr']=4;
-		dict['cn']=5;
-		dict['de']=6;
-
-		let language_id = dict[lang]
+		let language_id = lang
 		//console.info('lang:', language_id)
         if (true) {
 
@@ -767,7 +784,7 @@ router.post('/a/w/group', (req, res) => {
             db.serialize(() => {
 				try {
 					let params;
-					const stmt = db.prepare(sql);
+					const stmt = db.prepare(sql, err=>console.log(err));
 					for (const word_id of items) {
 						params = [word_id, group_id]
 
@@ -893,20 +910,25 @@ router.delete('/d/group', (req, res) => {
         const name = req.body.name
         const time = req.body.time
         const date = req.body.date
-        const code = req.body.lang
+        const lang_index = req.body.lang
 
 
         const db = new sqlite.Database('db.sqlite3')
-        let sql = 'delete from groups where id=? or name=? and time=? and date=? and language_id in (select id from languages l where code=?)'
-        let params = [id, name, time, date, code]
+        let sql = 'delete from groups where id=? or name=? and time=? and date=? and language_id=?'
+        let params = [id, name, time, date, lang_index]
 
 
         db.serialize(() => {
-            console.log('Удаление данных (Удаляем группу):')
-            const stmt = db.prepare(sql);
-            stmt.run(params);
-            stmt.finalize();
-            res.json({result: 'success'})
+			try {
+				console.log('Удаление данных (Удаляем группу):')
+				const stmt = db.prepare(sql,err=>console.log(err));
+				stmt.run(params, err=>console.log(err));
+				stmt.finalize();
+				res.json({result: 'success'})
+
+			}catch(e){
+				console.error(e)
+			}
         });
 
         db.close()

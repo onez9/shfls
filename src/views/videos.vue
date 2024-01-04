@@ -278,7 +278,7 @@ import Swal from 'sweetalert2';
           <i class="bi bi-radioactive"></i> Показать/Скрыть теги
         </button>
 
-
+        
       </div>
 
 
@@ -779,7 +779,7 @@ export default {
       } else {
         console.log('Обрыв соединения'); // например, "убит" процесс сервера
       }
-      console.log('Код: ' + event.code + ' причина: ' + event.reason);
+      console.log('Код: ' + event.code + ' причина: ' + event.reason)
     };
 
   },
@@ -802,6 +802,7 @@ export default {
     },
     async select_folder() {
       this.current_folder=this.selected_folder
+      this.currentPage=0
       await this.g(true)
       await this.g()
     },
