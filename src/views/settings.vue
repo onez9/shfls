@@ -22,6 +22,33 @@ import HighLight from "vue3-highlight-component";
           <input v-model="color_header" id="color_header" type="color" class="">
           
         </div>
+
+
+        <button 
+          class="my-btn"
+          @click="upload_settings">Загрузить настройки на сервер
+        </button>
+
+        <button 
+          class="my-btn"
+          @click="download_settings">Загрузить настройки с сервера
+        </button>
+
+        <button 
+          class="my-btn"
+          @click="change_container_mode">Переключить режим просмотра
+        </button>
+        <button 
+          class="my-btn"
+          @click="toggle_random_words">
+          Выключить/Включить случайные слова
+        </button>
+
+
+
+
+        <button @click="apply_settings(value)" v-for="(value, index) in settings">{{ value['cash'] }}</button>
+
         <div class="form-check form-switch mt-2">
           <input @click="change_theme" v-model="theme_current" class="form-check-input form-control" type="checkbox" role="switch"
             id="flexSwitchCheckDefault">
@@ -103,10 +130,19 @@ import HighLight from "vue3-highlight-component";
 
 
 <style scoped>
- .style_button {
+.style_button {
   text-align: left;
- }
+}
 
+.my-btn {
+  width: 100%;
+  margin-top: 3px;
+  border-radius: 10px;
+  border: 2px solid black;
+}
+.my-btn:hover {
+  background-color: orangered;
+}
 
 </style>
 
@@ -150,7 +186,10 @@ export default {
       answer: '',
       sourcecode: 'const str = "This sourcecode will update dynamically"',
       code: `const hello = 'world'`,
-      color_header: '#ffffff'
+      color_header: '#ffffff',
+      settings: [],
+      mode_container: false,
+      run_interval_mode: false,
 
     }
   },
@@ -193,6 +232,69 @@ export default {
   },
 
   methods: {
+    async apply_settings(value) {
+      console.log(123123123, value['cash'])
+      window.localStorage.setItem('tags', value['cash'])
+    },
+    async download_settings() {
+      console.log(window.localStorage.getItem('user_info'))
+      const user_info = JSON.parse(window.localStorage.getItem('user_info'));
+      const properties = {
+        id: user_info.id,
+        login: user_info.login,
+        email: user_info.email,
+        phone: user_info.phone,
+        tags: JSON.parse(window.localStorage.getItem('tags'))
+      }
+      axios
+      .post('/control/download/settings', {
+        Headers: {
+          'Authorization': window.localStorage.getItem('jwt'),
+        },        
+        data: {
+          ...properties
+        }
+      })
+      .then(response => {
+        console.log(response.data);
+        this.settings = response.data;
+      })
+      .catch(error => {
+        console.log(error)
+      })
+      .finally(() => {
+        console.log('finally!')
+      })
+    },
+    async upload_settings() {
+      console.log(window.localStorage.getItem('user_info'))
+      const user_info = JSON.parse(window.localStorage.getItem('user_info'));
+      const properties = {
+        id: user_info.id,
+        login: user_info.login,
+        email: user_info.email,
+        phone: user_info.phone,
+        tags: JSON.parse(window.localStorage.getItem('tags'))
+      }
+      axios
+      .post('/control/upload/settings', {
+        Headers: {
+          'Authorization': window.localStorage.getItem('jwt'),
+        },        
+        data: {
+          ...properties
+        }
+      })
+      .then(response => {
+        console.log(response);
+      })
+      .catch(error => {
+        console.log(error)
+      })
+      .finally(() => {
+        console.log('finally!')
+      })
+    },
     async get_test() {
       // await fetch('/control/ip', {
       //   headers: {
@@ -204,7 +306,6 @@ export default {
       // window.location.href = '/control/ip'
       // console.info('Я тут: ', await response.json())
     },
-
     async run(namec) {
       const properties = {
         name: namec
@@ -231,14 +332,27 @@ export default {
       });
     },
     async change_theme() {
-      // alert('hello')
-      // this.theme = (this.value===true)? 'dark' : 'white';
-      // alert(v)
-      // this.value=!this.value
-      // alert(this.theme)
-      // console.log(this.theme)
-      this.$emit('updateParent', !this.theme)
+      this.$emit('updateParent', {
+        theme: this.theme,
+      })
     },
+    async change_container_mode() {
+      this.mode_container =! this.mode_container;
+      this.$emit('change_container_mode', {
+        mc: this.mode_container,
+      })
+    },
+    async toggle_random_words() {
+      this.run_interval_mode =! this.run_interval_mode;
+      this.$emit('toggle_random_words', {
+        run_interval_mode: this.run_interval_mode,
+      })
+    },
+
+
+
+
+
     async save_set() {
       window.localStorage.setItem('user', this.nickname);
     }

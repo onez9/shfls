@@ -16,10 +16,10 @@ import { RouterLink, RouterView } from 'vue-router'
 
   </header> -->
   <header class=" ">
-    <div class="content-header">
+    <div class="content-header" v-if="!show_signup_login">
 
       <nav :class="{ 'navbar navbar-expand-lg navbar-light border-bottom': true, 'bg-body-tertiary': (dark) }">
-        <div class="container-fluid">
+        <div :class="{'container-fluid': (mode_container), 'container': (!mode_container)}">
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -59,14 +59,14 @@ import { RouterLink, RouterView } from 'vue-router'
                 <router-link class="nav-link" to="/g/videos">Видео</router-link>
               </li>
   
-              <li class="nav-item">
+              <li v-if="show_signup_login " class="nav-item">
                 <router-link to="/g/login" tag="button" class="nav-link">Войти</router-link>
               </li>
-              <li class="nav-item">
+              <li v-if="!show_signup_login" class="nav-item">
                 <button class="nav-link" @click="logout1">Выйти</button>
               </li>
               
-              <li class="nav-item">
+              <li v-if="show_signup_login " class="nav-item">
                 <router-link to="/g/signup" class="nav-link">Создать аккаунт</router-link>
               </li>
 
@@ -74,7 +74,12 @@ import { RouterLink, RouterView } from 'vue-router'
             </ul>
 
             <div class="d-flex">
-              <input class="form-control me-2 p-0 ps-1 bg-selected" type="search" placeholder="Search" aria-label="Search" v-model="word">
+              <input 
+                class="form-control me-2 p-0 ps-1 bg-selected" 
+                type="search" 
+                placeholder="Search" 
+                aria-label="Search" 
+                v-model="word">
               <button class="btn btn-sm btn-outline-danger" type="submit">Search</button>
             </div>
 
@@ -84,14 +89,21 @@ import { RouterLink, RouterView } from 'vue-router'
       </nav>
     </div>
   </header>
-  <main class="container-fluid">
-    <RouterView :wait="wait" :theme="dark" :word="word" @updateParent="someFunc" />
+  <main :class="{'container-fluid': (mode_container), 'container': (!mode_container)}">
+    <RouterView 
+      :wait="wait" 
+      :theme="dark" 
+      :word="word" 
+      @updateColor="someFunc" 
+      @change_container_mode="changeContainerMode"
+      @toggle_random_words="toggleRandomWords" 
+      @login="login_func" />
 
   </main>
 
-  <footer class="mt-auto border-top ">
-    <div class="container-fluid">
-      <div class="row">
+  <footer class="mt-auto border-top " v-if="!show_signup_login">
+    <div :class="{'container-fluid': (mode_container), 'container': (!mode_container)}">
+      <div class="row py-2">
         <div class="col my-footer">
           <div class="d-flex flex-column ">
             <div class=""><u>Version:</u> {{ current_version }}</div>
@@ -100,8 +112,15 @@ import { RouterLink, RouterView } from 'vue-router'
             <div class=""><u>Gitlab:</u> {{ gitlab }}</div>
           </div>
         </div>
-        <div class="col"></div>
-
+        <!-- <div class="col-sm-12 my-footer">
+          <div class="d-flex flex-column ">
+            <div class=""><u>Английский:</u> {{ g_random[1] }}</div>
+            <div class=""><u>Японский:</u> {{ g_random[2] }}</div>
+            <div class=""><u>Немецкий:</u> {{ g_random[3] }}</div>
+            <div class=""><u>Корейский:</u> {{ g_random[4] }}</div>
+            <div class=""><u>Китайский:</u> {{ g_random[5] }}</div>
+          </div>
+        </div> -->
       </div>
 
     </div>
@@ -111,8 +130,16 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <style scoped>
 
-main{
-  /* min-height: 1000px; */
+.btn-footer {
+  background-color: darkslategray;
+  border: 0px solid gray;
+  margin-bottom: 4px;
+  border-radius: 10px;
+  font-size: 13px;
+}
+.btn-footer:hover {
+  background-color: aquamarine;
+  color: black;
 }
 .bg-selected {
   background-color: black;
@@ -183,10 +210,26 @@ export default {
       color_header: '#ffffff',
       scroll: 0,
       word: '',
+      g_random: '',
+      interval_random: '',
+      mode_container: true,
+      run_interval_mode: false,
+      show_signup_login: false,
     }
   },
   watch: {
+    run_interval_mode() {
+      console.log('Я выполнюсь или нет')
+      if (this.run_interval_mode == true) {
+        this.run_setIntervl()
 
+      } else {
+        clearInterval(this.interval_random);
+      }
+
+
+
+    }
   },
   components: {
   },
@@ -200,14 +243,50 @@ export default {
       this.color_header = window.localStorage.getItem('color_header')
     }
 
+    if (window.localStorage.getItem('mode_container') == null) {
+      window.localStorage.setItem('mode_container', this.mode_container)
+    } else {
+      this.mode_container = JSON.parse(window.localStorage.getItem('mode_container'))
+    }
+
+    if (JSON.parse(window.localStorage.getItem('user_info'))?.login == undefined) {
+      this.show_signup_login = true; 
+    } else {
+      this.show_signup_login = false;
+      // await this.run_setIntervl()
+    }
     console.log(this.dark)
     console.log(import.meta.env.VITE_TEST_VAR)
     console.log(import.meta.env.VITE_APP_F23)
     console.log(import.meta.env.VITE_HOST)
     console.log(import.meta.env.VITE_PORT)
+
   },
 
   methods: {
+    async login_func(obj) {
+      if (obj['answer']=='success') {
+        this.show_signup_login = false;
+      } else {
+        this.show_signup_login = true;
+      }
+    },
+    async run_setIntervl() {
+      clearInterval(this.interval_random);
+        this.interval_random = setInterval(() => {
+          fetch('/books/r/words', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': window.localStorage.getItem('jwt'),
+            }
+          })
+          .then(res => res.json())
+          .then(result => {
+            this.g_random = result
+          })
+        }, 1000);
+    },
     async start() {
       document.addEventListener('scroll', (event) => {
         // if (window.scrollY ) {
@@ -218,16 +297,30 @@ export default {
         // }
       })
     },
-    async someFunc(isDark) {
-      this.dark = isDark
-      console.log(isDark)
+    async someFunc(obj) {
+      this.dark = !obj['theme']
+
+
+      console.log(this.dark)
+      console.log(obj)
+
     },
 
+    async toggleRandomWords(obj) {
+      console.log(obj);
+      this.run_interval_mode = obj['run_interval_mode'];
+    },
+    async changeContainerMode(obj) {
+      this.mode_container = !obj['mc']
+      window.localStorage.setItem('mode_container', this.mode_container);
+    },
 
     async logout1() {
       console.log('Включение метода logout...')
       this.my_name = ""
       this.logout = false
+      this.show_signup_login = true
+      clearInterval(this.interval_random);
       window.localStorage.clear()
       // const response = await fetch(`${this.url}/logout`)
       const response = await fetch('/users/log1', {

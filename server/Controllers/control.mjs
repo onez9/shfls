@@ -23,7 +23,7 @@ import { exec } from "child_process";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
+import sqlite from 'sqlite3';
 
 
 router.post('/', (req, res) => {
@@ -85,8 +85,66 @@ router.post('/', (req, res) => {
 		console.log(e);
 	}
 })
+router.post('/upload/settings', (req, res) => {
+	try {
+		let sql = 'insert into record_local_storage (user_id, name, cash) values (?, ?, ?);'
+		const db = new sqlite.Database('db.sqlite3');
+		// console.log(req.session.user_id)
+		// console.log(req.session.email)
+		const body = req.body.data;
+		console.log(body)
+		console.info(':::', body.id, body.tags)
+		let params = [body.id, 'tags', JSON.stringify(body.tags)];
+		let stmt = db.prepare(sql, (err) => {
+			if (err) console.error(err)
+		})
+		
+		stmt.run(params, (err) => {
+			if (err) console.log('Ошибка при вставке данных: ', err)
+			else res.json({'answer': 'ok'})
+			// console.log(rows)
+		})
+		stmt.finalize();
+		console.log()
+		console.info(req.body)
+		db.close();
+		console.log(req.body.id)
+
+	} catch (e) {
+		console.log(e)
+	}
+})
+
+router.post('/download/settings', (req, res) => {
+	try {
+		console.log('::: Сработало скачивание настроек.')
+		const db = new sqlite.Database('db.sqlite3');
+		// console.log(req.session.user_id)
+		// console.log(req.session.email)
+		let body = req.body.data
+		console.log('body: ', body)
+		let params = [body.id];
+		console.log(params)
+		let sql = 'select * from record_local_storage;'
+		let stmt = db.prepare(sql, (err) => {
+			if (err) console.error(err)
+		})
+		
+		stmt.all([], (err, rows) => {
+			console.log('вывод строк из запроса: ')
+			console.log(rows)
+			res.json(rows);
+		})
+		stmt.finalize();
 
 
+		db.close();
+		console.log(body.id)
+
+	} catch (e) {
+		console.log(e)
+	}
+})
 
 router.get('/ip', (req, res) => {
 	console.log(req.headers);

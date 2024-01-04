@@ -27,6 +27,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 import jwt from 'jsonwebtoken'
 import { unescape } from 'querystring';
+import { createRouterMatcher } from 'vue-router';
 
 
 
@@ -234,7 +235,27 @@ router.post('/g', async (req, res) => {
 
                 try {
                     if (err) console.log(err);
-					for (let i=0;i<items.length;i++) items[i]=convert(items[i])
+					// const db = new sqlite.Database('db.sqlite3', (err) => {
+					// 	if (!err) console.log('Объект базы данных создан')
+					// })
+					// let sql = 'insert into files (name, size, atime, mtime, ctime, btime) values (?, ?, ?, ?, ?, ?);'
+
+
+					for (let i=0;i<items.length;i++) {
+						items[i]=convert(items[i])
+						// let params = [
+						// 	items[i].name,
+						// 	items[i].info.size,
+						// 	items[i].info.atimeMs,
+						// 	items[i].info.mtimeMs,
+						// 	items[i].info.ctimeMs,
+						// 	items[i].info.birthtimeMs,
+						// ]
+						// db.run(sql, params, (err) => {
+						// 	if (!err) console.log('Всё прошло нормально!')
+						// 	else console.error('Произошла ошибка при вставке данных. ', err)
+						// })
+					}
                     //console.log(items)
 					let fromIndex = currentPage*countItems;
 					let toIndex = currentPage*countItems + countItems;
@@ -243,6 +264,13 @@ router.post('/g', async (req, res) => {
 						toIndex = items.length;
 					}
 					console.log(fromIndex, toIndex);
+
+					// db.close();
+
+
+
+
+
                     res.json({ "items": items.slice(fromIndex, toIndex), "route": route, total_files: items.length })
                 } catch (e) {
                     console.log(e)
@@ -285,17 +313,28 @@ router.post('/g', async (req, res) => {
             let route = config.routes.videos
 			let currentPage = parseInt(req.body.page, 10)
 			let limit = parseInt(req.body.limit, 10)
-
+			let folder = req.body.folder
 			console.log('route: ', route)
 			console.log('dir: ', dir)
+			console.log('folder: ', folder)
 			
+			if(folder[0]=='/'){
+				dir=folder
+			}else{
+				dir=path.resolve(dir,folder)
+			}
+	
+			console.log('dir: ', dir)
 			if (fs.existsSync(dir)) {
 				console.log('Директория существует!')
 				
 			} else {
 				console.log('Директория не найдена')
-				dir = 'Share/video2'
+
+
 			}
+
+
 			/*
 			fs.access(config.folders.videos, (error) => {
 				if (error) {
@@ -311,10 +350,7 @@ router.post('/g', async (req, res) => {
 
             fs.readdir(dir, (err, items) => {
                 try {
-                    if (err) { 
-						console.log(err);
-						
-					}
+                    if (err) console.log(err)
 
                     let result = Array()
 					let left = {};
@@ -444,9 +480,114 @@ router.post('/g', async (req, res) => {
 
 })
 
+
+router.post('/g/files', (req, res) => {
+	let route = config.routes.files;
+	try {
+		// console.log('nsdlfnsdflsf23449fs')
+		// console.log(req.body.type)
+		// if (req.body.type == 'file') {
+		// console.log('Выполняется запрос к /g file')
+		// let dir = config.folders.files;
+		const db = new sqlite.Database('db.sqlite3', (err) => {
+			if (!err) console.log('Объект базы данных создан')
+		})
+		let quantity = 0;
+		let params = []
+
+		db.serialize(() => {
+
+			let sql = 'select count(*) as count from files;';
+
+			let stmt = db.prepare(sql, (err) => {
+				if (!err) console.log('Подготовка к выполнению запроса.')
+			})
+			stmt.get([], (err, row) => {
+				quantity = row.count;
+				console.info('qunatity: ', quantity)
+
+			})
+			stmt.finalize();
+
+			let currentPage = parseInt(req.body.currentPage);
+			let countItems = parseInt(req.body.count);
+			let fromIndex = currentPage*countItems;
+			// let toIndex = currentPage*countItems + countItems;
+			// if (toIndex > quantity) {
+			// 	toIndex = quantity;
+			// }
+			// console.info(fromIndex, toIndex, quantity, currentPage, countItems);
+			params = [fromIndex, countItems];
+
+
+			sql = 'select * from files limit ?, ?;';
+			stmt = db.prepare(sql, (err) => {
+				if (err) console.error(err)
+			})
+			stmt.all(params, (err, rows) => {
+				if (!err) { 
+					console.log('Всё прошло нормально!')
+					console.log(rows)
+					res.json({ "items": rows, "route": route, total_files: quantity })
+
+					// res.json({ "items": rows.slice(fromIndex, toIndex), "route": route, total_files: items.length })
+				} else console.error('Произошла ошибка при вставке данных. ', err)
+			})
+			stmt.finalize();
+
+		})
+
+		// console.log('currentPage: ', currentPage);
+		// console.log('countPage: ', countItems);
+
+
+		// function convert(item) {
+		// 	return {
+		// 		name: item,
+		// 		info: fs.statSync(path.resolve(dir, item))
+		// 	}
+		// }
+		// fs.readdir(dir, (err, items) => {
+		// try {
+		// if (err) console.log(err);
+
+		// let sql = 'insert into files (name, size, atime, mtime, ctime, btime) values (?, ?, ?, ?, ?, ?);'
+		// let sql = 'select * from files limit;';
+		// let params = [];
+		// for (let i=0;i<items.length;i++) {
+		// 	items[i]=convert(items[i])
+		// let params = [
+		// 	items[i].name,
+		// 	items[i].info.size,
+		// 	items[i].info.atimeMs,
+		// 	items[i].info.mtimeMs,
+		// 	items[i].info.ctimeMs,
+		// 	items[i].info.birthtimeMs,
+		// ]
+
+		//console.log(items)
+
+		// console.log(fromIndex, toIndex);
+
+		db.close();
+
+
+
+
+
+
+	} catch (e) {
+		console.log(e)
+		res.json({ "items": [], "route": route})
+	}
+
+})
 // показ видео через разбитие на маленькие кусочки
 router.get('/g', (req, res) => {
 	try {
+
+		let folder_name=req.query.folder;
+		console.log('This is req.query: ', req.query);
 		// for(let i=0;i<100;i++){
 		// 	console.info(req.query.partname)
 		// }
@@ -460,7 +601,12 @@ router.get('/g', (req, res) => {
 		// let name = location.assign(encodeURIComponent(req.query.name))
 		let name = req.query.name
 		// console.log(`this name: ${name}`)
-		let dir = config.folders.videos
+		let dir;
+
+		console.log('i\'m running..');
+		dir = path.resolve(config.folders.videos, folder_name);
+
+
 		// dir = 'Share/video2'
 		// if (!existsSync(dir)) {
 		// 	dir = 'Share/video2'

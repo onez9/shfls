@@ -1,8 +1,8 @@
 export default {
     wlan0: {
         secret: 'secret',
-        host4: '192.168.1.103',
-        host6: '192.168.1.103',
+        host4: '192.168.1.106',
+        host6: '192.168.1.106',
         port: 3000
     },
     ws: {
@@ -16,7 +16,7 @@ export default {
         public: "public",
         code: "Share/code",
         books: "Share/books",
-        gifs: "Share/video/"
+        gifs: "Share/gifs"
     },
     routes: {
         files: "/downloads",

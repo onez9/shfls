@@ -986,5 +986,51 @@ router.post('/c/dictionary', (req, res) => {
 	}
 })
 
+router.post('/r/words', (req, res) => {
+	try {
+		const db = new sqlite.Database('db.sqlite3')
+		let sql = `
+			select * from (
+				select one||" "||two||" "||three as res, language_id as lid from words where language_id=1 order by random() limit 1
+				)
+			UNION 
+			select * from (
+				select one||" "||two||" "||three as res, language_id as lid from words where language_id=2 order by random() limit 1
+			)
+			UNION 
+			select * from (
+				select one||" "||two||" "||three as res, language_id as lid from words where language_id=3 order by random() limit 1
+			)
+			UNION 
+			select * from (
+				select one||" "||two||" "||three as res, language_id as lid from words where language_id=4 order by random() limit 1
+			)
+			UNION 
+			select * from (
+				select one||" "||two||" "||three as res, language_id as lid from words where language_id=5 order by random() limit 1
+			);
+		`;
+		let stmt = db.prepare(sql, err => console.log(err))
+		let res_a = new Map();
+		stmt.all([], (err, row) => {
+			try {
+				if (err) console.log('stmt.get: ', err)
+				row.forEach(item => {
+					res_a[item['lid']] = item['res']
+				})
+				console.log(res_a);
+				res.json(res_a)
+			} catch (e) {
+				console.info(e)
+			}
 
+		})
+		stmt.finalize((err) => console.error('stmt.finalize(/r/words): ', err))
+
+
+	} catch (e) {
+		console.log(e)
+
+	}
+})
 export default router

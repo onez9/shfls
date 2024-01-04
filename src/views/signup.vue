@@ -5,7 +5,7 @@ import {sha224, sha256} from 'js-sha256';
 
 <template>
     <div class="row d-flex justify-content-center wh1 align-items-center">
-        <div class="col-6">
+        <div class="col-sm-4">
             <!-- <form action="/g/create_account" method="POST"> -->
             <!-- <form @submit="addProduct(e)" > -->
             <!-- <form ref="form">   -->
@@ -26,7 +26,7 @@ import {sha224, sha256} from 'js-sha256';
             <button class="btn btn-sm btn-outline-danger form-control mt-1" type="button" @click="createAccount()">Зарегистрироваться</button>
             <button class="btn btn-sm btn-outline-danger form-control mt-1" type="button" @click="clear()">Отмена</button>
             <!-- </form> -->
-
+            <router-link to="/g/login">Войти</router-link>
             
         </div>
     </div>

@@ -377,13 +377,30 @@ app.use('/control', control);
 
 console.log(__dirname)
 app.use(config.routes.files, express.static(path.join(__dirname, config.folders.files)))
+// app.use(config.routes.gifs, (req, res, next) => {
+//     // console.log('мы находимся в мидлваре: ', req.query.name, path.join(__dirname, config.folders.gifs), config.folders.gifs)
+//     let path_to_pass=path.join(__dirname, config.folders.gifs);
+//     // console.log('m1: ', req.query);
+//     // if(req.query.path=='porno'){
+//     //     path_to_pass=path.join(path_to_pass,'porno')
+//     console.log('Передаю патчтупасс: ', path_to_pass)
+//     // }
+//     express.static(path_to_pass);
+//     // next();
+// })
+
 app.use(config.routes.gifs, express.static(path.join(__dirname, config.folders.gifs)))
+
+
 app.use(config.routes.images, express.static(path.join(__dirname, config.folders.images)))
 app.use(config.routes.public, express.static(path.join(__dirname, config.folders.public)))
 app.use(config.routes.musics, express.static(path.join(__dirname, config.folders.musics)))
 
 
-
+// app.get('/gifs', (req, res)=>{
+// 	console.log('А вот и я!!!!');
+// 	res.json('123');
+// })
 
 // const corsOptions = {
 // 	origin: 'http://192.168.1.103:5173',  //Your Client, do not write '*'
@@ -433,7 +450,7 @@ app.get('*', (req, res) => {
 http.listen(config.wlan0.port, config.wlan0.host4, () => {
 
     console.log('Environment variables: ', process.env.VITE_TEST_VAR)
-    console.log(`Address: http://${config.wlan0.host}:${config.wlan0.port}`);
+    console.log(`Address: http://${config.wlan0.host4}:${config.wlan0.port}`);
     // console.log('Остановить сервер - Ctrl+C');
 
 });

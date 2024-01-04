@@ -125,9 +125,9 @@ router.post('/login', (req, res) => {
 	  console.log(err)
 	})
   
-  
-	db.get(`SELECT * FROM users WHERE login = ? or email = ? or phone = ?`, [req.body.login, req.body.login, req.body.login], (err, user) => {
-		console.log('вот это у нас юзер: ', user)
+	let sql = `SELECT * FROM users WHERE login = ? or email = ? or phone = ?`;
+	let params = [req.body.login, req.body.login, req.body.login]
+	db.get(sql, params, (err, user) => {
 		if (err) return res.status(500).send('Ошибка на сервере.');
 		
 		if (!user) return res.status(404).send('Пользователь не найден.');
@@ -141,7 +141,7 @@ router.post('/login', (req, res) => {
 	  	if (!passwordIsValid) return res.status(401).send({ auth: false, token: null });
 	  
 		  // иначе отправляем токен
-		let token = jwt.sign({ id: user.id }, config.wlan0.secret, { expiresIn: 86400 });
+		let token = jwt.sign({ id: user.id }, config.wlan0.secret, { expiresIn: '7d' });
 		req.session.token = token
 		req.session.user_id = user.id
 		req.session.email = user.email

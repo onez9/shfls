@@ -21,33 +21,58 @@ import Swal from 'sweetalert2';
       <div class="row">
         <div class="col-sm">
           <!-- <button type="button" class="btn btn-primary btn-sm">Small button</button> -->
-          <button class="btn btn-sm btn-outline-danger mb-1 me-1" @click="upload_file">
+          <button class="my-btn-style mb-1 me-1" @click="upload_file">
             <i class="bi bi-upload"></i>
           </button>
 
-          <button class="btn btn-sm btn-outline-danger mb-1 me-1" @click="show_qr">
+          <button class="my-btn-style mb-1 me-1" @click="show_qr">
             <i class="bi bi-qr-code"></i>
           </button>
           <!-- <button @click="send_on_download" class="btn btn-info mb-3">Стандартная папка</button> -->
 
-          <button v-if="item1 == true" class="btn btn-sm btn-outline-danger mb-1 me-1" @click="show_all_pic">
+          <button v-if="item1 == true" class="my-btn-style mb-1 me-1" @click="show_all_pic">
             Развернуть
           </button>
-          <button v-else class="btn btn-sm btn-outline-danger mb-1 me-1" @click="show_all_pic">
+          <button v-else class="my-btn-style mb-1 me-1" @click="show_all_pic">
             Скрыть
           </button>
 
-          <button class="btn btn-sm btn-outline-danger mb-1 me-1" @click="show_info = !show_info">
+          <button class="my-btn-style mb-1 me-1" @click="show_info = !show_info">
             <i class="bi bi-list"></i>
           </button>
-          <button class="btn btn-sm btn-outline-danger mb-1 me-1" @click="show_debug_info =! show_debug_info">
+          <button class="my-btn-style mb-1 me-1" @click="show_debug_info =! show_debug_info">
             <i class="bi bi-asterisk"></i>
           </button>
+          <input 
+            class="mb-1 input-search me-1" 
+            placeholder="Type your files name"
+            @beforeinput="searching"
+            @keyup.enter=""
+            @keyup.escape="name = ''"
+            v-model="name">
           <!-- <button @click="send_on_download" class="btn btn-info mb-3">Стандартная папка</button> -->
+          <button
+            class="my-btn-style me-1"><i class="bi bi-arrow-clockwise"></i></button>
+
+          <label class="tablo">{{ result['total_files'] }}</label>
         </div>
 
       </div>
-
+      <div 
+        class="row"
+        v-if="samples.length!==0">
+        <div
+          class="col">
+          <div
+            class="results_for_searching">
+            <p
+              class="my-label"
+              v-for="(item, index) in samples">
+              {{ item.name }}
+            </p>
+          </div>
+        </div>
+      </div>
       <!-- <table id="id_table" class="table text-nowrap table-borderless table-hover"> -->
       <div v-if="show_debug_info" class="d-flex flex-column fixed-bottom" style="background-color: #111111; opacity: .9; font-size: 10px;">
         <div>document.documentElement.scrollHeight: {{ scrollHeight }}</div>
@@ -66,6 +91,7 @@ import Swal from 'sweetalert2';
             <td class="p-0"><button class="btn btn-outline-warning btn-sm"><i class="bi bi-filter-square"></i></button></td>
             <td class="p-0"><button class="btn btn-outline-warning btn-sm"><i class="bi bi-filter-square"></i></button></td>
             <td class="p-0"><button class="btn btn-outline-warning btn-sm"><i class="bi bi-filter-square"></i></button></td>
+            <td class="p-0"><button class="btn btn-outline-warning btn-sm"><i class="bi bi-filter-square"></i></button></td>
             <td class="p-0"></td>
           </tr>
         </thead>
@@ -74,6 +100,7 @@ import Swal from 'sweetalert2';
             
             <tr class="p-0 m-0">
               <td @click="item.showmode = !item.showmode" class="align-middle text-break p-0 m-0">{{ item.name }}</td>
+              <td v-if="show_info" class="align-middle px-1 p-0 m-0">{{ item.name.split('.').slice(-1)[0] }}</td>
               <td v-if="show_info" class="align-middle px-1 p-0 m-0">{{ parseInt(item.info.size / 1024) }}Kb</td>
               <td v-if="show_info" class="align-middle px-1 p-0 m-0">{{ new Date(item.info.mtime).toLocaleDateString() }}</td>
               <td v-if="show_info" class="align-middle px-1 p-0 m-0">{{ new Date(item.info.mtime).toLocaleTimeString() }}</td>
@@ -109,8 +136,37 @@ import Swal from 'sweetalert2';
 
 
 <style scoped>
-.d-flex,
-.justify-content-end {
+.tablo {
+  border: 2px solid black;
+  border-radius: 5pt;
+  padding-inline: 5pt;
+  /* font-size: 10px; */
+}
+.my-label {
+  margin: 0;
+}
+.results_for_searching {
+  background-color: black;
+  border-radius: 5px;
+  padding: 3px;
+  margin-bottom: 2ch;
+  
+  /* margin-inline: 10px; */
+}
+.input-search {
+  border-radius: 5px;
+  border: 0 solid black;
+  
+}
+.my-btn-style {
+  border-radius: 5px;
+  border: 0 solid black;
+}
+.my-btn-style:hover {
+  background-color: darkgoldenrod;
+}
+
+.d-flex, .justify-content-end {
   padding: 0;
   margin: 0;
 }
@@ -122,18 +178,18 @@ import Swal from 'sweetalert2';
 }
 
 
-.blur{
-  filter: blur(20px);
-  -webkit-filter: blur(30px);
+/* .blur{
+  filter: blur(30px);
+  -webkit-filter: blur(10px);
 
-  /* Full height */
+
   height: 100%;
 
-  /* Center and scale the image nicely */
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-}
+} 
+*/
 
 
 </style>
@@ -168,12 +224,14 @@ export default {
       clientHeight: 0,
       clientWidth: 0,
       innerHeight: 0,
-      show_debug_info: false
+      show_debug_info: false,
+      name: '',
+      samples: [],
     }
   },
   created() {
     console.log("Запускаю процедуру подключения к WebSocket Server")
-    this.ws = new WebSocket("ws://192.168.1.103:3000")
+    this.ws = new WebSocket("ws://192.168.1.106:3000")
     // this.ws.binaryData = "blob";
     this.ws.binaryType = "arraybuffer";
 
@@ -212,8 +270,25 @@ export default {
     await this.start()
   },
   methods: {
+    async searching() {
+      try {
+        let rx = new RegExp(this.name.toLowerCase())
+        this.samples = [];
+        if (this.name) {
+          this.samples = this.array.filter(item => rx.test(item.name.toLowerCase()))
+        } else {
+          this.samples = [];
+        }
+      } catch (e) {
+        console.error(e);
+      }
+
+
+
+    },
     async start() {
       document.addEventListener('scroll', (event) => {
+        
         // console.log(parseInt(window.scrollY))
         // let pos1 = Math.ceil(window.scrollY)
         // // console.log(pos1, this.num)
@@ -222,14 +297,10 @@ export default {
         //   // console.log('hello ', window.scrollY)
         //   this.num += 668
         //   this.count += 1
-
         // } else if (this.num - window.scrollY >= 668) {
         //   this.num -= 668
         //   this.count -= 1
         // }
-
-
-
         // let st = window.scrollY || document.documentElement.scrollTop
         // if (this.currentPage > 0) {
         //   if (st > this.lastScrollTop) {
@@ -255,6 +326,9 @@ export default {
         // если конец страницы
         // if(parseInt(document.documentElement.scrollHeight - document.documentElement.scrollTop) == document.documentElement.clientHeight) 
         //   alert(parseInt(document.documentElement.scrollHeight - document.documentElement.scrollTop) == document.documentElement.clientHeight)
+        // console.error(Math.abs(this.left - this.innerHeight) <= 1)
+        // console.error(this.currentPage < this.countPage-1)
+        console.error(this.currentPage, this.countPage-1)
         if (this.currentPage < this.countPage-1 && Math.abs(this.left - this.innerHeight) <= 1) {
           this.currentPage +=1;
           console.log('new page end: ', this.currentPage)
@@ -339,6 +413,8 @@ export default {
       })
       this.result = await response.json()
       
+      console.error(this.countItems)
+      console.error(this.result)
       this.array.push(...this.result['items'])
       this.countPage = Math.ceil(this.result['total_files'] / countItems)
       console.log('this.countPage: ', this.countPage)
@@ -360,7 +436,6 @@ export default {
       //window.open(response);
       window.open(response.url)
     },
-
     async delete_file(item) {
       // console.log('this name is name: ', item)
       // console.log('this with a indexOf: ', this.array.indexOf(item))
@@ -391,7 +466,6 @@ export default {
       // console.log('123,', this.array.indexOf(name))
       // await this.g();
     },
-
     async SendFile(fileMeta, fileData) {
       const fileMetaJson = JSON.stringify({
         lastModified: fileMeta.lastModified,
@@ -417,7 +491,6 @@ export default {
       this.conn.send(sendData);
       this.conn.binaryType = "blob";
     },
-
     async upload_file() {
       // await this.sendMessage("hello")
       // let formData = new FormData()
@@ -583,7 +656,6 @@ export default {
       // window.open(response.url)
       console.log(response)
     },
-
     async canvas() {
       let url = `/qr`;
       let f = await fetch(url);
@@ -654,7 +726,6 @@ export default {
     // 		this.g()
     // 	})
     // },
-
     async somefunc(image) {
       image.remove();
       URL.revokeObjectURL(image.src); //удаляет внутреннюю ссылку на объект,

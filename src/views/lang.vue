@@ -23,7 +23,7 @@ import Swal from 'sweetalert2';
       </div>
     </div>
 
-    <div class="col-sm-4 rounded m-0 p-1" style="background-color: rgb(8, 9, 17);" v-if="show_menu">
+    <div class="col-sm-4 rounded m-0 p-1" v-if="show_menu">
       <div v-if="false" class="border rounded p-1 mt-1 " >
         <input type="search" id="site-search" name="q" />
       </div>
@@ -42,7 +42,7 @@ import Swal from 'sweetalert2';
 
 
       <!-- <div v-if="show_menu"> -->
-      <div class="border rounded mt-1 p-0 px-1">
+      <div class="border rounded p-0 px-1">
         <label @click="create_mode_dictionary =! create_mode_dictionary" class="w-100">Создать новый словарь</label>
         <template v-if="create_mode_dictionary">
           <input class="form-control p-0 ps-1" title="Название словаря" placeholder="Название словаря" v-model="name_dictionary">
@@ -61,7 +61,15 @@ import Swal from 'sweetalert2';
         <br> -->
         <label @click="mode_filter=false" class="w-100">Дни активности:</label>
         <!-- <input class="form-control p-0 ps-1" title="Название словаря" placeholder="Название словаря"> -->
-        <button @click="set_date(date['date'])" class="btn btn-sm form-control btn-outline-danger d-flex justify-content-left mt-1 " v-for="(date, key) in action_days">{{ date['date'] }} ({{ date['count'] }})</button>
+        <!-- <button @click="set_date(date['date'])" class="btn btn-sm form-control btn-outline-danger d-flex justify-content-left mt-1 " v-for="(date, key) in action_days">{{ date['date'] }} ({{ date['count'] }})</button> -->
+        <select @change="set_date(select_day)" v-model="select_day" class="form-select mt-1 bg-dark text-white p-0 ps-1" name="" title="Выберете дату">
+          <option  v-for="(value, key) in action_days" :value="value['date']">{{ value['date'] }} ({{  value['count'] }})</option>
+        </select>
+
+
+
+
+
 
         <div class="form-check">
           <input class="form-check-input" type="radio" name="exampleRadios" id="specific_date" value="specific_date" v-model="mode_request">
@@ -112,12 +120,18 @@ import Swal from 'sweetalert2';
         </div>
       </div>
       <div :class="{'border rounded mt-1 p-0 px-1': true, 'border-my': new_word_mode}">
-        <label @click="new_word_func" class="d-flex justify-content-start">Слова</label>
-        <input v-if="new_word_mode" v-model="one" ref="myinput" type="text" class="form-control ps-1 p-0" title="Иностранный" placeholder="Иностранный"/>
+        <label 
+          @click="new_word_func" 
+          class="d-flex justify-content-start">
+            Слова
+
+        </label>
+
+        <input v-if="new_word_mode" v-model="one" ref="myinput" type="text" class="form-control ps-1 p-0" title="Иностранный" :placeholder="dict_lang[name_lang-1]?.name"/>
         <input v-if="new_word_mode" v-model="two" type="text" class="form-control mt-1 ps-1 p-0" title="Родной" placeholder="Транскрипция"/>
         <input v-if="new_word_mode" v-model="three" type="text" class="form-control mt-1 ps-1 p-0" title="Родной" placeholder="Родной"/>
-        <button v-if="new_word_mode" @click="send_new_word(one, two, three)" class="btn btn-sm btn-outline-danger form-control mb-1 mt-1" :disabled="(one=='' || three=='')? true : false"><i class="bi bi-send"></i></button>
-      
+        <button v-if="new_word_mode" @click="send_new_word(one, two, three)" class="my-btn-send" :disabled="(one=='' || three=='')? true : false"><i class="bi bi-send"></i></button>
+        <button v-if="new_word_mode" class="my-btn-clear">Стереть</button>  
         <!-- <button v-if="new_word_mode" @click="get_words()" class="btn btn-sm btn-outline-danger form-control mt-1">Показать слова</button> -->
       </div>
 
@@ -192,9 +206,17 @@ import Swal from 'sweetalert2';
           </div>
         </div>
       </div>
+      <div class="border rounded px-1 mt-1 p-0 mb-1">
+        <p class="my-0 py-0" style="font-size: 30px;">{{ click_one_tmp[0] }}</p>
+        <p class="my-0 py-0">{{ click_one_tmp[1] }}</p>
+        <p class="my-0 py-0"
+          style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;">{{ click_one_tmp[2] }}</p>
+      </div>
     </div>
 
-
+    <!-- <div class="col-sm-12">
+      <input type="color">
+    </div> -->
 
 
     <div :class="{'col-sm-8': show_menu, 'col-sm-12': !show_menu}">
@@ -204,14 +226,22 @@ import Swal from 'sweetalert2';
           <div class="input-group">
             <button class="btn btn-sm btn-outline-danger"><i class="bi bi-search"></i></button>
             <button @click="show_menu =! show_menu" class="btn btn-sm btn-outline-danger"><i class="bi bi-gear"></i></button>
-            <input v-model="word" @input="word_change" @keyup.enter="find_func" class="form-control p-0 m-0 ps-1 _edit_mode" placeholder="Введите текст" title="Панель для поиска" />
+            <input 
+              v-model="word" 
+              @input="word_change" 
+              @keyup.enter="find_func" 
+              @keyup.escape="csr"
+              class="form-control p-0 m-0 ps-1 _edit_mode" 
+              placeholder="Поиск по ключевым словам" 
+              title="Панель для поиска" />
+
             <label class="border lc d-flex align-items-center px-2">{{ this.tablo_result }}</label>
             
             <!-- <button @click="collection" class="btn btn-sm btn-outline-danger"><i class="bi bi-collection"></i></button> -->
             <button @click="mode_filter =! mode_filter" class="btn btn-sm btn-outline-danger"><i class="bi bi-funnel"></i></button>
             <!-- <button @click="downl_search" class="btn btn-sm btn-outline-danger"><i class="bi bi-sliders2-vertical"></i></button> -->
             <button @click="downl_search" class="btn btn-sm btn-outline-danger"><i class="bi bi-arrow-clockwise"></i></button>
-            <button @click="resu_search = []; word = ''; resu = resu_backup.slice()" class="btn btn-sm btn-outline-danger"><i class="bi bi-backspace"></i></button>
+            <button @click="csr" class="btn btn-sm btn-outline-danger"><i class="bi bi-backspace"></i></button>
           </div>
         </div>
         <div class="col-sm-12" v-if="create_rule_mode">
@@ -225,13 +255,15 @@ import Swal from 'sweetalert2';
         </div>
       </div>
 
-      <div class="col-sm-12 rounded p-1 mt-1 style_searching" v-if="resu_search.length!==0">
-        <div class="" v-for="(item, index) in resu_search.slice(0, 12)" :key="item">
+
+      <div class="rounded p-1 mt-1 style_searching" v-if="resu_search.length!==0">
+        <div class="" v-for="(item, index) in resu_search.slice(0, 20)" :key="item">
           {{ item[1] }}
         </div>
       </div>
 
-      <table v-if="resu.length !== 0 && !create_rule_mode" class="table table-bordered table-dark mt-1 rounded"  >
+
+      <table v-if="resu.length !== 0 && !create_rule_mode" class="table table-bordered table-hover table-dark mt-1 rounded"  >
         <thead class="p-0">
           <tr class="bg-info p-0">
             <td class="p-0 m-0">
@@ -276,9 +308,9 @@ import Swal from 'sweetalert2';
           </tr>
         </thead>
         <tbody class="">
-          <tr v-for="(value, index) of resu" >
+          <tr v-for="(value, index) of resu">
 
-            <td  :class="{'p-0 align-middle': true, 'bg-selected': value['edit']}" style="width: 1%;">
+            <td :class="{'p-0 align-middle': true, 'bg-selected': value['edit']}" style="width: 1%;">
               <div class="d-flex justify-content-center">
                 <div v-if="check_edit_record"  class="form-check ">
                   <input class="form-check-input " type="checkbox" v-model="value['select']" >
@@ -287,8 +319,14 @@ import Swal from 'sweetalert2';
               </div>
             </td>
             
-            <td v-if="check_foreign_word" :class="{'p-0 px-1 align-middle col': true, 'bg-selected': value['edit']}">
-              <label v-if="!value['edit']">{{ value['one'] }} </label>
+            <td 
+              @mouseover="click_one(value)" 
+              v-if="check_foreign_word" 
+              :class="{'p-0 px-1 align-middle col': true, 'bg-selected': value['edit']}">
+              <label 
+                v-if="!value['edit']">
+                {{ value['one'] }}
+              </label>
               <input v-if="value['edit']" class="form-control border-0 rounded-0 p-0 align-middle bg-selected" v-model="value['one']" data-style-base="form-control" data-style="">
             </td>
             <td v-if="check_trascription" :class="{'p-0 px-1 align-middle col': true, 'bg-selected': value['edit']}">
@@ -383,9 +421,41 @@ import Swal from 'sweetalert2';
 </template>
 
 
+
 <style scoped>
 
-
+.my-btn {
+  margin: 0;
+  padding: 0;
+  padding-inline: 2px;
+  border: 1px solid yellow;
+  border-radius: 3px;
+  font-size: 10px;
+}
+.my-btn-send {
+  width: 100%;
+  border: 0 solid #111111;
+  margin-top: 4px;
+  /* margin-bottom: 4px; */
+  border-radius: 15px;
+  background-color: #0a4f4f;
+  text-align: center;
+}
+.my-btn-clear {
+  width: 100%;
+  border: 0 solid #111111;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  border-radius: 15px;
+  background-color: #0a4f4f;
+  text-align: center;
+}
+.my-btn-clear:hover {
+  background-color: orangered;
+}
+.my-btn-send:disabled {
+  background-color: #444444;
+}
 .edit_font {
   font-size: 13px;
 }
@@ -394,28 +464,25 @@ import Swal from 'sweetalert2';
   border-bottom-left-radius: 3px;
     
 }
-
 .pagination>li:last-child>a, .pagination>li:last-child>span {
   border-top-right-radius: 3px;
   border-bottom-right-radius: 3px;
 }
-
-
 .style_searching {
   background-color: #111111;
   padding: 5px;
   border-radius: 5px;
   text-decoration: underline;
   /* z-index: 1000; */
-  position: absolute;
+  position: relative;
+  display: inline-block;
+  width: 100%;
   /* box-sizing: border-box;
   -moz-box-sizing: border-box; */
 }
-
 tr, td, tbody {
   border-radius: 3%;
 }
-
 .lc {
   font-size: 10px;
   border-color: #0a4f4f;
@@ -424,41 +491,29 @@ tr, td, tbody {
   font-size: 10px;
   background-color: #0a4f4f;
 }
-
 .bg-selected {
-  background-color: black;
+  background-color: rgb(120, 24, 24);
 }
 .bg-selected:focus {
-  background-color: black;
-}
-button:hover {
-
+  background-color: rgb(56, 10, 10);
 }
 .extreme_button {
   background-color: #0a4f4f;
 }
-
 .active {
   background-color: #031313 !important;
 }
-
 .pagination > .active > a
 {
-    color: white;
-    background-color: #5A4181 !Important;
-    border: solid 1px #5A4181 !Important;
+  color: white;
+  background-color: #5A4181 !Important;
+  border: solid 1px #5A4181 !Important;
 }
-
 .pagination > .active > a:hover
 {
-    background-color: #5A4181 !Important;
-    border: solid 1px #5A4181;
+  background-color: #5A4181 !Important;
+  border: solid 1px #5A4181;
 }
-
-
-
-
-
 .btn-outline-danger {
   border-color: #0a4f4f;
   color: #c3b5b5;
@@ -467,7 +522,6 @@ button:hover {
   border-color: #0a4f4f;
   color: #c3b5b5;
 }
-
 .border {
   border-color: #0a4f4f;
   color: #c3b5b5;
@@ -476,32 +530,24 @@ button:hover {
   border-color: #0a4f4f;
   color: #c3b5b5;
 }
-
-
 .bootstrap-select .form-control:focus {
   outline: 0px none #fff !important;
 }
-
 .bootstrap-select .form-control > div.filter-option:focus {
   outline: 0px none #fff !important;
 }
-
 .bootstrap-select .form-control > div.filter-option > div.filter-option-inner:focus {
   outline: 0px none #fff !important;
 }
-
 .bootstrap-select .form-control > div.filter-option > div.filter-option-inner > div.filter-option-inner-inner:focus {
   outline: 0px none #fff !important;
 }
-
 *:focus {
   box-shadow: none !important;
 }
-
 .custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {
   background-color: green!important;
 }
-
 .form-check-input .custom-checkbox .custom-control-input:checked:focus ~ .custom-control-label::before {
   box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(0, 255, 0, 0.25)
 }
@@ -512,10 +558,9 @@ button:hover {
   background-color: #C8FFC8; 
 }
 
-
-
-
 </style>
+
+
 <script>
 export default {
   data() {
@@ -593,8 +638,8 @@ export default {
       scroll: 0,
       html_text: '',
       edit_rule_mode: false,
-      
-
+      select_day: '',
+      click_one_tmp: {},
     }
   },
   props: {
@@ -780,6 +825,20 @@ export default {
   components: {
   },
   methods: {
+    async click_one(value) {
+      value.color =! value.color;
+      if (value.color) {
+        this.click_one_tmp[0] = value.one;
+        this.click_one_tmp[1] = value.two;
+        this.click_one_tmp[2] = value.three;
+      }
+
+    },
+    async csr() {
+      this.resu_search = []; 
+      this.word = ''; 
+      this.resu = this.resu_backup.slice()
+    },
     async start() {
       document.addEventListener('scroll', (event) => {
         // if (window.scrollY ) {

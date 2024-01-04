@@ -5,7 +5,7 @@ import Swal from 'sweetalert2';
 </script>
 
 <template >
-  <div class="container-fluid ">
+  <div :class="{ 'container': (mode_size), 'container-fluid': (!mode_size) }">
     <div class="row" @mouseover="">
       <!-- <div class="form-check form-switch">
         <input class="form-check-input" v-model="v1" @change="func" type="checkbox" id="flexSwitchCheckDefault">
@@ -29,9 +29,38 @@ import Swal from 'sweetalert2';
       </div> -->
 
     </div>
-    <div class="row" @mouseover="">
+    <div class="row" @mouseleave="recent_request = false">
 
-      <div v-if="show_extra" class="col-sm-12 mt-1" style="background-color: #000000; border-radius: 5px; padding: 5px;">
+
+
+      <div class="col-12"></div>
+
+
+
+      <div class="col-sm-8 input-group mb-2 mt-2 m-0 p-0">
+        <span class="input-group-text p-0 m-0 px-2" id=""><i class="bi bi-search"></i></span>
+        <input type="text" placeholder="Ключевые слова для поиска" class="form-control bg-dark text-white p-0 m-0 ps-1"
+          v-on:keyup.enter="template_request" @keyup.escape="csr" @mouseover="recent_request = true"
+          v-on:input="searching(name)" v-model="name" @focus="recent_request = true" @mouseleave="" @blur=""
+          autocomplete="on">
+
+
+
+
+        <button @click="open_addvance" class="btn btn-sm btn-outline-danger" title="Дополнительно">
+          <i class="bi bi-list"></i>
+        </button>
+
+        <button @click="csr" class="btn btn-sm btn-outline-danger" id="">
+          <i class="bi bi-backspace"></i>
+        </button>
+      </div>
+
+
+
+
+
+      <div v-if="show_extra" class="col-sm-4 m-1" style="background-color: rgb(96, 93, 96); border-radius: 5px; padding: 5px;">
         <!-- <div class="col-sm-4 mb-1">
           <button @click="show_playlist = !show_playlist"
             :class="{ 'btn btn-sm btn-outline-danger ': true, 'btn btn-outline-success': (show_playlist == true) }"
@@ -39,16 +68,28 @@ import Swal from 'sweetalert2';
             <i class="bi bi-folder-plus"></i>
           </button>
         </div> -->
-        <div v-if="show_playlist == true || true" class="col-sm-12 mb-1">
+        <div class="col-sm-12 mb-1">
           <div class="input-group mb-1">
-            <button @click="show_playlist = !show_playlist" class="btn btn-sm btn-outline-danger" title="Создать новый плейлист"><i class="bi bi-folder-plus"></i></button>
-            
-            <input v-on:keyup.enter="create_new_play_playlist(name_of_play_list)" class="border border-outline-primary p-0 ps-1 form-control" id="name_list" placeholder="Название плейлиста"
+
+
+            <input 
+              @keyup.enter="create_new_play_playlist(name_of_play_list)"
+              @keyup.escape="name_of_play_list=''"
+              class="border border-outline-primary p-0 ps-2 form-control" 
+              id="name_list" 
+              placeholder="Название плейлиста"
               v-model="name_of_play_list">
-            <button @click="show_pen = !show_pen" class="btn btn-sm btn-outline-danger" title="Редактировать play list">
+            <button @click="show_pen = !show_pen" class="btn btn-sm btn-danger" title="Редактировать play list">
               <i class="bi bi-pen"></i>
             </button>
-            <button @click="name_of_play_list = ''" class="btn btn-sm btn-outline-danger" id=""><i class="bi bi-backspace"></i></button>
+            <!-- <button @click="name_of_play_list = ''" class="btn btn-sm btn-outline-danger" id=""><i
+                class="bi bi-backspace"></i></button> -->
+
+
+            <!-- <button @click="show_playlist = !show_playlist" class="btn btn-sm btn-warning"
+              title="Создать новый плейлист">
+              <i class="bi bi-folder-plus"></i>
+            </button> -->
             <!-- <button class="btn btn-sm btn-outline-primary "
             @click="create_new_play_playlist(name_of_play_list)">Создать</button> -->
 
@@ -69,11 +110,35 @@ import Swal from 'sweetalert2';
               <button @click="edit_item(item[1])" class="btn btn-sm btn-outline-info ms-1"><i
                   class="bi bi-pencil"></i></button>
             </div>
-            
+
           </div>
 
-          <p v-if="play_list_array.size == 0" class="text-center p-0 ps-1">Тут пока ничего нет {{ play_list_array.size }}</p>
+          <p v-if="play_list_array.size == 0" class="text-center p-0 ps-1">Результат: {{ play_list_array.size }}</p>
         </div>
+
+
+
+
+
+        <div class="col-sm-12">
+          <div class="input-group mb-1">
+            <input 
+              class="form-control m-0 p-0 ps-2" 
+              placeholder="Название тега" 
+              v-model="tag_name"
+              @keyup.enter="createTag"
+              @keyup.escape="tag_name=''">
+            <button class="btn btn-sm btn-danger" @click="createTag"><i class="bi bi-plus-square"></i></button>
+          </div>
+        </div>
+        <!-- <div class="col-sm-12">
+          <button 
+            class="my-form-control mb-1"
+            @click="mode_toggle_size">
+            Переключить режим
+          </button>
+        </div> -->
+
 
 
 
@@ -85,24 +150,33 @@ import Swal from 'sweetalert2';
         </div> -->
         <div v-if="show_download_panel == true || true" class="col-sm-12 mb-1">
           <div class="input-group mb-1">
-            <button class="btn btn-sm btn-outline-danger" @click="url = ''" title="Очистить буффер от загружаемых видео"><i class="bi bi-trash"></i></button>
-            <input v-on:keyup.enter="run_download(url)" type="text" class="bg-dark text-white form-control p-0 m-0 ps-1" :disabled="false" v-model="url"
-              placeholder="Панель загрузки видео">
-            <button class="btn btn-sm btn-secondary" @click="run_download(url)">
+
+            <input 
+              v-model="url" 
+              @keyup.enter="run_download(url)" 
+              @keyup.escape="url = ''"
+              type="text" 
+              class="bg-dark text-white form-control p-0 m-0 ps-2"
+              :disabled="false" 
+              placeholder="Ссылка на видео">
+            <!-- <button class="btn btn-sm btn-info" @click="run_download(url)">
               <i class="bi bi-download"></i>
             </button>
-            <button class="btn btn-sm btn-outline-danger" @click="clean" title="Очистить буффер от загружаемых видео"><i class="bi bi-trash"></i></button>
+            <button class="btn btn-sm btn-danger" @click="url = ''" title="Стереть"><i
+                class="bi bi-backspace"></i></button> -->
+            <button class="btn btn-sm btn-danger" @click="clean" title="Очистить буффер от загружаемых видео"><i
+                class="bi bi-trash"></i></button>
           </div>
           <!-- стек загрузжаемых видео -->
           <div class="col-sm">
             <div v-for="(item, i) in batch_list" :key="item"
-              class="alert alert-info text-primary d-flex align-items-center mb-1 ps-22" role="alert">
+              class="alert alert-info text-primary d-flex align-items-center mb-1 ps-2" role="alert">
               <div class="">{{ item }}</div>
               <button @click="" class="btn btn-sm btn-outline-info ms-auto me-1">Отменить</button>
               <button class="btn btn-sm btn-outline-danger">
-                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>%
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
               </button>
-              
+
               <!-- <i class="bi bi-x-diamond"></i> -->
             </div>
           </div>
@@ -130,249 +204,344 @@ import Swal from 'sweetalert2';
         </div> -->
 
         <!-- количество видео на одной странице -->
-        <div class="col-sm-12 mb-1 mt-1">
-          <select @change="change_count" v-model="video_values" class="form-select mt-1 bg-dark text-white p-0 ps-1" name=""
-            title="Количество видео на одной странице">
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="15">15</option>
-            <option :value="totalvideos">{{ totalvideos }}</option>
+        <div class="row">
+          <div class="col-sm-12">
+            <select @change="change_count" v-model="video_values" class="form-select mt-1 bg-dark text-white p-0 ps-1"
+              name="" title="Количество видео на одной странице">
+              <option value="9">9</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+              <option :value="totalvideos">{{ totalvideos }}</option>
+            </select>
+          </div>
+          <!-- количество столбцов -->
+          <div class="col-sm-12">
+            <!-- <input type="number" class="form-control mt-1" min="1" max="4"> -->
+            <select v-model="selected" class="form-select mt-1 bg-dark text-white p-0 ps-1" name=""
+              title="Количество столбцов">
+              <option value="0">List</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="6">6</option>
+              <option value="12">12</option>
+            </select>
+          </div>
+          <div class="col-sm-12">
+            <!-- <input type="number" class="form-control mt-1" min="1" max="4"> -->
+            <select @change="select_play(playlist_name)" v-model="playlist_name"
+              class="form-select mt-1 bg-dark text-white p-0 ps-1" name="" title="Выбор плейлиста">
+              <option value="all">All</option>
+              <option value="recent">Recent</option>
+              <option v-for="(item, index) in play_list_array" v-bind:value="item">{{ item[0] }}</option>
+            </select>
+          </div>
 
-          </select>
+
         </div>
+        <input 
+          class="form-control p-0 mt-1 ps-2" 
+          placeholder="Введите полный путь до папки с видео" 
+          v-model="folder_name"
+          @keyup.enter="add_folder" 
+          @keyup.escape="folder_name = ''">
+        <select 
+          @change="select_folder"
+          v-model="selected_folder"
+          class="form-select mt-1 bg-dark text-white p-0 ps-1" 
+          title="Выбор папки">
+          <option value="">Видосы</option>
+          <option value="porno">Порнуха</option>
+          <option v-for="(item, index) in folders" :value="item">{{ item }}</option>
+        </select>
+        <!-- <button class="btn btn-sm btn-outline-info mt-1">Добавить</button> -->
 
-        <!-- количество столбцов -->
-        <div class="col-sm-12 mb-1 mt-1">
-          <!-- <input type="number" class="form-control mt-1" min="1" max="4"> -->
-          <select v-model="selected" class="form-select mt-1 bg-dark text-white p-0 ps-1" name="" title="Количество столбцов">
-            <option value="0">List</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
-            <option value="4">Four</option>
-            <option value="6">Six</option>
-            <option value="12">Twelve</option>
-          </select>
-        </div>
-
-
-        <div class="col-sm-12 mb-1 mt-1">
-          <!-- <input type="number" class="form-control mt-1" min="1" max="4"> -->
-          <select @change="select_play(playlist_name)" v-model="playlist_name" class="form-select mt-1 bg-dark text-white p-0 ps-1" name="" title="Выбор плейлиста">
-            <option value="all">All</option>
-            <option value="recent">Recent</option>
-            <option  v-for="(item, index) in play_list_array" v-bind:value="item">{{ item[0] }}</option>
-          </select>
-        </div>
-
-      </div>
-
-
-      <div class="col-12"></div>
-
-
-
-      <div class="col-sm-12 input-group mb-2 mt-2 m-0 p-0">
-        <span class="input-group-text p-0 m-0 px-2" id=""><i class="bi bi-search"></i></span>
-        <input type="text" placeholder="Панель поиска" class="form-control bg-dark text-white p-0 m-0 ps-1" v-on:keyup.enter="template_request" @mouseover="recent_request=true" v-on:input="searching(name)" v-model="name" @focus="recent_request = true" @mouseleave="" @blur="" autocomplete="on">
-      
-      
-        <button class="btn btn-sm btn-outline-danger" @click="show_poster_func"
-          title="Показывает\Скрывает постеры на видео"><i class="bi bi-emoji-heart-eyes"></i></button>
-        <button @click="open_addvance" class="btn btn-sm btn-outline-danger" title="Дополнительно">
-          <i class="bi bi-list"></i>
+        <button 
+          class="btn btn-sm btn-info form-control mt-1" 
+          @click="show_poster_func"
+          title="Показывает\Скрывает постеры на видео">
+          <i class="bi bi-emoji-heart-eyes"></i>Показать/Скрыть постеры к видео
         </button>
-        <button @click="clear_history_search" class="btn btn-sm btn-outline-danger" id=""><i class="bi bi-radioactive"></i></button>
-        <button @click="csr" class="btn btn-sm btn-outline-danger" id=""><i class="bi bi-backspace"></i></button>
+        <button 
+          @click="clear_history_search" 
+          class="btn btn-sm btn-info form-control mt-1" 
+          id=""
+          title="Очистить историю поиска">
+          <i class="bi bi-radioactive"></i>Очистить историю поиска
+        </button>
+        <button 
+          @click="show_hide_tags" 
+          class="btn btn-sm btn-info form-control mt-1" 
+          id=""
+          title="Скрыть/показать теги">
+          <i class="bi bi-radioactive"></i> Показать/Скрыть теги
+        </button>
+
+
       </div>
 
-      <div class="col-sm-8 style_searching rounded p-1 ms-4 mt-5" style="" v-if="sampling_by_template.length !== 0">
-        <div class="" v-for="(item, index) in sampling_by_template" :key="item">
-          {{ item.name }}
-        </div>
-      </div>
-      <div v-if="recent_request_array.length!=0 && recent_request && sampling_by_template.length==0" class="col-sm-8 mt-5 style_searching" @mouseleave="recent_request = false">
+
+
+
+
+      <!-- <div v-if="recent_request_array.length!=0 && recent_request && sampling_by_template.length==0" class="col-sm-8 style_searching" @mouseleave="recent_request = false">
         <div class="" v-for="(request, index) in recent_request_array" :key="request">
           <span @click="sel_last_request(request)" >{{ request }}</span>
         </div>
-      </div> 
+      </div>  -->
 
 
 
-      <div>
-        <!-- переключатель страниц -->
-        <div v-if="totalpages != 1 && current_play_list == 'All' && video_values!==5" class="mt-1 d-flex justify-content-center">
-          <nav aria-label="">
-            <ul class="pagination">
-              <li v-if="currentPage > 0" class="page-item"><a class="page-link" href="#"
-                  @click="crumbs(currentPage - 1)">  &lt;  </a></li>
-                  <!-- @click="crumbs(currentPage - 1)">&laquo;</a></li> -->
-              <li v-if="currentPage > 2" class="page-item"><a class="page-link" href="#" @click="crumbs(0)">1</a></li>
+      <div class="col m-1" style="background-color: rgb(96, 93, 96); border-radius: 5px;">
+        <div class="row">
 
-              <template v-for="(page, i) in totalpages">
-                <li v-if="(currentPage - 2 < page) && (currentPage + 4 > page)"
-                  :class="{ 'page-item': true, 'active': (page - 1 == currentPage) }">
-                  <a class="page-link" @click="crumbs(page - 1)" href="#">{{ page }}</a>
-                </li>
-              </template>
-
-
-
-              <li v-if="currentPage < totalpages - 3" class="page-item">
-                <a class="page-link" href="#" @click="crumbs(totalpages - 1)">
-                  {{ totalpages }}
-                </a>
-              </li>
-              <!-- <li v-if="currentPage==totalpages-2" class="page-item"><a class="page-link" href="#" @click="crumbs(currentPage+1)">{{ currentPage }}</a></li> -->
-              <li v-if="currentPage < totalpages - 1" class="page-item"><a class="page-link" href="#" style=""
-                  @click="crumbs(currentPage + 1)">&gt;</a></li>
-                  <!-- @click="crumbs(currentPage + 1)">&raquo;</a></li> -->
-            </ul>
-          </nav>
-        </div>
-      </div>
-      <!-- <search :array="array_videos" placeholder="Название видео" type="video"></search> -->
-      <!-- <div class="col-sm-12 mb-2 mt-2">
-        <input type="text" class="form-control" placeholder="Поиск видео" v-model="nme" v-on:input="search">
-      </div> -->
-
-
-      <!-- {{ rx_array.length }} -->
-      <!-- :poster="`/gifs/${encodeURIComponent(item.replace('.mp4', '.gif'))}`" -->
-      <!-- отображаемые видео -->
-
-      <div v-for="(item, i) in rx_array" :key="item"
-        :class="{ 'p-1 pt-2': true, 'col-1': (selected == 12), 'col-2': (selected == 6), 'col-3': (selected == 4), 'col-sm-4': (selected == 3), 'col-6': (selected == 2), 'col-12': (selected == 1), 'col-sm-12': (selected==0) }">
-
-        <!-- {{ item }} -->
-        <div class="frame-video p-1 rounded">
-          <div class="row">
-            
-            
-            <div :class="{'col-4': selected==0, 'd-flex': true }">
-              
-              <div class="row p-0 mb-2 d-flex flex-column">
-                <div v-if="current_play_list == 'All' && show_like_button==true" class="mb-1 me-1">
-                  <button class="btn btn-sm btn-outline-danger" @click="add_to_like(item.name)" :title="like_button_label">
-                    <i class="bi bi-heart"></i> 
-                  </button>
-                </div>
-                <div class="mb-1" v-if="current_play_list !== 'All'"><button @click="delete_from_albom(i)" class="btn btn-sm btn-outline-secondary"><i class="bi bi-x"></i></button></div>
-                <div class="mb-1 me-1"><button class="btn btn-sm btn-outline-danger" @click="reset_video(i)"><i class="bi bi-stop-btn"></i></button></div>
-                <div class="mb-1"><button class="btn btn-sm btn-outline-success" @click="play_video(i)"><i class="bi bi-play-btn"></i></button></div>
-                <div class=""><button class="btn btn-sm btn-outline-success" @click="full_video(i)"><i class="bi bi-arrows-fullscreen"></i></button></div>
-              </div>
-
-              <div>
-                <figure class="m-0" @mouseover="item.upHere = true" @mouseleave="item.upHere = false" >
-                  <video class="w-100 videos m-0 p-0"
-                    v-bind:poster="(show_poster == true && item.upHere !== true) ? '/images/periodic_table.jpg' : `/gifs/${encodeURIComponent(item.name.replace(/(.webm|.mp4|.mkv|.avi)/gi, '.gif'))}`"
-                    loop preload="none" controls="controls" controlsList="nodownload">
-                    <!-- <source :src="`/g?name=${encodeURIComponent(item.name)}`" type="video/mp4" /> -->
-                    <source :src="`/files/g?name=${encodeURIComponent(item.name)}`" type='video/mp4' />
-                  </video>
-                  <!-- <figcaption>
-                    <label id="timer" for="progress" role="timer"></label>
-                    <progress id="progress" max="100" value="0">Progress</progress>
-                  </figcaption> -->
-                  <!-- <marquee behavior="scroll" direction="left">{{ item.name }}</marquee> -->
-                    <!-- {{ item.name }} -->
-                    <!-- {{ item.shw_nm_vd }} -->
-                  <figcaption v-if="selected != 0" style="font-size: small" class="text-break ms-auto">
-                    <span v-if="crypt_mode">{{ nameVideo(item) }}</span>
-                    <span v-else>{{ nameVideo(item) }}</span>
-     
-                  </figcaption>
-                </figure>
-                
-              </div>
+          <div class="col-sm-6 style_searching rounded p-1" style="" v-if="sampling_by_template.length !== 0">
+            <div class="" v-for="(item, index) in sampling_by_template" :key="item">
+              {{ item.name }}
             </div>
+          </div>
 
-            <div v-if="selected == 0" class="col-6 p-0">
-              <p class="p-0 m-0" style="font-size: small; color: #555555">
-                <!-- {{ nameVideo(item, 0) }} -->
-                <span v-if="crypt_mode">{{ nameVideo(item, 0).toString(16) }}</span>
-                <span v-else>{{ nameVideo(item, 0) }}</span>
-              </p>
-              <p class="p-0 m-0" style="font-size: small; color: #555555">
-                atime: {{ new Date(item['info']['atime']).toLocaleDateString() }} {{ new Date(item['info']['atime']).toLocaleTimeString() }}
-              </p>
-              <p class="p-0 m-0" style="font-size: small; color: #555555">
-                ctime: {{ new Date(item['info']['atime']).toLocaleDateString() }} {{ new Date(item['info']['atime']).toLocaleTimeString() }}
-              </p>
-              <p class="p-0 m-0" style="font-size: small; color: #555555">
-                mtime: {{ new Date(item['info']['mtime']).toLocaleDateString() }} {{ new Date(item['info']['mtime']).toLocaleTimeString() }}
-              </p>
-              <p class="p-0 m-0" style="font-size: small; color: #555555">
-                size: {{ Math.round(item['info']['size'] * 100 / 1024 / 1024) / 100 }} Мб
-              </p>
+          <div class="col-sm-12" v-if="show_tags">
+            <button v-for="(value, index) in tags" @click="byTag(value)" class="mybtn">{{ value }}</button>
+          </div>
+
+          <!-- переключатель страниц -->
+          <div>
+
+            <div v-if="totalpages != 1 && current_play_list == 'All' && video_values !== 9"
+              class="mt-1 d-flex justify-content-center">
+              <nav aria-label="">
+                <ul class="pagination">
+                  <li v-if="currentPage > 0" class="page-item"><a class="page-link" href="#"
+                      @click="crumbs(currentPage - 1)"> &lt; </a></li>
+                  <!-- @click="crumbs(currentPage - 1)">&laquo;</a></li> -->
+                  <li v-if="currentPage > 2" class="page-item"><a class="page-link" href="#" @click="crumbs(0)">1</a></li>
+
+                  <template v-for="(page, i) in totalpages">
+                    <li v-if="(currentPage - 2 < page) && (currentPage + 4 > page)"
+                      :class="{ 'page-item': true, 'active': (page - 1 == currentPage) }">
+                      <a class="page-link" @click="crumbs(page - 1)" href="#">{{ page }}</a>
+                    </li>
+                  </template>
+
+
+
+                  <li v-if="currentPage < totalpages - 3" class="page-item">
+                    <a class="page-link" href="#" @click="crumbs(totalpages - 1)">
+                      {{ totalpages }}
+                    </a>
+                  </li>
+                  <!-- <li v-if="currentPage==totalpages-2" class="page-item"><a class="page-link" href="#" @click="crumbs(currentPage+1)">{{ currentPage }}</a></li> -->
+                  <li v-if="currentPage < totalpages - 1" class="page-item"><a class="page-link" href="#" style=""
+                      @click="crumbs(currentPage + 1)">&gt;</a></li>
+                  <!-- @click="crumbs(currentPage + 1)">&raquo;</a></li> -->
+                </ul>
+              </nav>
+            </div>
+          </div>
+          <!-- <search :array="array_videos" placeholder="Название видео" type="video"></search> -->
+          <!-- <div class="col-sm-12 mb-2 mt-2">
+              <input type="text" class="form-control" placeholder="Поиск видео" v-model="nme" v-on:input="search">
+            </div> -->
+
+
+          <!-- {{ rx_array.length }} -->
+          <!-- :poster="`/gifs/${encodeURIComponent(item.replace('.mp4', '.gif'))}`" -->
+          <!-- отображаемые видео -->
+
+          <div v-for="(item, i) in rx_array" :key="item"
+            :class="{ 'p-1 pt-2': true, 'col-1': (selected == 12), 'col-2': (selected == 6), 'col-3': (selected == 4), 'col-sm-4': (selected == 3), 'col-6': (selected == 2), 'col-12': (selected == 1), 'col-sm-12': (selected == 0) }">
+
+            <!-- {{ item }} -->
+            <div class="frame-video p-1 rounded panel_show_video">
+              <div class="row">
+
+
+                <div :class="{ 'col-4': selected == 0, 'd-flex': true }">
+
+                  <div class="row p-0 mb-2 d-flex flex-column">
+                    <div v-if="current_play_list == 'All' && show_like_button == true" class="mb-1 me-1">
+                      <button class="btn btn-sm btn-outline-danger" @click="add_to_like(item.name)"
+                        :title="like_button_label">
+                        <i class="bi bi-heart"></i>
+                      </button>
+                    </div>
+                    <div class="mb-1" v-if="current_play_list !== 'All'"><button @click="delete_from_albom(i)"
+                        class="btn btn-sm btn-outline-secondary"><i class="bi bi-x"></i></button></div>
+                    <div class="mb-1 me-1"><button class="my-btn-play-list" @click="reset_video(i)"><i
+                          class="bi bi-stop-btn"></i></button></div>
+                    <div class="mb-1"><button class="my-btn-play-list" @click="play_video(i)"><i
+                          class="bi bi-play-btn"></i></button></div>
+                    <div class=""><button class="my-btn-play-list" @click="full_video(i)"><i
+                          class="bi bi-arrows-fullscreen"></i></button></div>
+                  </div>
+
+                  <div>
+                    <figure class="m-0" @mouseover="item.upHere = true" @mouseleave="item.upHere = false">
+                      <video class="w-100 videos m-0 p-0"
+                        :poster="(show_poster == true && item.upHere !== true) ? '/images/periodic_table.jpg' : `/gifs/${encodeURIComponent(item.name.replace(/(.webm|.mp4|.mkv|.avi)/gi, '.gif'))}`"
+                        loop preload="none" controls="controls" controlsList="nodownload">
+                        <!-- <source :src="`/g?name=${encodeURIComponent(item.name)}`" type="video/mp4" /> -->
+                        <source :src="`/files/g?name=${encodeURIComponent(item.name)}&folder=${current_folder}`"
+                          type='video/mp4' />
+                      </video>
+                      <!-- <figcaption>
+                          <label id="timer" for="progress" role="timer"></label>
+                          <progress id="progress" max="100" value="0">Progress</progress>
+                        </figcaption> -->
+                      <!-- <marquee behavior="scroll" direction="left">{{ item.name }}</marquee> -->
+                      <!-- {{ item.name }} -->
+                      <!-- {{ item.shw_nm_vd }} -->
+                      <figcaption v-if="selected != 0" style="font-size: small" class="text-break ms-auto">
+                        <span v-if="crypt_mode">{{ nameVideo(item) }}</span>
+                        <span v-else>{{ nameVideo(item) }}</span>
+
+                      </figcaption>
+                    </figure>
+
+                  </div>
+                </div>
+
+                <div v-if="selected == 0" class="col-6 p-0">
+                  <p class="p-0 m-0" style="font-size: small; color: #555555">
+                    <!-- {{ nameVideo(item, 0) }} -->
+                    <span v-if="crypt_mode">{{ nameVideo(item, 0).toString(16) }}</span>
+                    <span v-else>{{ nameVideo(item, 0) }}</span>
+                  </p>
+                  <p class="p-0 m-0" style="font-size: small; color: #555555">
+                    atime: {{ new Date(item['info']['atime']).toLocaleDateString() }} {{ new
+                      Date(item['info']['atime']).toLocaleTimeString() }}
+                  </p>
+                  <p class="p-0 m-0" style="font-size: small; color: #555555">
+                    ctime: {{ new Date(item['info']['atime']).toLocaleDateString() }} {{ new
+                      Date(item['info']['atime']).toLocaleTimeString() }}
+                  </p>
+                  <p class="p-0 m-0" style="font-size: small; color: #555555">
+                    mtime: {{ new Date(item['info']['mtime']).toLocaleDateString() }} {{ new
+                      Date(item['info']['mtime']).toLocaleTimeString() }}
+                  </p>
+                  <p class="p-0 m-0" style="font-size: small; color: #555555">
+                    size: {{ Math.round(item['info']['size'] * 100 / 1024 / 1024) / 100 }} Мб
+                  </p>
+                </div>
+
+              </div>
+
             </div>
 
           </div>
+          <!-- {{ rx_array.length==0 }} -->
+          <div class="mt-1 d-flex justify-content-center text1style">
+            <p v-if="rx_array.length == 0">Результатов не найдено</p>
+          </div>
+
+          <!-- переключатель страниц -->
+          <div v-if="totalpages != 1 && current_play_list == 'All'" class="mt-1 d-flex justify-content-center">
+            <nav aria-label="Page navigation mt-1">
+              <ul class="pagination">
+                <li v-if="currentPage > 0" class="page-item"><a class="page-link" href="#"
+                    @click="crumbs(currentPage - 1)">&laquo;</a></li>
+                <li v-if="currentPage > 3" class="page-item"><a class="page-link" href="#" @click="crumbs(0)">1</a></li>
+
+                <template v-for="(page, i) in totalpages">
+                  <li v-if="(currentPage - 2 < page) && (currentPage + 4 > page)"
+                    :class="{ 'page-item': true, 'active': (page - 1 == currentPage) }">
+                    <a class="page-link" @click="crumbs(page - 1)" href="#">{{ page }}</a>
+                    <!-- <a v-else class="page-link" @click="crumbs(page-1)" href="#"></a> -->
+                  </li>
+                  <!-- {{ func(page) }} -->
+                  <!-- {{ (4+totalpages-3)/2 }} -->
+                  <!-- <li v-if="page==Number((4+totalpages-3)/2)" class="page-item">
+                      <a class="page-link">...</a>
+                    </li> -->
+                  <!-- <li class="page-item" v-if="check">
+                      <a class="page-link" href="#">...</a>
+                    </li> -->
+                </template>
+
+
+
+                <li v-if="currentPage < totalpages - 4" class="page-item">
+                  <a class="page-link" href="#" @click="crumbs(totalpages - 1)">
+                    {{ totalpages }}
+                  </a>
+                </li>
+                <!-- <li v-if="currentPage==totalpages-2" class="page-item"><a class="page-link" href="#" @click="crumbs(currentPage+1)">{{ currentPage }}</a></li> -->
+                <li v-if="currentPage < totalpages - 1" class="page-item"><a class="page-link" href="#"
+                    @click="crumbs(currentPage + 1)">&raquo;</a></li>
+              </ul>
+            </nav>
+          </div>
 
         </div>
-
-      </div>
-      <!-- {{ rx_array.length==0 }} -->
-      <div class="mt-1 d-flex justify-content-center">
-        <p v-if="rx_array.length == 0">Тут пока ничего нет...</p>
       </div>
 
-      <!-- переключатель страниц -->
-      <div v-if="totalpages != 1 && current_play_list == 'All'" class="mt-1 d-flex justify-content-center">
-        <nav aria-label="Page navigation mt-1">
-          <ul class="pagination">
-            <li v-if="currentPage > 0" class="page-item"><a class="page-link" href="#"
-                @click="crumbs(currentPage - 1)">&laquo;</a></li>
-            <li v-if="currentPage > 3" class="page-item"><a class="page-link" href="#" @click="crumbs(0)">1</a></li>
-
-            <template v-for="(page, i) in totalpages">
-              <li v-if="(currentPage - 2 < page) && (currentPage + 4 > page)"
-                :class="{ 'page-item': true, 'active': (page - 1 == currentPage) }">
-                <a class="page-link" @click="crumbs(page - 1)" href="#">{{ page }}</a>
-                <!-- <a v-else class="page-link" @click="crumbs(page-1)" href="#"></a> -->
-              </li>
-              <!-- {{ func(page) }} -->
-              <!-- {{ (4+totalpages-3)/2 }} -->
-              <!-- <li v-if="page==Number((4+totalpages-3)/2)" class="page-item">
-                <a class="page-link">...</a>
-              </li> -->
-              <!-- <li class="page-item" v-if="check">
-                <a class="page-link" href="#">...</a>
-              </li> -->
-            </template>
 
 
-
-            <li v-if="currentPage < totalpages - 4" class="page-item">
-              <a class="page-link" href="#" @click="crumbs(totalpages - 1)">
-                {{ totalpages }}
-              </a>
-            </li>
-            <!-- <li v-if="currentPage==totalpages-2" class="page-item"><a class="page-link" href="#" @click="crumbs(currentPage+1)">{{ currentPage }}</a></li> -->
-            <li v-if="currentPage < totalpages - 1" class="page-item"><a class="page-link" href="#"
-                @click="crumbs(currentPage + 1)">&raquo;</a></li>
-          </ul>
-        </nav>
-      </div>
     </div>
   </div>
 </template>
 
 
 <style scoped>
-
-
-.pagination>li:first-child>a, .pagination>li:first-child>span {
-    border-top-left-radius: 3px;
-    border-bottom-left-radius: 3px;
-    
+.text1style {
+  color: rgb(16, 53, 53);
 }
 
-.pagination>li:last-child>a, .pagination>li:last-child>span {
-    border-top-right-radius: 3px;
-    border-bottom-right-radius: 3px;
+.my-btn-play-list {
+  padding: 0;
+  padding-inline: 6px;
+  border: 3px solid coral;
+  /* border: 3px dashed coral; */
+  background-color: rgb(18, 4, 47);
+  /* cursor: wait; */
 }
+
+.my-form-control {
+  width: 100%;
+  border: 3px ridge black;
+  background-color: gray;
+}
+
+.mybtn {
+  background-color: rgb(168, 219, 14);
+  color: #111111;
+  border-radius: 7px;
+  padding: 0;
+  padding-inline: 10px;
+  /* margin-inline: 2px; */
+  margin-right: 2px;
+  margin-left: 0;
+  margin-bottom: 4px;
+  font-size: 13px;
+  border: 0 solid yellow;
+  cursor: crosshair;
+}
+
+.mybtn:hover {
+  background-color: #dc3545;
+}
+
+.panel_show_video {
+  z-index: 500;
+  position: relative;
+  background-color: #dc3545;
+}
+
+.pagination>li:first-child>a,
+.pagination>li:first-child>span {
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+
+}
+
+.pagination>li:last-child>a,
+.pagination>li:last-child>span {
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+
 /* 
 .pagination {
   border-radius: 0px !important;;
@@ -392,18 +561,20 @@ import Swal from 'sweetalert2';
   border-radius: 5px;
   text-decoration: underline;
   z-index: 1000;
-  position: absolute;
+  position: relative;
   font-size: 13px;
   opacity: .8;
   /* box-sizing: border-box;
   -moz-box-sizing: border-box; */
 }
+
 .recent_request_class_css:hover {
   color: orange;
 }
+
 .page-link {
   background-color: black;
-  border-color: #dc3545;
+  border-color: #cb0317;
   color: #dc3545;
 }
 
@@ -422,16 +593,17 @@ import Swal from 'sweetalert2';
 
 .frame-video {
   background-color: rgb(0, 0, 0);
+  /* cursor: n-resize; */
   /* padding: 10px; */
 }
 
 /* audio::-webkit-media-controls-timeline,
 video::-webkit-media-controls-timeline {
-    display: none;
+  display: none;
 }
 audio::-webkit-media-controls,
 video::-webkit-media-controls {
-    display: none;
+  display: none;
 }
 
 
@@ -466,6 +638,11 @@ export default {
   },
   data() {
     return {
+      show_tags: 0,
+      selected_folder:'',
+      folder_name: '',
+      folders: [],
+      current_folder: '',
       array_videos: [],
       currentPage: 0,
       shw_nm_vd: true,
@@ -488,7 +665,7 @@ export default {
       selected_part: '',
       batch_list: [], // загружаемые видео(список)
       dayes: 1,
-      video_values: 5,
+      video_values: 9,
       totalvideos: 0,
       totalpages: 0,
       tmp: true,
@@ -509,7 +686,10 @@ export default {
       recent_arr: [],
       crypt_mode: false,
       recent_request: false,
-      recent_request_array: []
+      recent_request_array: [],
+      tags: [],
+      tag_name: '',
+      mode_size: false,
     }
   },
 
@@ -524,17 +704,30 @@ export default {
 
     // В этом методе происходит, чтение или создание хранилища для пользовательских данных в кэше браузера.
     if (window.localStorage.getItem('url_list') == null) {
-      window.localStorage.setItem('url_list', JSON.stringify([]));
+      window.localStorage.setItem('url_list', JSON.stringify([]))
 
     }
 
     if (window.localStorage.getItem('recent_request_list') == null) {
-      window.localStorage.setItem('recent_request_list', JSON.stringify([]));
+      window.localStorage.setItem('recent_request_list', JSON.stringify([]))
 
     } else {
       // await this.write_to_db()
     }
 
+    if (window.localStorage.getItem('tags') == null) {
+      window.localStorage.setItem('tags', JSON.stringify([]))
+    } else {
+      this.tags = JSON.parse(window.localStorage.getItem('tags'))
+    }
+
+    if(window.localStorage.getItem('folders')==null){
+      window.localStorage.setItem('folders', JSON.stringify([]))
+    }
+  
+    
+
+    this.folders=JSON.parse(window.localStorage.getItem('folders'))
     this.batch_list = JSON.parse(window.localStorage.getItem('url_list'))
     this.recent_request_array = JSON.parse(window.localStorage.getItem('recent_request_list'))
 
@@ -545,10 +738,11 @@ export default {
     await this.g(true)
 
     await this.g()
+    await this.open_addvance()
 
-
+    // тут идёт запись словаря в локальное хранилище
     if (window.localStorage.getItem('lst_ply_lst') == null) {
-      window.localStorage.setItem('lst_ply_lst', JSON.stringify(Array.from((new Map()).entries()))); // записываем словарь в локальное хранилище
+      window.localStorage.setItem('lst_ply_lst', JSON.stringify(Array.from((new Map()).entries()))) // записываем словарь в локальное хранилище
 
     }
     this.play_list_array = new Map(JSON.parse(localStorage.getItem('lst_ply_lst')))
@@ -563,8 +757,8 @@ export default {
     // alert('created hello')
     console.log("Запускаю процедуру подключения к WebSocket Server")
     this.ws = new WebSocket("ws://192.168.1.103:3000")
-    // this.ws.binaryData = "blob";
-    this.ws.binaryType = "arraybuffer";
+    // this.ws.binaryData = "blob"
+    this.ws.binaryType = "arraybuffer"
 
     this.ws.onmessage = function (event) {
       // console.log(event.data.text());
@@ -596,6 +790,42 @@ export default {
 
   },
   methods: {
+    async show_hide_tags(){
+      this.show_tags=!this.show_tags
+    },
+    async add_folder() {
+      if(this.folder_name.trim()){
+        this.folders.push(this.folder_name);
+        window.localStorage.setItem('folders', JSON.stringify(this.folders))
+        this.folder_name = "";
+      }
+    },
+    async select_folder() {
+      this.current_folder=this.selected_folder
+      await this.g(true)
+      await this.g()
+    },
+    async clear_sample_result() {
+
+    },
+    async mode_toggle_size() {
+      this.mode_size = !this.mode_size
+    },
+    async byTag(value) {
+      console.log(value)
+      this.name = value
+      await this.searching(this.name)
+      await this.template_request()
+
+    },
+    async createTag() {
+      if(this.tag_name.trim()){
+        this.tags.push(this.tag_name);
+        window.localStorage.setItem('tags', JSON.stringify(this.tags));
+        this.tag_name = "";
+      }
+
+    },
     async write_to_db() {
       const response = await fetch('/g/write_cash', {
         method: 'POST',
@@ -624,7 +854,7 @@ export default {
 
     },
     async csr() {
-      this.name = ''; 
+      this.name = '';
       this.rx_array = this.array_videos.slice(0)
       this.sampling_by_template = []
 
@@ -649,9 +879,9 @@ export default {
 
 
     },
-    
-    nameVideo(item, mode=1) {
-      return (!item.upHere && item.name.length > 30) ? item.name.slice(0, (mode==1)? 30 : 120) + '...' : item.name
+
+    nameVideo(item, mode = 1) {
+      return (!item.upHere && item.name.length > 30) ? item.name.slice(0, (mode == 1) ? 30 : 120) + '...' : item.name
     },
 
     async delete_from_albom(i) {
@@ -671,46 +901,27 @@ export default {
     },
 
     async template_request() {
-      this.rx_array = this.sampling_by_template.slice(0);
+      this.rx_array = this.sampling_by_template.slice(0) // записываем в список видео то что было в поиске
       let tname = this.name.trim()
 
-      if (tname!="" && this.recent_request_array.indexOf(tname) < 0) { 
-
-          this.recent_request_array.push(tname)
-          window.localStorage.setItem('recent_request_list', JSON.stringify(this.recent_request_array))
+      if (tname != "" && this.recent_request_array.indexOf(tname) < 0) { // добавляем в кэш
+        this.recent_request_array.push(tname)
+        window.localStorage.setItem('recent_request_list', JSON.stringify(this.recent_request_array))
 
       }
 
 
       // await this.csr()
-      this.name = ''; 
+      this.name=''
       // this.rx_array = this.array_videos.slice(0)
-      this.sampling_by_template = []
+      this.sampling_by_template=[]
 
-      // let properties = {
-      //   type: "video",
-      //   page: this.currentPage,
-      //   limit: this.video_values,
-      //   flag: flag
-      // }
-
-      // console.info(this.selected_part)
-      // const response = await fetch('/g', {
-      //   method: 'POST',
-      //   credentials: 'include',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(properties)
-      // })
-
-      // let result = await response.json()
     },
 
-    async open_addvance() {
-      this.show_extra = !this.show_extra
-      this.show_pen = false
-      if (!this.show_extra) this.show_like_button = false;
+    async open_addvance(){
+      this.show_extra=!this.show_extra
+      this.show_pen=false
+      if(!this.show_extra)this.show_like_button=false
     },
 
     async sdp() {
@@ -719,10 +930,10 @@ export default {
     },
 
     async show_like_button_func(key) {
-      //this.show_like_button = !this.show_like_button;
+      //this.show_like_button = !this.show_like_button
       this.like_button_label = key;
       this.current_play_list = 'All'
-      this.rx_array = this.array_videos.slice(0);
+      this.rx_array = this.array_videos.slice(0)
       this.show_like_button = true
 
     },
@@ -827,10 +1038,10 @@ export default {
     async select_play(item) {
       console.log('selected_play 12313: ', item)
 
-      if (item=='recent') {
+      if (item == 'recent') {
         console.log('Тут Тут Тут сработало!!!!!!!!!!!!')
         console.log(this.rx_array)
-        this.rx_array = this.recent_arr.slice(0); 
+        this.rx_array = this.recent_arr.slice(0);
         this.current_play_list = 'Recent'
         console.log(this.recent_arr)
 
@@ -843,7 +1054,7 @@ export default {
 
         //this.totalpages = Math.ceil(this.rx_array / this.video_values)
       } else if (item == 'all') {
-        this.rx_array = this.array_videos.slice(0); 
+        this.rx_array = this.array_videos.slice(0);
         this.current_play_list = 'All'
       } else {
         this.hide_default_point_tmp = true; // логика с выбором дэфолтного плей листа
@@ -917,19 +1128,23 @@ export default {
       }
     },
     async searching() {
-      let name = this.name.toLowerCase()
-      let rx = new RegExp(name)
-      this.sampling_by_template = []
-      if (name != "") {
-        //for (let i = 0; i < this.lst_srch.length; i++) {
-        this.sampling_by_template = this.lst_srch.filter(item => rx.test(item.name.toLowerCase()))
-            // this.sampling_by_template.push(this.lst_srch[i])
+      try {
+        let name = this.name.toLowerCase()
+        let rx = new RegExp(name)
+        this.sampling_by_template = []
+        if (name != "") {
+          //for (let i = 0; i < this.lst_srch.length; i++) {
+          this.sampling_by_template = this.lst_srch.filter(item => rx.test(item.name.toLowerCase()))
+          // this.sampling_by_template.push(this.lst_srch[i])
 
-            //console.log(`this.video: ${this.lst_srch[i].name}`)
+          //console.log(`this.video: ${this.lst_srch[i].name}`)
           //}
-        //} 
-      } else { // заполняем тем что было до поиска
-        this.rx_array = this.array_videos.slice(0)
+          //} 
+        } else { // заполняем тем что было до поиска
+          this.rx_array = this.array_videos.slice(0)
+        }
+      } catch (e) {
+        console.log(e)
       }
       // this.name = ""
       // console.log(this.rx_array)
@@ -944,12 +1159,13 @@ export default {
 
     },
 
-    async g(flag=false) {
+    async g(flag = false) {
       let properties = {
         type: "video",
         page: this.currentPage,
         limit: this.video_values,
-        flag: flag
+        flag: flag,
+        folder: this.current_folder
       }
 
       console.info(this.selected_part)
@@ -986,33 +1202,34 @@ export default {
     },
 
     async run_download(url) {
-      this.url = "" // очищаем поле ввода
-      this.batch_list.push(url)
-      window.localStorage.setItem('url_list', JSON.stringify(this.batch_list));
-      // console.log(123123, window.localStorage.getItem('url_list'))
-      // this.$emit('wait', true)
-      const response = await fetch(`/files/download/video?url=${url}`, {
-        method: "GET",
-        credentials: 'include',
-        headers: {
-          'Authorization': window.localStorage.getItem('jwt'),
-        }
+      if(this.url.trim()){
+        this.url = "" // очищаем поле ввода
+        this.batch_list.push(url)
+        window.localStorage.setItem('url_list', JSON.stringify(this.batch_list));
+        // console.log(123123, window.localStorage.getItem('url_list'))
+        // this.$emit('wait', true)
+        const response = await fetch(`/files/download/video?url=${url}`, {
+          method: "GET",
+          credentials: 'include',
+          headers: {
+            'Authorization': window.localStorage.getItem('jwt'),
+          }
 
-      })
+        })
 
-      this.done_string = (await response.json())['wait']
-      console.log(`result: ${this.done_string}`)
-      this.batch_list = JSON.parse(window.localStorage.getItem('url_list'))
+        this.done_string = (await response.json())['wait']
+        console.log(`result: ${this.done_string}`)
+        this.batch_list = JSON.parse(window.localStorage.getItem('url_list'))
 
-      this.batch_list.splice(this.batch_list.indexOf(this.done), 1)
-      window.localStorage.setItem('url_list', JSON.stringify(this.batch_list));
-      this.batch_list = JSON.parse(window.localStorage.getItem('url_list'))
-      // console.log('аааааааааа')
-      // await this.sendMessage()
+        this.batch_list.splice(this.batch_list.indexOf(this.done), 1)
+        window.localStorage.setItem('url_list', JSON.stringify(this.batch_list));
+        this.batch_list = JSON.parse(window.localStorage.getItem('url_list'))
+        // console.log('аааааааааа')
+        // await this.sendMessage()
 
 
-      await this.g()
-
+        await this.g()
+      }
 
 
 
