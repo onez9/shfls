@@ -208,6 +208,76 @@ router.post('/g/words', (req, res) => {
 		console.log(e)
 	}
 })
+
+router.get('/g/words/:num_lang/:num_part/:count_words', (req, res) => {
+	try {
+		let lang = 1
+		let page = req.params.num_part
+		let limit = req.params.count_words
+		let column_name = 'one'
+		let order = 'asc'
+		let date_order = 'asc'
+		let time_order = 'asc'
+		let m2 = true
+
+		let date_from = ''
+		let time_from = ''
+
+		let date_to = ''
+		let time_to = ''
+		const db = new sqlite.Database('db.sqlite3')
+		let sql;
+		let count;
+		let params;
+
+
+		db.serialize(() => {
+			let fromIndex = page * limit     
+			let toIndex = page * limit + limit 
+
+			// console.log(`fromIndex: ${fromIndex}, toIndex: ${toIndex}`)
+
+			sql = `select * from words where language_id=? order by ${column_name} ${order}, lower(${column_name}) limit ?, ?;`;
+			sql='select * from words where language_id=? limit ?, ?'
+
+
+
+			let stmt1 = db.prepare(sql, err => {
+				console.error('db.prepare: ', err)
+			})
+			stmt1.all([req.params.num_lang, fromIndex, limit], (err, rows) => {
+				// console.info('количество: ', count, 'код страны: ', dict[lang], params, sql)
+				console.info('sql: ', sql)
+				try {
+					if (err) {
+						console.log('stmt1.all: ', err)
+						// throw err;
+					}
+					
+					// console.log(rows)
+					res.json({
+						body: rows,
+						count: 0,
+					})
+	
+				} catch (e) {
+					console.info('Сработал catch (при запросе к /get/lang (запрос словарей)) ошибка ниже')
+					console.log(e);
+	
+				}
+			});
+			stmt1.finalize((err) => {
+				console.error('stmt1.finalize: ', err)
+			})
+		})
+		db.close(err => {
+			console.error('db.close: ', err)
+		});
+	} catch (e) {
+		console.log(e)
+	}
+})
+
 router.post('/g/name-book', (req, res) => {
     const db = new sqlite.Database('db.sqlite3')
 
@@ -744,73 +814,120 @@ router.post('/g/group', (req, res) => {
 	}
 })
 router.post('/a/w/group', (req, res) => {
-	console.log('Создание группы')
+	console.log('/add_to_group: Идёт добавление в группe : ')
 	try {
-		console.log('Привет Здаров! я тут /add_to_group')
+		// console.log('Привет Здаров! я тут /add_to_group')
 		// console.info(req.body)
 
 		let group_id = Number(req.body.group_id)
+		let group_name=req.body.group_name
+		let group_lang=req.body.group_lang
 		let items = req.body.items
+		console.log(req.body)
 		// let dict = new Map();
 
 		console.info('items', items)
 		console.info('group_id', group_id)
+
+
+		const db = new sqlite.Database('db.sqlite3')
+
+
+		//let sql = 'select id from words where language_id=?';
+		/*
+		db.all(sql, [dict[lang]], (err, rows) => {
+			try {
+				if (err) {
+					throw err;
+				}
+				
+				console.log(rows)
+				res.json(rows)
+
+			} catch (e) {
+				console.info('Сработал catch (при запросе к /get/phrase (запрос словарей)) ошибка ниже')
+				console.log(e);
+
+			}
+		});
+		*/
+
+
+
+		console.log('Последний индекс: 2',group_id)
+		db.serialize(()=>{
+			let sql,params
+			try {
+				if(isNaN(group_id)){
+					// sql='select max(id) as id from groups'
+					sql='select id from groups where name=? and language_id=?'
+					let stmt=db.prepare(sql,err=>{
+						if(err){
+							console.log('Ошибка при подготовке получении максимального id-ника группы.')
+							console.log(err)
+						}
+					})
+					stmt.get([group_name,group_lang],(err,row)=>{
+						if(err)console.log('Ошибка при получении.')
+						else{
+							console.log('row:', row)
+							group_id=row.id
+							console.log('Последний индекс 1: ',group_id)
+							
+						}
+					})
+	
+					stmt.finalize()
+				}
+
+
+
+
 		
-
-        if (true) {
-			const db = new sqlite.Database('db.sqlite3')
-			//let sql = 'select id from words where language_id=?';
-			/*
-			db.all(sql, [dict[lang]], (err, rows) => {
-				try {
-					if (err) {
-						throw err;
-					}
-					
-					console.log(rows)
-					res.json(rows)
-	
-				} catch (e) {
-					console.info('Сработал catch (при запросе к /get/phrase (запрос словарей)) ошибка ниже')
-					console.log(e);
-	
-				}
-			});
-			*/
-
-            let sql = "insert into gw ('word_id', 'group_id') VALUES (?, ?);"
-
-
-            db.serialize(() => {
-				try {
-					let params;
-					const stmt = db.prepare(sql, err=>console.log(err));
-					for (const word_id of items) {
-						params = [word_id, group_id]
-
-						stmt.run(params);
-
-						// console.info(word_id)
+				console.log('Последний индекс 3: ',group_id)
+				
+				sql = "insert into gw ('word_id', 'group_id') VALUES (?, ?);"
+				let stmt = db.prepare(sql, err=>{
+					if(err){
+						console.log(err)
+					}else{
+						console.log('Последний индекс 4: ',group_id)
+						for (const word_id of items) {
+							params = [word_id, group_id]
+							console.log('параметры: ',params)
+							stmt.run(params,err=>{
+								if(err){
+									console.log('/a/w/group')
+									console.log('Последний индекс 5: ',group_id)
+									console.log(err)
+								}
+		
+							});
+		
+							// console.info(word_id)
+						}
 					}
 
-					console.log('Идёт запись данных (Создание группы):')
 					stmt.finalize();
+				});
+			
 
-				} catch (e) {
-					console.log(e)
-
-				}
-            
-            });
+				console.log('Идёт запись данных (Создание группы):')
 
 
-			db.close()
-			res.json({answer: 'success'})
+			} catch (e) {
+				console.log(e)
+
+			}
+		
+		});
 
 
-		} else {
-			res.json({answer: 'failed проводится тестирование'})
-		}
+		db.close()
+		res.json({answer: 'success'})
+
+
+
 
 	} catch (e) {
 		console.error('Произошла предвиденная ошибка (её описание ниже): ')
@@ -860,52 +977,51 @@ router.post('/g/rule', (req, res) => {
 		console.log(e)
 	}
 })
-router.post('/g/w/group', (req, res) => {
+router.post('/g/w/group',(req,res)=>{
 	try {
-		const group_id = req.body.group_id
+		const group_id=req.body.group_id
+		const name=req.body.name
+		const lang=req.body.lang
 
-
-		console.info('Текущий номер группы точнее айди% ', group_id)
-		const db = new sqlite.Database('db.sqlite3')
+		console.info('Индекс группы: ',group_id)
+		console.info('Название группы: ',name)
+		console.info('Названия словаря к которому относится группа: ',lang)
+		const db=new sqlite.Database('db.sqlite3')
 		let sql;
 
-		sql = 'select * from words right join gw on words.id=gw.word_id left join groups on groups.id=gw.group_id where groups.id=?;';
-		db.all(sql, [group_id], (err, rows) => {
-			try {
-				if (err) {
+		sql = 'select * from words right join gw on words.id=gw.word_id \
+			left join groups on groups.id=gw.group_id where groups.id=? or (groups.name=? and groups.language_id=?);';
+		db.all(sql,[group_id,name,lang],(err,rows)=>{
+			try{
+				if(err){
 					throw err;
 				}
 				
 				console.log(rows)
 				res.json(rows)
 
-			} catch (e) {
+			}catch(e){
 				console.info('Сработал catch (при запросе к /get/from_group) ошибка ниже')
 				console.log(e);
 
-			} finally {
+			}finally{
 				console.info('Я тут тут тут')
 			}
 		});
-
-
-			
-
-		
 		db.close();
 
 
-	} catch (e) {
+	}catch(e){
 		console.log('/from_group')
 		console.error(e)
 
-	} finally {
+	}finally{
 		console.info('I\'m running eneway')
 	}
 })
-router.delete('/d/group', (req, res) => {
-    try {
-        console.log('/group', req.body)
+router.delete('/d/group',(req, res)=>{
+    try{
+        console.log('/group',req.body)
         const id = req.body.id
         const name = req.body.name
         const time = req.body.time

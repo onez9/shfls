@@ -146,8 +146,9 @@ router.post('/download/settings', (req, res) => {
 	}
 })
 
-router.get('/ip', (req, res) => {
+router.get('/ip/:id', (req, res) => {
 	console.log(req.headers);
+	console.log("Парматры запроса: ", req.params)
 	// req.headers['remoteFamily'] = req.socket.remoteFamily;
 	// req.headers['remoteAddress'] = req.socket.remoteAddress;
 	// req.headers['remotePort'] = req.socket.remotePort;

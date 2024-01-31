@@ -375,6 +375,10 @@ app.use('/qr', qrCode);
 app.use('/control', control);
 
 
+
+
+
+
 console.log(__dirname)
 app.use(config.routes.files, express.static(path.join(__dirname, config.folders.files)))
 // app.use(config.routes.gifs, (req, res, next) => {

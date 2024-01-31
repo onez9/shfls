@@ -45,7 +45,7 @@ import Swal from 'sweetalert2';
       <div class="border rounded p-0 px-1">
         <label @click="create_mode_dictionary =! create_mode_dictionary" class="w-100">Создать новый словарь</label>
         <template v-if="create_mode_dictionary">
-          <input class="form-control p-0 ps-1" title="Название словаря" placeholder="Название словаря" v-model="name_dictionary">
+          <input class="form-control p-0 ps-1" title="Название словаря" placeholder="Название словаря" v-model="name_dictionary" @keyup.enter="create_new_dict" @keyup.escape="name_dictionary=''">
           <button @click="create_new_dict" class="btn btn-sm form-control btn-outline-danger my-1">Создать</button>
         </template>
       </div>
@@ -130,8 +130,10 @@ import Swal from 'sweetalert2';
         <input v-if="new_word_mode" v-model="one" ref="myinput" type="text" class="form-control ps-1 p-0" title="Иностранный" :placeholder="dict_lang[name_lang-1]?.name"/>
         <input v-if="new_word_mode" v-model="two" type="text" class="form-control mt-1 ps-1 p-0" title="Родной" placeholder="Транскрипция"/>
         <input v-if="new_word_mode" v-model="three" type="text" class="form-control mt-1 ps-1 p-0" title="Родной" placeholder="Родной"/>
-        <button v-if="new_word_mode" @click="send_new_word(one, two, three)" class="my-btn-send" :disabled="(one=='' || three=='')? true : false"><i class="bi bi-send"></i></button>
-        <button v-if="new_word_mode" class="my-btn-clear">Стереть</button>  
+        <div class="d-flex">
+          <button v-if="new_word_mode" @click="send_new_word(one, two, three)" class="my-btn-send" :disabled="(one=='' || three=='')? true : false"><i class="bi bi-send"></i></button>
+          <button v-if="new_word_mode" @click="clearInputWords" class="my-btn-clear">Стереть</button>
+        </div>
         <!-- <button v-if="new_word_mode" @click="get_words()" class="btn btn-sm btn-outline-danger form-control mt-1">Показать слова</button> -->
       </div>
 
@@ -148,8 +150,9 @@ import Swal from 'sweetalert2';
 
 
       <div class="border rounded px-1 mt-1 p-0">
-        <label @click="show_groups_func" class="d-flex justify-content-start">Группы ({{ current_group }})</label>
+        <label @click="show_groups_func" class="d-flex justify-content-start">Открыть группы </label>
         <div v-if="new_group_mode">
+          <!-- {{ current_group }} -->
           <input v-if="true" v-model="name_group" ref="myinput1" v-on:keyup.enter="create_group(name_group)" type="text" class="form-control mb-1" title="Название" placeholder="Название">
           <button v-if="true" @click="create_group(name_group)" class="btn btn-sm btn-outline-danger form-control mb-1">Создать</button>
       
@@ -157,11 +160,16 @@ import Swal from 'sweetalert2';
           <div v-for="(item, index) in groups" :key="item" class="border rounded p-0 mb-1 d-flex align-items-center">
             <!-- <div class="me-auto ps-2"></div> -->
             <!-- {{ item }} -->
-            <button @click="get_values_from_group(item)" class="btn btn-sm btn-outline-danger me-1 w-100">{{ item['name'] }}</button>
-            <button @click="add_to_group" class="btn btn-sm btn-outline-danger me-1"><i class="bi bi-save"></i></button>
-            <!-- <button @click="" class="btn btn-sm btn-outline-danger me-1"><i class="bi bi-pen"></i></button> -->
-            <button @click="selGroup(item)" class="btn btn-sm btn-outline-danger me-1"><i class="bi bi-plus"></i></button>
-            <button @click="delGroup(item)" class="btn btn-sm btn-outline-danger"><i class="bi bi-x"></i></button>
+            <button v-if="item.name==sel_group.name" @click="delGroup(item)" class="my-1 py-0 ms-1 btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+
+            <button v-if="item.name!=sel_group.name" @click="get_values_from_group(item)" class="m-0 px-1 py-1 btn btn-sm btn-outline-danger d-flex justify-content-start me-1 form-control">{{ item['name'] }}</button>
+            <input v-else class="m-0 p-0 mx-1 ps-1 form-control bg-selected border-0 rounded-1" v-model="item['name']">
+
+            <button v-if="item.name==sel_group.name" @click="add_to_group" class="my-1 py-0 btn btn-sm btn-outline-danger me-1"><i class="bi bi-save-fill"></i></button>
+            <button v-if="item.name!=sel_group.name" @click="edit_group(item)" class="m-0 btn btn-sm btn-outline-danger" title="Редактировать группу"><i class="bi bi-pen"></i></button>
+            <button v-if="item.name==sel_group.name" @click="selGroup(item)" class="my-1 py-0 btn btn-sm btn-outline-danger me-1"><i class="bi bi-plus"></i></button>
+            <button v-if="item.name==sel_group.name" @click="closeGroup(item)" class="my-1 py-0 me-1 btn btn-sm btn-outline-danger"><i class="bi bi-x"></i></button>
+          
           </div>
         </div>
       </div>
@@ -423,7 +431,13 @@ import Swal from 'sweetalert2';
 
 
 <style scoped>
-
+.btn:hover{
+  background-color: rgb(7, 1, 80);
+  border-color:rgb(7, 1, 80);
+}
+/* .btn{
+  border:1px solid black;
+} */
 .my-btn {
   margin: 0;
   padding: 0;
@@ -433,25 +447,27 @@ import Swal from 'sweetalert2';
   font-size: 10px;
 }
 .my-btn-send {
-  width: 100%;
+  width: 100%; 
   border: 0 solid #111111;
-  margin-top: 4px;
-  /* margin-bottom: 4px; */
-  border-radius: 15px;
+  margin: 4px;
+  margin-left: 0;
+  margin-right: 2px;
+  border-radius: 5px;
   background-color: #0a4f4f;
   text-align: center;
 }
 .my-btn-clear {
-  width: 100%;
+  width: 100%; 
   border: 0 solid #111111;
-  margin-top: 4px;
-  margin-bottom: 4px;
-  border-radius: 15px;
+  margin: 4px;
+  margin-right: 0;
+  margin-left: 2px;
+  border-radius: 5px;
   background-color: #0a4f4f;
   text-align: center;
 }
 .my-btn-clear:hover {
-  background-color: orangered;
+  background-color: rgb(7, 1, 80);
 }
 .my-btn-send:disabled {
   background-color: #444444;
@@ -492,10 +508,12 @@ tr, td, tbody {
   background-color: #0a4f4f;
 }
 .bg-selected {
-  background-color: rgb(120, 24, 24);
+  background-color: rgb(8, 207, 121);
+  color: #000000;
 }
 .bg-selected:focus {
-  background-color: rgb(56, 10, 10);
+  background-color: rgb(104, 241, 0);
+  color: #000000;
 }
 .extreme_button {
   background-color: #0a4f4f;
@@ -579,7 +597,7 @@ export default {
       dict: '',
       ll1: '',
       dict_lang: [],
-      name_lang: 'en',
+      name_lang: 1,
       resu: [],
       resu_backup: [],
       resu_search: [],
@@ -641,6 +659,7 @@ export default {
       edit_rule_mode: false,
       select_day: '',
       click_one_tmp: {},
+      sel_group: '',
     }
   },
   props: {
@@ -892,6 +911,7 @@ export default {
       })
 
       let result = await response.json()
+      console.log(this.name_dictionary)
       if (result.answer == 'ok') {
         this.dict_lang.push(this.name_dictionary)
         this.name_dictionary = ""
@@ -900,6 +920,11 @@ export default {
       }
       console.log(result)
 
+    },
+    async clearInputWords(){
+      this.one="";
+      this.two="";
+      this.three="";
     },
     async request_by_date() {
       console.info(this.select_date_from)
@@ -1041,6 +1066,7 @@ export default {
         },
         body: JSON.stringify({
           group_id: this.current_group['id'],
+          name: this.current_group['name'],
           lang: this.name_lang
         }),
         "mode":"cors"
@@ -1073,20 +1099,33 @@ export default {
             authorization: window.localStorage.getItem('jwt'),
           },
           body: JSON.stringify({
-            group_id: this.current_group['id'],
+            group_id:this.current_group['id'],
+            group_name:this.current_group['name'],
+            group_lang:this.current_group['lang'],
             items: selected_group.map(item => item['id']),
           }),
           "mode":"cors"
         })
 
         let result = await response.json()
-        //console.log(result)
-        alert('Данные добавленны!', result)
+        console.log(result)
+        Swal.fire(`Данные добавленны!`)
+
       } else {
         console.info('Список пуст не каких запросов не будет!')
-        alert('Список пуст не каких запросов не будет!')
+        // alert('Список пуст не каких запросов не будет!')
+        Swal.fire("Список пуст не каких запросов не будет!");
+
       }
 
+    },
+    async edit_group(group){
+      console.log(group)
+      this.sel_group=group
+
+    },
+    async closeGroup(group){
+      this.sel_group=''
     },
     async selGroup(item) {
       this.current_group = item
@@ -1160,6 +1199,7 @@ export default {
       this.new_word_mode = false
       this.create_rule_mode = false
       this.new_group_mode = false
+      this.click_one_tmp={}
 
       if (this.add_phrase_mode==true) {
         await this.get_phrase()
@@ -1171,6 +1211,7 @@ export default {
       this.add_phrase_mode = false
       this.new_word_mode = false
       this.new_group_mode = false
+      this.click_one_tmp={}
       
 
       if (this.create_rule_mode==true) { // загружаем правила

@@ -47,7 +47,10 @@ import { unescape } from 'querystring';
 
 
 
-
+router.get('/:id', function (req, res, next) {
+    console.log('req.params:', req.params);
+    next();
+});
 
 
 

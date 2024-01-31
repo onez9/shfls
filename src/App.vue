@@ -212,7 +212,7 @@ export default {
       word: '',
       g_random: '',
       interval_random: '',
-      mode_container: true,
+      mode_container: false,
       run_interval_mode: false,
       show_signup_login: false,
     }

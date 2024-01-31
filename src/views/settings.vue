@@ -207,6 +207,9 @@ export default {
       this.color_header = window.localStorage.getItem('color_header')
     }
 
+    if (window.localStorage.getItem('mode_container') !== null) {
+      this.mode_container = JSON.parse(window.localStorage.getItem('mode_container'))
+    }
 
     console.log('this func: mounted', this.theme)
     this.theme_current = this.theme
