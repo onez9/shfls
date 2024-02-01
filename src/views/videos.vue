@@ -77,6 +77,7 @@ import Swal from 'sweetalert2';
               @keyup.escape="name_of_play_list=''"
               class="border border-outline-primary p-0 ps-2 form-control" 
               id="name_list" 
+              title="Нажмите ENTER - для добавления плейлиста"
               placeholder="Название плейлиста"
               v-model="name_of_play_list">
             <button @click="show_pen = !show_pen" class="btn btn-sm btn-danger" title="Редактировать play list">
@@ -126,6 +127,7 @@ import Swal from 'sweetalert2';
               class="form-control m-0 p-0 ps-2" 
               placeholder="Название тега" 
               v-model="tag_name"
+              title="Нажмите ENTER - для добавления тега"
               @keyup.enter="createTag"
               @keyup.escape="tag_name=''">
             <button class="btn btn-sm btn-danger" @click="createTag"><i class="bi bi-plus-square"></i></button>
@@ -155,6 +157,7 @@ import Swal from 'sweetalert2';
               v-model="url" 
               @keyup.enter="run_download(url)" 
               @keyup.escape="url = ''"
+              title="Нажмите ENTER - для загрузки"
               type="text" 
               class="bg-dark text-white form-control p-0 m-0 ps-2"
               :disabled="false" 
@@ -313,8 +316,7 @@ import Swal from 'sweetalert2';
               class="mt-1 d-flex justify-content-center">
               <nav aria-label="">
                 <ul class="pagination">
-                  <li v-if="currentPage > 0" class="page-item"><a class="page-link" href="#"
-                      @click="crumbs(currentPage - 1)"> &lt; </a></li>
+                  <li v-if="currentPage > 0" class="page-item"><a class="page-link" href="#" @click="crumbs(currentPage - 1)"> &lt; </a></li>
                   <!-- @click="crumbs(currentPage - 1)">&laquo;</a></li> -->
                   <li v-if="currentPage > 2" class="page-item"><a class="page-link" href="#" @click="crumbs(0)">1</a></li>
 

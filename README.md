@@ -1,15 +1,19 @@
-# fileloader
-Сайт для работы в локальной сети
+## fileloader
+### Сайт для работы в локальной сети
 
 Функции:
 - чат
 - просмотр и загрузка видео
 - файлообменник
 
-Перед запуском необходимо подредактировать Configs/config.mjs, измените соответствующие директории для работы 
-Можно найти docker контейнер с этим сайтом по адресу https://dockerhub.com/zakhar1101/myapp
+#### Установка:
+```bash
+git clone https://github.com/onez9/shfls.git
+cd shfls
+npm i
+```
 
-
+#### Запуск:
 ```python
 python3 start.py
 ```
