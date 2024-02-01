@@ -16,3 +16,8 @@ npm i
 ```python
 python3 start.py
 ```
+#### Или (обе команды в разных терминалах):
+```bash
+npm run dev
+npm start
+```
