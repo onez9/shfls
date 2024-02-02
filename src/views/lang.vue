@@ -265,7 +265,7 @@ import Swal from 'sweetalert2';
 
 
       <div class="rounded p-1 mt-1 style_searching" v-if="resu_search.length!==0">
-        <div class="" v-for="(item, index) in resu_search.slice(0, 20)" :key="item">
+        <div class="" v-for="(item, index) in resu_search" :key="item">
           {{ item[1] }}
         </div>
       </div>
@@ -1056,6 +1056,9 @@ export default {
 
       });
     },
+    async delFromGroup(item){
+      
+    },
     async get_values_from_group(item) {
       this.current_group = item
       const response = await fetch('/books/g/w/group', {
@@ -1701,6 +1704,8 @@ export default {
         this.currentPage = 0
         this.create_rule_mode = false
         this.click_one_tmp={}
+        this.resu_search=[]
+        this.word=""
         await this.downl_search()
       }
       console.info('lang_code: ', lang_code)

@@ -37,24 +37,6 @@ import Swal from 'sweetalert2';
 
 
 
-      <div class="col-sm-8 input-group mb-2 mt-2 m-0 p-0">
-        <span class="input-group-text p-0 m-0 px-2" id=""><i class="bi bi-search"></i></span>
-        <input type="text" placeholder="Ключевые слова для поиска" class="form-control bg-dark text-white p-0 m-0 ps-1"
-          v-on:keyup.enter="template_request" @keyup.escape="csr" @mouseover="recent_request = true"
-          v-on:input="searching(name)" v-model="name" @focus="recent_request = true" @mouseleave="" @blur=""
-          autocomplete="on">
-
-
-
-
-        <button @click="open_addvance" class="btn btn-sm btn-outline-danger" title="Дополнительно">
-          <i class="bi bi-list"></i>
-        </button>
-
-        <button @click="csr" class="btn btn-sm btn-outline-danger" id="">
-          <i class="bi bi-backspace"></i>
-        </button>
-      </div>
 
 
 
@@ -298,14 +280,40 @@ import Swal from 'sweetalert2';
 
       <div class="col m-1" style="background-color: rgb(96, 93, 96); border-radius: 5px;">
         <div class="row">
+          <div class="col-sm-6 input-group px-1 pt-1">
+            <span class="input-group-text p-0 m-0 px-2" id=""><i class="bi bi-search"></i></span>
+            <input 
+              type="text" 
+              placeholder="Ключевые слова для поиска" 
+              class="form-control bg-dark text-white"
+              v-on:keyup.enter="template_request" 
+              @keyup.escape="csr" 
+              @mouseover="recent_request = true"
+              v-on:input="searching(name)" 
+              v-model="name" 
+              @focus="recent_request = true" 
+              @mouseleave="" 
+              @blur=""
+              autocomplete="on">
 
-          <div class="col-sm-6 style_searching rounded p-1" style="" v-if="sampling_by_template.length !== 0">
+
+            <button @click="open_addvance" class="btn btn-sm btn-outline-danger" title="Дополнительно">
+              <i class="bi bi-list"></i>
+            </button>
+
+            <button @click="csr" class="btn btn-sm btn-outline-danger" id="">
+              <i class="bi bi-backspace"></i>
+            </button>
+          </div>
+
+
+          <div class="col-sm-6 style_searching rounded p-1 m-1" style="" v-if="sampling_by_template.length !== 0">
             <div class="" v-for="(item, index) in sampling_by_template" :key="item">
               {{ item.name }}
             </div>
           </div>
 
-          <div class="col-sm-12" v-if="show_tags">
+          <div class="col-sm-12 p-1" v-if="show_tags">
             <button v-for="(value, index) in tags" @click="byTag(value)" class="mybtn">{{ value }}</button>
           </div>
 
