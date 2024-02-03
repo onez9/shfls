@@ -2,6 +2,7 @@
 import { registerRuntimeCompiler } from 'vue';
 import search from '../../Components/search.vue'
 import Swal from 'sweetalert2';
+import axios from 'axios';
 </script>
 
 <template >
@@ -154,13 +155,19 @@ import Swal from 'sweetalert2';
           </div>
           <!-- стек загрузжаемых видео -->
           <div class="col-sm">
-            <div v-for="(item, i) in batch_list" :key="item"
-              class="alert alert-info text-primary d-flex align-items-center mb-1 ps-2" role="alert">
-              <div class="">{{ item }}</div>
-              <button @click="" class="btn btn-sm btn-outline-info ms-auto me-1">Отменить</button>
-              <button class="btn btn-sm btn-outline-danger">
-                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-              </button>
+            <div v-for="(item, i) in batch_list" 
+              :key="item"
+              class="alert alert-info text-primary d-flex align-items-center mb-1 ps-2" 
+              role="alert">
+              <div class="" style="font-size: 15px;">{{ item }}</div>
+              <div class="d-flex flex-column ms-auto">
+                <button 
+                  @click="" 
+                  class="btn btn-sm btn-outline-info mb-1"><i class="bi bi-back"></i></button>
+                <button class="btn btn-sm btn-outline-danger">
+                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                </button>
+              </div>
 
               <!-- <i class="bi bi-x-diamond"></i> -->
             </div>
@@ -191,7 +198,10 @@ import Swal from 'sweetalert2';
         <!-- количество видео на одной странице -->
         <div class="row">
           <div class="col-sm-12">
-            <select @change="change_count" v-model="video_values" class="form-select mt-1 bg-dark text-white p-0 ps-1"
+            <select 
+              @change="change_count" 
+              v-model="video_values" 
+              class="form-select mt-1 bg-dark text-white p-0 ps-1"
               name="" title="Количество видео на одной странице">
               <option value="9">9</option>
               <option value="10">10</option>
@@ -202,7 +212,10 @@ import Swal from 'sweetalert2';
           <!-- количество столбцов -->
           <div class="col-sm-12">
             <!-- <input type="number" class="form-control mt-1" min="1" max="4"> -->
-            <select v-model="selected" class="form-select mt-1 bg-dark text-white p-0 ps-1" name=""
+            <select 
+              v-model="selected" 
+              class="form-select mt-1 bg-dark text-white p-0 ps-1" 
+              name=""
               title="Количество столбцов">
               <option value="0">List</option>
               <option value="1">1</option>
@@ -292,28 +305,39 @@ import Swal from 'sweetalert2';
               v-on:input="searching(name)" 
               v-model="name" 
               @focus="recent_request = true" 
-              @mouseleave="" 
+              @mouseleave=""
               @blur=""
               autocomplete="on">
 
 
-            <button @click="open_addvance" class="btn btn-sm btn-outline-danger" title="Дополнительно">
+            <button 
+              @click="open_addvance" 
+              class="btn btn-sm btn-outline-warning" 
+              title="Дополнительно">
               <i class="bi bi-list"></i>
             </button>
 
-            <button @click="csr" class="btn btn-sm btn-outline-danger" id="">
+            <button 
+              @click="csr" 
+              class="btn btn-sm btn-warning" 
+              id="">
               <i class="bi bi-backspace"></i>
             </button>
           </div>
 
 
-          <div class="col-sm-6 style_searching rounded p-1 m-1" style="" v-if="sampling_by_template.length !== 0">
+          <div 
+            class="col-sm-6 style_searching rounded p-1 m-1" 
+            style="" 
+            v-if="sampling_by_template.length !== 0">
             <div class="" v-for="(item, index) in sampling_by_template" :key="item">
               {{ item.name }}
             </div>
           </div>
 
-          <div class="col-sm-12 p-1" v-if="show_tags">
+          <div 
+            class="col-sm-12 p-1" 
+            v-if="show_tags">
             <button v-for="(value, index) in tags" @click="byTag(value)" class="mybtn">{{ value }}</button>
           </div>
 
@@ -324,7 +348,10 @@ import Swal from 'sweetalert2';
               class="mt-1 d-flex justify-content-center">
               <nav aria-label="">
                 <ul class="pagination">
-                  <li v-if="currentPage > 0" class="page-item"><a class="page-link" href="#" @click="crumbs(currentPage - 1)"> &lt; </a></li>
+                  <li 
+                    v-if="currentPage > 0" 
+                    class="page-item">
+                    <a class="page-link" href="#" @click="crumbs(currentPage - 1)"> &lt; </a></li>
                   <!-- @click="crumbs(currentPage - 1)">&laquo;</a></li> -->
                   <li v-if="currentPage > 2" class="page-item"><a class="page-link" href="#" @click="crumbs(0)">1</a></li>
 
@@ -377,19 +404,43 @@ import Swal from 'sweetalert2';
                         <i class="bi bi-heart"></i>
                       </button>
                     </div>
-                    <div class="mb-1" v-if="current_play_list !== 'All'"><button @click="delete_from_albom(i)"
-                        class="btn btn-sm btn-outline-secondary"><i class="bi bi-x"></i></button></div>
-                    <div class="mb-1 me-1"><button class="my-btn-play-list" @click="reset_video(i)"><i
-                          class="bi bi-stop-btn"></i></button></div>
-                    <div class="mb-1"><button class="my-btn-play-list" @click="play_video(i)"><i
-                          class="bi bi-play-btn"></i></button></div>
-                    <div class=""><button class="my-btn-play-list" @click="full_video(i)"><i
-                          class="bi bi-arrows-fullscreen"></i></button></div>
+                    <div class="mb-1" v-if="current_play_list !== 'All'">
+                      <button 
+                        @click="delete_from_albom(i)"
+                        class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-x"></i>
+                      </button>
+                    </div>
+                    <div class="mb-1 me-1">
+                      <button 
+                        class="my-btn-play-list" 
+                        @click="reset_video(i)">
+                        <i class="bi bi-stop-btn"></i>
+                      </button>
+                    </div>
+                    <div class="mb-1">
+                      <button 
+                        class="my-btn-play-list" 
+                        @click="play_video(i)">
+                        <i class="bi bi-play-btn"></i>
+                      </button>
+                    </div>
+                    <div class="">
+                      <button 
+                        class="my-btn-play-list" 
+                        @click="full_video(i)">
+                        <i class="bi bi-arrows-fullscreen"></i>
+                      </button>
+                    </div>
                   </div>
 
                   <div>
-                    <figure class="m-0" @mouseover="item.upHere = true" @mouseleave="item.upHere = false">
-                      <video class="w-100 videos m-0 p-0"
+                    <figure 
+                      class="m-0" 
+                      @mouseover="item.upHere = true" 
+                      @mouseleave="item.upHere = false">
+                      <video 
+                        class="w-100 videos m-0 p-0"
                         :poster="(show_poster == true && item.upHere !== true) ? '/images/periodic_table.jpg' : `/gifs/${encodeURIComponent(item.name.replace(/(.webm|.mp4|.mkv|.avi)/gi, '.gif'))}`"
                         loop preload="none" controls="controls" controlsList="nodownload">
                         <!-- <source :src="`/g?name=${encodeURIComponent(item.name)}`" type="video/mp4" /> -->
@@ -728,7 +779,7 @@ export default {
     if (window.localStorage.getItem('tags') == null) {
       window.localStorage.setItem('tags', JSON.stringify([]))
     } else {
-      this.tags = JSON.parse(window.localStorage.getItem('tags'))
+      // this.tags = JSON.parse(window.localStorage.getItem('tags'))
     }
 
     if(window.localStorage.getItem('folders')==null){
@@ -801,6 +852,32 @@ export default {
   },
   methods: {
     async show_hide_tags(){
+      if(this.tags.length==0){
+        console.log(window.localStorage.getItem('user_info'))
+        const user_info = JSON.parse(window.localStorage.getItem('user_info'));
+        const properties = {
+          id: user_info.id,
+          login: user_info.login,
+          email: user_info.email,
+          phone: user_info.phone,
+          // tags: JSON.parse(window.localStorage.getItem('tags'))
+        }
+        // axios
+        // console.log(properties)
+        const response = await fetch('/control/download/settings', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': window.localStorage.getItem('jwt'),
+          },        
+          body: JSON.stringify(properties)
+          
+        })
+        let result=await response.json()
+        console.log(result);
+        this.tags = result;
+        window.localStorage.setItem('tags', JSON.stringify(this.settings))
+      }
       this.show_tags=!this.show_tags
     },
     async add_folder() {
@@ -833,7 +910,46 @@ export default {
       if(this.tag_name.trim()){
         this.tags.push(this.tag_name);
         window.localStorage.setItem('tags', JSON.stringify(this.tags));
+        
+        
+        console.log(window.localStorage.getItem('user_info'))
+        const user_info = JSON.parse(window.localStorage.getItem('user_info'));
+        const properties = {
+          id: user_info.id,
+          login: user_info.login,
+          email: user_info.email,
+          phone: user_info.phone,
+          tag: this.tag_name,
+        }
+
+
+
+        // axios
+        const response = await fetch('/control/upload/settings', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': window.localStorage.getItem('jwt'),
+          },        
+          body: JSON.stringify(properties)
+          
+        })
+
+        // .then(response => {
+        console.log(await response.json());
+        // })
+        // .catch(error => {
+        // console.log(error)
+        // })
+        // .finally(() => {
+        // console.log('finally!')
         this.tag_name = "";
+        // })
+
+
+
+      }else{
+        Swal.fire("Поле не может быть пустым!")
       }
 
     },

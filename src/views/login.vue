@@ -9,7 +9,13 @@ import { sha224, sha256 } from 'js-sha256';
       <label for="login">Логин: <span v-if="!login && flag">Поле обязательно</span></label>
       <input v-model="login" id="login" type="text" class="form-control" placeholder="Логин">
       <label for="password">Пароль: <span v-if="!login && flag">Поле обязательно</span></label>
-      <input v-model="password" id="password" type="password" class="form-control" placeholder="Пароль">
+      <input 
+        v-model="password" 
+        v-on:keyup.enter="login_func"
+        id="password" 
+        type="password" 
+        class="form-control" 
+        placeholder="Пароль">
       <button class="btn-login" @click="login_func">Войти</button>
       <router-link to="/g/signup">Создать аккаунт</router-link>
     </div>

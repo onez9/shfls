@@ -246,18 +246,40 @@ import Swal from 'sweetalert2';
             <label class="border lc d-flex align-items-center px-2">{{ this.tablo_result }}</label>
             
             <!-- <button @click="collection" class="btn btn-sm btn-outline-danger"><i class="bi bi-collection"></i></button> -->
-            <button @click="mode_filter =! mode_filter" class="btn btn-sm btn-outline-danger"><i class="bi bi-funnel"></i></button>
+            <button 
+              @click="mode_filter =! mode_filter" 
+              class="btn btn-sm btn-outline-danger">
+              <i class="bi bi-funnel"></i>
+            </button>
             <!-- <button @click="downl_search" class="btn btn-sm btn-outline-danger"><i class="bi bi-sliders2-vertical"></i></button> -->
-            <button @click="downl_search" class="btn btn-sm btn-outline-danger"><i class="bi bi-arrow-clockwise"></i></button>
+            <button 
+              @click="downl_search" 
+              class="btn btn-sm btn-outline-danger">
+              <i class="bi bi-arrow-clockwise"></i>
+            </button>
             <button @click="csr" class="btn btn-sm btn-outline-danger"><i class="bi bi-backspace"></i></button>
           </div>
         </div>
         <div class="col-sm-12" v-if="create_rule_mode">
           <div :class="{'border rounded mt-1 px-1 p-0': true, 'border-my': (create_rule_mode)}">
             <label @click="" class="d-flex justify-content-start">Правила</label>
-            <input v-model="name_rule" type="text" class="form-control mb-1" title="Название" placeholder="Название">
-            <textarea v-model="description_rule" type="text" class="form-control mb-1" title="Описание" placeholder="Описание"></textarea>
-            <button @click="add_rule(name_rule, description_rule)" class="btn btn-sm btn-outline-danger form-control mb-1" :disabled="(name_rule=='' || description_rule=='')? true : false">Создать</button>
+            <input 
+              v-model="name_rule" 
+              type="text" 
+              class="form-control mb-1" 
+              title="Название" 
+              placeholder="Название">
+            <textarea 
+              v-model="description_rule" 
+              type="text" 
+              class="form-control mb-1" 
+              title="Описание" 
+              placeholder="Описание">
+            </textarea>
+            <button 
+              @click="add_rule(name_rule, description_rule)" 
+              class="btn btn-sm btn-outline-danger form-control mb-1" 
+              :disabled="(name_rule=='' || description_rule=='')? true : false">Создать</button>
             <!-- <button v-if="create_rule_mode" @click="get_rules()" class="btn btn-sm btn-outline-danger form-control mt-1">Показать правила</button> -->
           </div>
         </div>

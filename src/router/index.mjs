@@ -16,6 +16,7 @@ import settings from '../views/settings.vue'
 import chemistry from '../views/chemistry.vue'
 import login from '../views/login.vue'
 import signup from '../views/signup.vue'
+import gists from '../views/gists.vue'
 import Swal from 'sweetalert2'
 
 
@@ -29,6 +30,14 @@ const router = createRouter({
       name: 'home',
       redirect: {path: '/g/files'},
       component: home,
+      meta: { 
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/g/gists',
+      name: 'gists',
+      component: gists,
       meta: { 
         requiresAuth: true
       }

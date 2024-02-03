@@ -87,14 +87,15 @@ router.post('/', (req, res) => {
 })
 router.post('/upload/settings', (req, res) => {
 	try {
-		let sql = 'insert into record_local_storage (user_id, name, cash) values (?, ?, ?);'
+		let sql = 'insert into tags (user_id, name) values (?, ?);'
 		const db = new sqlite.Database('db.sqlite3');
 		// console.log(req.session.user_id)
 		// console.log(req.session.email)
-		const body = req.body.data;
+		const body = req.body
 		console.log(body)
-		console.info(':::', body.id, body.tags)
-		let params = [body.id, 'tags', JSON.stringify(body.tags)];
+
+		console.info(':::', body.id, body.tag)
+		let params = [body.id, body.tag];
 		let stmt = db.prepare(sql, (err) => {
 			if (err) console.error(err)
 		})
@@ -117,28 +118,43 @@ router.post('/upload/settings', (req, res) => {
 
 router.post('/download/settings', (req, res) => {
 	try {
-		console.log('::: Сработало скачивание настроек.')
+		console.log('::: Сработало скачивание настроек.', req.body)
 		const db = new sqlite.Database('db.sqlite3');
 		// console.log(req.session.user_id)
 		// console.log(req.session.email)
-		let body = req.body.data
+		let body = req.body
 		console.log('body: ', body)
 		let params = [body.id];
 		console.log(params)
-		let sql = 'select * from record_local_storage;'
+		let sql = 'select name from tags where user_id=?'
 		let stmt = db.prepare(sql, (err) => {
 			if (err) console.error(err)
 		})
-		
-		stmt.all([], (err, rows) => {
+
+		// stmt.each(params, (err, row) => {
+		// 	if (err) console.error(err)
+		// 	console.log(row)
+		// 	rows.push(row.name)
+		// })
+	
+		stmt.all(params, (err, rows) => {
 			console.log('вывод строк из запроса: ')
 			console.log(rows)
-			res.json(rows);
+			let tmprows=[]
+			rows.forEach(row => {
+				tmprows.push(row.name)
+			})
+			// console.log(rows)
+			res.json(tmprows);
 		})
-		stmt.finalize();
+		stmt.finalize((err)=>{
+			if(err) console.log(err)
+			// else res.json(rows)
+			db.close();
+		})
 
 
-		db.close();
+
 		console.log(body.id)
 
 	} catch (e) {

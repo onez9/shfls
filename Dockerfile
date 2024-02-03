@@ -1,4 +1,4 @@
-FROM node:19.0.0-slim
+FROM node:20.0.0-slim
 
 #RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 ENV DEBIAN_FRONTEND=noninteractive

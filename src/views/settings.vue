@@ -26,12 +26,14 @@ import HighLight from "vue3-highlight-component";
 
         <button 
           class="my-btn"
-          @click="upload_settings">Загрузить настройки на сервер
+          @click="upload_settings"
+          disabled>Загрузить в бд
+          
         </button>
 
         <button 
           class="my-btn"
-          @click="download_settings">Загрузить настройки с сервера
+          @click="download_settings">Скачать теги из БД
         </button>
 
         <button 
@@ -47,7 +49,7 @@ import HighLight from "vue3-highlight-component";
 
 
 
-        <button @click="apply_settings(value)" v-for="(value, index) in settings">{{ value['cash'] }}</button>
+        <button @click="apply_settings(value)" v-for="(value, index) in settings">{{ value }}</button>
 
         <div class="form-check form-switch mt-2">
           <input @click="change_theme" v-model="theme_current" class="form-check-input form-control" type="checkbox" role="switch"
@@ -237,7 +239,7 @@ export default {
   methods: {
     async apply_settings(value) {
       console.log(123123123, value['cash'])
-      window.localStorage.setItem('tags', value['cash'])
+      window.localStorage.setItem('tags', this.settings)
     },
     async download_settings() {
       console.log(window.localStorage.getItem('user_info'))
@@ -247,27 +249,35 @@ export default {
         login: user_info.login,
         email: user_info.email,
         phone: user_info.phone,
-        tags: JSON.parse(window.localStorage.getItem('tags'))
+        // tags: JSON.parse(window.localStorage.getItem('tags'))
       }
-      axios
-      .post('/control/download/settings', {
-        Headers: {
+      // axios
+      // console.log(properties)
+      const response = await fetch('/control/download/settings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
           'Authorization': window.localStorage.getItem('jwt'),
         },        
-        data: {
-          ...properties
-        }
+        body: JSON.stringify(properties)
+        
       })
-      .then(response => {
-        console.log(response.data);
-        this.settings = response.data;
-      })
-      .catch(error => {
-        console.log(error)
-      })
-      .finally(() => {
-        console.log('finally!')
-      })
+      let result=await response.json()
+      console.log(result);
+      this.settings = result;
+      window.localStorage.setItem('tags', JSON.stringify(this.settings))
+
+      // .then(response => {
+      //   console.log(response.data);
+      //   this.settings = response.data;
+      //   window.localStorage.setItem('tags', JSON.stringify(this.settings))
+      // })
+      // .catch(error => {
+      //   console.log(error)
+      // })
+      // .finally(() => {
+      //   console.log('finally!')
+      // })
     },
     async upload_settings() {
       console.log(window.localStorage.getItem('user_info'))

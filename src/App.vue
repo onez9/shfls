@@ -45,6 +45,7 @@ import { RouterLink, RouterView } from 'vue-router'
                   <!-- <li><router-link class="dropdown-item" to="/g/poligon">Полигон</router-link></li> -->
                   <li class=""><router-link class="dropdown-item" to="/g/chat">Чат</router-link></li>
                   <li class=""><router-link class="dropdown-item" to="/g/chemistry">Химия</router-link></li>
+                  <li class=""><router-link class="dropdown-item" to="/g/gists">Gists</router-link></li>
                   <li class=""><router-link class="dropdown-item" to="/g/settings">Настройки</router-link></li>
 
                 </ul>

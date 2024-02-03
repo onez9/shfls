@@ -298,7 +298,7 @@ app.use((req, res, next) => {
 
 app.use((req, res, next) => {
     // console.log('Авторизация ёбаная: ', req.headers.authorization, req.headers, req.header, req.rawHeaders)
-    // console.log('jwt headers: ', req.headers)
+    console.log('jwt headers: ', req.headers)
     try {
         if (req.headers.authorization) {
             jwt.verify(req.headers.authorization, config.wlan0.secret, (err, payload) => {
@@ -333,7 +333,7 @@ app.use((req, res, next) => {
 
         } else {
 
-            console.log('JWT malformed');
+            console.log("\x1b[5m\x1b[31m%s\x1b[0m", 'JWT malformed/JWT отсутствует. Возможен парсинг');
             // res.json({'answer': 'exit'})
             // res.redirect('/g/login')
             //throw 'Need authorization. Token authorization is Undefined.'
