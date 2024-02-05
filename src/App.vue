@@ -110,7 +110,7 @@ import { RouterLink, RouterView } from 'vue-router'
             <div class=""><u>Version:</u> {{ current_version }}</div>
             <div class=""><u>Authors:</u> {{ authors }}</div>
             <div class=""><u>Stackoverflow:</u> <a :href="stackoverflow">{{ stackoverflow }}</a></div>
-            <div class=""><u>Gitlab:</u> {{ gitlab }}</div>
+            <div class=""><u>Github:</u> {{ github }}</div>
           </div>
         </div>
         <!-- <div class="col-sm-12 my-footer">
@@ -206,7 +206,7 @@ export default {
       current_version: '3.4.5',
       authors: 'Арамилев Захар',
       stackoverflow: 'https://ru.stackoverflow.com/users/486286/onez9',
-      gitlab: 'https://gitlab.com/onez9',
+      github: 'https://github.com/onez9',
       logout: false,
       color_header: '#ffffff',
       scroll: 0,
