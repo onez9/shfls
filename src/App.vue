@@ -34,7 +34,7 @@ import { RouterLink, RouterView } from 'vue-router'
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Основные разделы</a>
                 <ul class="dropdown-menu dropdown-menu-dark">
-                  <!-- <li><router-link class="dropdown-item" to="/g/images">Картинки</router-link></li> -->
+                  <li><router-link class="dropdown-item" to="/g/images">Картинки</router-link></li>
                   <!-- <li><router-link class="dropdown-item" to="/g/videos">Видео</router-link></li> -->
                   <!-- <li><router-link class="dropdown-item" to="/g/musics">Музыка</router-link></li> -->
                   <!-- <li><router-link class="dropdown-item" to="/g/books">Книги</router-link></li> -->

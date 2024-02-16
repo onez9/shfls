@@ -274,6 +274,7 @@ app.use((req, res, next) => {
     req.headers['remoteFamily'] = req.socket.remoteFamily;
 	req.headers['remoteAddress'] = req.socket.remoteAddress;
 	req.headers['remotePort'] = req.socket.remotePort;
+    console.log('Ррщуцкщцущк ц кщуцо ущцк оуцкщ цукщц')
     next();
 })
 // CORS middleware
@@ -304,8 +305,16 @@ app.use((req, res, next) => {
             jwt.verify(req.headers.authorization, config.wlan0.secret, (err, payload) => {
                 try {
                     if (err) {
+                        console.log("очередное говно")
                         console.log(err)
-                        throw 'Токены не совпадают'
+                        // if(err.name=='TokenExpiredError'){
+                        //     res.json({'answer': 'exit'})
+                        // }
+                        // if(err){
+                        //     res.json({'answer': 'exit'})
+                        // }
+                        throw "error happen"
+                        // throw err
                         // return next()
                         // return 
 
@@ -326,6 +335,14 @@ app.use((req, res, next) => {
                         res.json({'answer': 'exit'})
                         //res.redirect('/g/login')
                     }
+                    // if (e instanceof TokenExpiredError) {
+                    //     console.error('Токен искажён!')
+                    //     console.error(e)
+
+                    //     res.json({'answer': 'exit'})
+                    //     //res.redirect('/g/login')
+                    // }
+                    console.log('Тут произошел конфуз.')
                 }
 
 
@@ -342,6 +359,14 @@ app.use((req, res, next) => {
 
     } catch (e) {
         //res.redirect('/g/login')
+        console.log("There happen something")
+        if (e instanceof ReferenceError) {
+            console.error('Произошло что-то немыслимое')
+            console.error(e)
+
+            res.json({'answer': 'exit'})
+            //res.redirect('/g/login')
+        }
         console.error(e)
     }
 

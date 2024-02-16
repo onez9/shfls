@@ -6,9 +6,15 @@ import search from '../../Components/search.vue'
   <div class="container-fluid">
     <div class="row">
 
-      <div class="col-12 input-group mb-2 mt-2">
+      <div class="col-12 input-group mb-2 mt-2 p-0">
         <span class="input-group-text" id=""><i class="bi bi-search"></i></span>
-        <input type="text" placeholder="Поиск картинок" class="form-control" v-on:keyup.enter="get_select_image" v-on:input="searching(name)" v-model="name">
+        <input 
+          type="text" 
+          placeholder="Поиск картинок" 
+          class="form-control" 
+          v-on:keyup.enter="get_select_image" 
+          v-on:input="searching(name)" 
+          v-model="name">
       </div>
 
 
@@ -21,32 +27,28 @@ import search from '../../Components/search.vue'
 
 
 
-      <div class="col">
-        <button class="btn btn-outline-info me-1 form-control" @click="reversing">
+      <div class="col p-0 d-flex">
+        <button class="btn btn-outline-info me-1 m-0 px-2" @click="reversing">
           <i :class="{'bi bi-sort-alpha-down': true, 'bi bi-sort-alpha-up': (reverse==false)}"></i>
         </button>
-      </div>
-      <div class="col" v-show="false">
-        <button class="btn btn-outline-success form-control" @click="show_image=false">
+        <div>
+          <select v-model="selected" class="form-select" name="">
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+            <option value="4">Four</option>
+            <option value="6">Six</option>
+            <option value="12">Twelve</option>
+          </select>
+        </div>
+        <!-- <button class="btn btn-outline-success form-control m-0" @click="show_image=false">
           Скрыть изображения
         </button>
-      </div>
-      <div class="col" v-show="false">
-        <button class="btn btn-outline-warning form-control" @click="show_image=true">
+        <button class="btn btn-outline-warning form-control m-0" @click="show_image=true">
           Показать изображения
-        </button>
+        </button> -->
       </div>
 
-      <div class="col">
-        <select v-model="selected" class="form-select" name="">
-          <option value="1">One</option>
-          <option value="2">Two</option>
-          <option value="3">Three</option>
-          <option value="4">Four</option>
-          <option value="6">Six</option>
-          <option value="12">Twelve</option>
-        </select>
-      </div>
       <!-- <input type="number" class="form-control" aria-describedby="passwordHelpInline"> -->
       <!-- <span id="passwordHelpInline" class="form-text">
         Пароль должен быть от 8 до 20 символов
@@ -56,11 +58,22 @@ import search from '../../Components/search.vue'
       <div class="col-12"></div>
 
 
-      <div :class="{'p-1': true, 'col-1': (selected==12), 'col-2': (selected==6), 'col-3': (selected==4), 'col-sm-4': (selected==3), 'col-6': (selected==2), 'col-12': (selected==1) }" v-for="(item, i) in array_img" :key="i">
+      <div 
+        :class="{
+          'p-1': true, 
+          'col-1': (selected==12), 
+          'col-2': (selected==6), 
+          'col-3': (selected==4), 
+          'col-sm-4': (selected==3), 
+          'col-6': (selected==2), 
+          'col-12': (selected==1) 
+        }" v-for="(item, i) in array_img" :key="item">
         <!-- {{ item }} -->
         <figure v-if="show_image==true">
           <!-- {{ folder }} -->
-          <img loading="lazy" class="img-thumbnail p-0" :src="`${route}/${encodeURIComponent(item['name'])}`" @click="canvas2(item['name'])" alt="">
+          <!-- <img loading="lazy" class="img-thumbnail p-0" :src="`${route}/${encodeURIComponent(item['name'])}`" @click="canvas2(item['name'])" alt=""> -->
+          <img loading="lazy" class="img-thumbnail rounded-0 p-0" :src="`${route}/${encodeURIComponent(item['name'])}`" @click="canvas2(item['name'])" alt="">
+
           <!-- <figcaption class="text-break">{{ item['name'] }}</figcaption> -->
         </figure>
         <p v-else class="mt-0 mb-0">{{ `${item['name']}` }}</p>
@@ -172,7 +185,8 @@ export default {
       } else {
         this.reverse=true
       }
-      this.find_arr.reverse()
+      this.array_img.reverse()
+      // console.info(this.find_arr)
     },
     async g() {
       let properties = {
@@ -190,7 +204,9 @@ export default {
       if (response.ok) {
         const result = await response.json()
         this.array_img = result['items']
-        this.route = result['route']
+        this.route = result['route'] // /images
+        // this.route='/files'
+        console.log(this.route)
         this.tmp_array_img = this.array_img.slice(0)
       } else {
         alert('У нас что-т пошло не так!')

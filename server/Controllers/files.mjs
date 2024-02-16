@@ -280,8 +280,8 @@ router.post('/g', async (req, res) => {
 		}
 		else if (req.body.type == 'image') {
 
-			let dir = config.folders.images
-			let route = config.routes.images
+			let dir = config.folders.files
+			let route = config.routes.files
 
 			fs.readdir(dir, (err, items) => {
 				if (err) console.log(err);

@@ -2,6 +2,8 @@
 import Swal from 'sweetalert2';
 </script>
 
+
+
 <template>
     <div class="container-fluid">
         <div class="row">
@@ -117,7 +119,7 @@ export default {
             // alert("Соединение установлено.");
             console.log("Подключение успешно завершено к websocket server...")
         }
-
+        
         this.connection.onclose = function (event) {
             if (event.wasClean) {
                 console.log('Соединение закрыто');
@@ -230,5 +232,8 @@ export default {
             window.localStorage.setItem('user', this.name);
         }
     }
+
+
+
 }
 </script>

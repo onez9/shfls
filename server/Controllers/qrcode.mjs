@@ -23,7 +23,7 @@ router.get('/', async (req, res) => {
     // `server/Pictures/${v4()}${path.parse(req.files.file.name).ext}`
     try {
         let data = {
-            url: `http://${config.wlan0.host}:${config.wlan0.port}`
+            url: `http://${config.wlan0.host4}:${config.wlan0.port}`
         }
 
         let stringdata = JSON.stringify(data)
