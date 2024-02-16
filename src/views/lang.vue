@@ -108,7 +108,7 @@ import Swal from 'sweetalert2';
 
 
       <select @change="selLang(name_lang, 1)" v-model="name_lang" class="form-select mt-1 bg-dark text-white p-0 ps-1" name="" title="Выберете язык">
-        <option  v-for="(value, key) in dict_lang" v-bind:value="value['id']">{{ value['name'] }}</option>
+        <option  v-for="(value, key) of dict_lang" v-bind:value="key">{{ value }}</option>
       </select>
       <div v-if="false" class="border rounded p-1 mt-1">
         <label class="d-flex justify-content-start" @click="show_alphavit_mode =! show_alphavit_mode">Показать алфавит</label>
@@ -126,8 +126,9 @@ import Swal from 'sweetalert2';
             Открыть слова
 
         </label>
-
-        <input v-if="new_word_mode" v-model="one" ref="myinput" type="text" class="form-control ps-1 p-0" title="Иностранный" :placeholder="dict_lang[name_lang-1]?.name"/>
+<!-- {{ dict_lang }}
+{{ name_lang }} -->
+        <input v-if="new_word_mode" v-model="one" ref="myinput" type="text" class="form-control ps-1 p-0" title="Иностранный" :placeholder="dict_lang[name_lang]"/>
         <input v-if="new_word_mode" v-model="two" type="text" class="form-control mt-1 ps-1 p-0" title="Родной" placeholder="Транскрипция"/>
         <input v-if="new_word_mode" v-model="three" type="text" class="form-control mt-1 ps-1 p-0" title="Родной" placeholder="Родной"/>
         <div class="d-flex">
@@ -215,10 +216,9 @@ import Swal from 'sweetalert2';
         </div>
       </div>
       <div class="border rounded px-1 mt-1 p-0 mb-1" v-if="click_one_tmp[0] || click_one_tmp[1] || click_one_tmp[2]">
-        <p class="my-0 py-0" style="font-size: 30px;">{{ click_one_tmp[0] }}</p>
-        <p class="my-0 py-0">{{ click_one_tmp[1] }}</p>
-        <p class="my-0 py-0"
-          style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;">{{ click_one_tmp[2] }}</p>
+        <p class="my-0 py-0 fnts1">{{ click_one_tmp[0] }}</p>
+        <p class="my-0 py-0 fnts1">{{ click_one_tmp[1] }}</p>
+        <p class="my-0 py-0 fnts1">{{ click_one_tmp[2] }}</p>
       </div>
     </div>
 
@@ -453,6 +453,11 @@ import Swal from 'sweetalert2';
 
 
 <style scoped>
+.fnts1{
+  font-family: "Comic Sans MS", "Comic Sans", cursive;
+  font-size: 20px;
+
+}
 .btn:hover{
   background-color: rgb(7, 1, 80);
   border-color:rgb(7, 1, 80);

@@ -281,7 +281,7 @@ router.get('/g/words/:num_lang/:num_part/:count_words', (req, res) => {
 router.post('/g/name-book', (req, res) => {
     const db = new sqlite.Database('db.sqlite3')
 
-    // let dict = {}
+    let dict = {}
     let sql = "SELECT * FROM languages"
 	console.log('/g/name-book')
     //db.serialize(() => {
@@ -291,12 +291,12 @@ router.post('/g/name-book', (req, res) => {
                 throw err;
             }
             
-            console.log(rows)
-            // rows.forEach( row => {
-            //     dict[row.code] = row.name
-            // })
+            console.error(rows)
+            rows.forEach( row => {
+                dict[row.id] = row.name
+            })
 
-            res.json(rows)
+            res.json(dict)
 
         } catch (e) {
             console.info('Сработал catch (при запросе к /books/g/name-book) ошибка ниже')
