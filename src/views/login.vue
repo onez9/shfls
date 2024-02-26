@@ -62,7 +62,7 @@ export default {
       this.flag = true
       if (this.login && this.password) {
 
-        let response = await fetch('/users/login', {
+        let response = await fetch('/u/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ export default {
           window.localStorage.setItem('jwt', result['token']);
           console.log('login this htis: ', result['user']['is_admin'])
           window.localStorage.setItem('is_admin', result['user']['is_admin'])
-          this.$router.push({ path: '/g/files' })
+          this.$router.push({ path: '/' })
           this.$emit('login', {
             answer: 'success',
           })

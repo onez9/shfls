@@ -84,7 +84,7 @@ import Swal from 'sweetalert2';
         <div>scrollHeight - scrollTop: {{ left }}</div>
         <div>search: {{ search }}</div>
       </div>
-      <table id="id_table" class="table table-bordered table-hover">
+      <table id="id_table" class="table table-hover">
         <thead v-if="show_info">
           <tr>
             <td class="p-0"><button class="btn btn-outline-warning btn-sm"><i class="bi bi-filter-square"></i></button></td>
@@ -231,7 +231,7 @@ export default {
   },
   created() {
     console.log("Запускаю процедуру подключения к WebSocket Server")
-    this.ws = new WebSocket("ws://192.168.1.106:3000")
+    this.ws = new WebSocket("ws://192.168.0.5:3000")
     // this.ws.binaryData = "blob";
     this.ws.binaryType = "arraybuffer";
 

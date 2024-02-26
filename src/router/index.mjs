@@ -25,10 +25,18 @@ const router = createRouter({
   //history: createWebHistory(import.meta.env.BASE_URL),
   history: createWebHistory(),
   routes: [
+    // {
+    //   path: '/',
+    //   name: 'home',
+    //   redirect: {path: '/g/files'},
+    //   component: home,
+    //   meta: { 
+    //     requiresAuth: true
+    //   }
+    // },
     {
       path: '/',
       name: 'home',
-      redirect: {path: '/g/files'},
       component: home,
       meta: { 
         requiresAuth: true

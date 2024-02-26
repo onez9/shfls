@@ -274,7 +274,7 @@ app.use((req, res, next) => {
     req.headers['remoteFamily'] = req.socket.remoteFamily;
 	req.headers['remoteAddress'] = req.socket.remoteAddress;
 	req.headers['remotePort'] = req.socket.remotePort;
-    console.log('Ррщуцкщцущк ц кщуцо ущцк оуцкщ цукщц')
+    console.log('Мидлвайр для добавления других заголовков')
     next();
 })
 // CORS middleware
@@ -389,7 +389,7 @@ app.use(express.static(__dirname + '/dist'));
 app.use('/g', get);
 
 app.use('/books', books)
-app.use('/users', users)
+app.use('/u', users)
 app.use('/files', files)
 app.use('/message', message)
 

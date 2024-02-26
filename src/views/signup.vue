@@ -102,7 +102,7 @@ export default {
                 
                 
                     //this.$emit('submit', this.login, this.email, this.age, this.pass1, this.phone)
-                    const response = await fetch('/users/create_account', {
+                    const response = await fetch('/u/create_account', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

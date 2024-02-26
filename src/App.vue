@@ -28,6 +28,9 @@ import { RouterLink, RouterView } from 'vue-router'
             <!-- {{ dark }} -->
             <ul class="navbar-nav me-auto mb-lg-0">
               <li class="nav-item">
+                <router-link class="nav-link" to="/"><i class="bi bi-card-list"></i> Главная</router-link>
+              </li>
+              <li class="nav-item">
                 <!-- <a class="nav-link active" aria-current="page" href="index.html"><i class="bi-house"></i> Главная</a> -->
                 <router-link class="nav-link" to="/g/files"><i class="bi bi-card-list"></i> Файлы</router-link>
               </li>
@@ -324,7 +327,7 @@ export default {
       clearInterval(this.interval_random);
       window.localStorage.clear()
       // const response = await fetch(`${this.url}/logout`)
-      const response = await fetch('/users/log1', {
+      const response = await fetch('/u/log1', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

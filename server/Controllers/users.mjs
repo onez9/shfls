@@ -27,9 +27,71 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 import jwt from 'jsonwebtoken'
 import { unescape } from 'querystring';
+// import { ConsoleLogEntry } from 'selenium-webdriver/bidi/logEntries';
 
 
+router.post('/set_image', (req,res)=>{
+	console.log('Welcome to /u/set_image')
+	console.log(req.files.file)
+	console.log(req.body.login)
+	console.log(req.body.email)
+	// console.info(req.body)
+	let path_to_save=`${config.folders.files}/${req.files.file.name}`
+	let route_to_image=`${config.routes.files}/${req.files.file.name}`
+	let login=req.body.login
+	let email=req.body.email
+	req.files.file.mv(path_to_save)
 
+	try{
+		const db=new sqlite.Database('db.sqlite3')
+
+		db.serialize(()=>{
+			try{
+				let sql = "update users set pictures=? where login=?;"
+				let stmt = db.prepare(sql);
+				let params = [route_to_image, login]
+				stmt.run(params, (err)=>{
+					console.log(err)
+				})
+				stmt.finalize()
+			}catch(e){
+				console.error(e)
+			}
+		})
+		res.json(route_to_image)
+	}catch(e1){
+		console.error(e1)
+	}
+})
+
+router.post('/get_image_name', (req, res)=> {
+	console.log('Welcome to /u/get_image')
+	let login=req.body.login
+	let email=req.body.email
+	const db=new sqlite.Database('db.sqlite3')
+	try{
+		db.serialize(()=>{
+			try{
+				let sql="select pictures as name from users where login=?"
+				let stmt=db.prepare(sql, (err)=>{
+					console.log(err)
+				})
+				let params=[login]
+				stmt.get(params, (err, row)=>{
+					if(err)console.log(err)
+					res.json(row)
+				})
+				stmt.finalize()
+
+			}catch(e){
+				console.error(e)
+			}
+		})
+		db.close()
+	}catch(e){
+		console.error(e)
+	}
+})
 
 router.post('/create_account', (req, res) => {
 	// res.redirect(301, '/g/chat')
